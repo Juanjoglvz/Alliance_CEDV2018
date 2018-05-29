@@ -1,3 +1,4 @@
+#LaTeX Garbage
 ./GDD/GDD.aux
 ./GDD/GDD.bbl
 ./GDD/GDD.blg
@@ -6,3 +7,23 @@
 ./GDD/GDD.log
 ./GDD/GDD.toc
 ./GDD/GDD.synctex.gz
+
+#Unreal built files
+Binaries/*
+Intermediate/*
+Saved/*
+
+#Visual Studio files
+AeroFighters.sln
+.vs/*
+
+
+# Not tracked assets
+Content/InfinityBladeEffects/*
+Content/InfinityBladeGrassLands/*
+Content/KiteDemo/*
+Content/Lighting/*
+Content/ParagonProps/*
+Content/Paragon/Serath/*
+Content/ParagonTwinblast/*
+ContentSampleMap/*

@@ -9,6 +9,7 @@
 \usepackage{courier} % Required for the courier font
 \usepackage{url}
 \usepackage{mathptmx} % Times New Roman
+\usepackage{multicol}
 
 %----------------------------------------------------------------------------------------
 % Change section style
@@ -273,28 +274,49 @@ Iván García Herrera.
 \section{Descripción breve}
 \markboth{Descripción breve}{}
 
-Juego de acción en tercera persona dividido en 2 niveles. El juego consistirá en avanzar en la trama de la historia, estando cada punto importante encerrado detrás de una pelea contra un boss. Algunas puertas tendrán que ser \textit{``hackeadas''} para poder avanzar, siendo este \textit{hackeo} la resolución de un minijuego de tipo puzzle. En el primer nivel, cada punto importante de la historia aumentará el tamaño de nuestro grupo, siendo cada integrante un NPC. El juego dará la opción de elegir a uno de los dos personajes iniciales, cada uno con un tipo distinto de combate. Cada personaje tendrá 2 tipos distintos de ataque, siendo posible hacer combos entre cada uno de ellos. Además tendrá la opción de jugar en modo cooperativo local, controlando el otro personaje el segundo jugador.
+Juego de acción en tercera persona dividido en 2 niveles. El juego consistirá en avanzar en la trama de la historia, estando cada punto importante encerrado detrás de una pelea contra un boss. Algunas puertas tendrán que ser \textit{``hackeadas''} para poder avanzar, siendo este \textit{hackeo} la resolución de un minijuego de tipo puzzle. En el primer nivel, cada punto importante de la historia aumentará el tamaño de nuestro grupo, siendo cada integrante un NPC. El segundo nivel consistirá en avanzar por el interior de la nave enemiga hasta encontrar al jefe final, al que habrá que derrotar. El juego dará la opción de elegir a uno de los dos personajes iniciales, cada uno con un tipo distinto de combate. Cada personaje tendrá 2 tipos distintos de ataque, siendo posible hacer combos entre cada uno de ellos. Además tendrá la opción de jugar en modo cooperativo \textit{on-line}, controlando el otro personaje el segundo jugador.
 
 \pagestyle{insection}
 \section{Lista de descriptores}
 \markboth{Lista de descriptores}{}
+\begin{multicols}{2}
 \begin{itemize}
 \item Acción.
 \item Tercera Persona.
 \item Peleas con bosses.
 \item Cooperativo.
+\item \textit{on-line}.
 \item Minijuego.
 \item Historia lineal.
+\item \textit{Lore} profundo.
 \end{itemize}
-
+\end{multicols}
 \pagestyle{insection}
 \section{Requisitos específicos que ha de \\ cumplir el desarrollo}
 \markboth{Requisitos específicos que ha de cumplir el desarrollo}{}
 
 \subsection{Requisitos Funcionales}
-
+\begin{itemize}
+\item El juego consistirá en \textbf{dos} niveles.
+\item Habrá tres tipos de enemigos: Cuerpo a cuerpo, a Distancia y tanque.
+\item Habrá tres jefes finales.
+\item Los jefes finales serán de movimiento lento, fáciles de coreografiar y golpearán fuerte.
+\item Algunas puertas tendrán que desbloquearse mediante la resolución de un minijuego de tipo puzzle.
+\item El jugador podrá recuperar vida a través de objetos, que se conseguirán al romper ciertos elementos del escenario.
+\item Un segundo jugador podrá unirse a la partida de forma remota en cualquier momento.
+\item Los NPCs aliados no podrán recibir daño, de modo que la única forma de perder es que el jugador muera.
+\item En caso de estar jugando dos personas, y una de ellas muere, se dará la posibilidad de reanimar al compañero en un período de tiempo. Si no se consigue, el juego también acabará.
+\item El juego tendrá puntos de \textit{checkpoint} en zonas estratégicas. Se guardará el progreso de forma transparente.
+\end{itemize}
 
 \subsection{Requisitos No Funcionales}
+\begin{itemize}
+\item La plataforma de ejecución del juego será \textbf{\textit{Windows}}.
+\item El juego debe ir \textbf{como mínimo} a 60 FPS estables.
+\item Los textos y voces del juego estarán en castellano.
+\item El proceso de desarrollo seguirá una metodología ágil, ayudándonos de la herramienta \texttt{Trello}\footnote{https://trello.com}.
+\item Se usará \texttt{Unreal Engine 4} como motor gráfico y C++ como lenguaje de programación.
+\end{itemize}
 
 \pagestyle{insection}
 \section{Dinámica del juego}
@@ -302,7 +324,7 @@ Juego de acción en tercera persona dividido en 2 niveles. El juego consistirá 
 
 
 \subsection{Argumento}
-Eres \textit{Alyssa Theras} parte de la poca resistencia que queda en el planeta Tierra. Habéis sido invadidos por una raza extraterrestre que quiere esclavizaros. Tu misón será encontrar a otros miembros de la resistencia y unir fuerzas con ellos para liberar a la Tierra del invasor enemigo. 
+Eres \textit{Alyssa Theras} parte de la poca resistencia que queda en el planeta Tierra. Habéis sido invadidos por una raza extraterrestre que quiere esclavizaros. Tu misión será encontrar a otros miembros de la resistencia y unir fuerzas con ellos para liberar a la Tierra del invasor enemigo. 
 
 \subsection{Jugadores}
 Se trata de un juego de un solo jugador con posibilidad de campaña cooperativa de dos jugadores en forma remota. El jugador principal podrá elegir si quiere jugar con \textit{Alyssa} o con \textit{Morten}. Si un segundo jugador se une a la partida, controlará al otro personaje.
@@ -500,10 +522,10 @@ Todos los assets para personajes y decorado de los mapas se han obtenido princip
 
 \subsection{Bocetos de niveles}
 \subsubsection{Nivel1}
-\includegraphics[width=16cm]{./images/mapa1.png}
+\includegraphics[width=16cm]{./images/Mapa1.png}
 
 \subsubsection{Nivel2}
-\includegraphics[width=16cm]{./images/Level2.jpg}
+\includegraphics[angle=90,width=16cm]{./images/Mapa2.png}
 
 \subsection{Bocetos de pantallas}
 \includegraphics[width=16cm]{./images/pantallas.png}

@@ -1,0 +1,41 @@
+\select@language {spanish}
+\contentsline {section}{\numberline {1}T\IeC {\'\i }tulo}{4}
+\contentsline {section}{\numberline {2}Autores}{4}
+\contentsline {section}{\numberline {3}Descripci\IeC {\'o}n breve}{4}
+\contentsline {section}{\numberline {4}Lista de descriptores}{5}
+\contentsline {section}{\numberline {5}Requisitos espec\IeC {\'\i }ficos que ha de \\ cumplir el desarrollo}{5}
+\contentsline {subsection}{\numberline {5.1}Requisitos Funcionales}{5}
+\contentsline {subsection}{\numberline {5.2}Requisitos No Funcionales}{5}
+\contentsline {section}{\numberline {6}Din\IeC {\'a}mica del juego}{5}
+\contentsline {subsection}{\numberline {6.1}Argumento}{5}
+\contentsline {subsection}{\numberline {6.2}Jugadores}{6}
+\contentsline {subsection}{\numberline {6.3}Personajes}{6}
+\contentsline {subsubsection}{\numberline {6.3.1}\textit {Alyssa Theras}}{6}
+\contentsline {subsubsection}{\numberline {6.3.2}\textit {Morten Vengeance}}{6}
+\contentsline {subsubsection}{\numberline {6.3.3}\textit {Serj Mao}}{7}
+\contentsline {subsubsection}{\numberline {6.3.4}\textit {Spectre}}{7}
+\contentsline {subsubsection}{\numberline {6.3.5}\textit {Henkka}}{8}
+\contentsline {subsubsection}{\numberline {6.3.6}\textit {Euronymous}}{8}
+\contentsline {subsubsection}{\numberline {6.3.7}\textit {Shiva}}{9}
+\contentsline {subsubsection}{\numberline {6.3.8}Enemigo guerrero}{9}
+\contentsline {subsubsection}{\numberline {6.3.9}Enemigo a distancia}{9}
+\contentsline {subsubsection}{\numberline {6.3.10}Enemigo tanque}{10}
+\contentsline {subsection}{\numberline {6.4}Historia del mundo}{10}
+\contentsline {subsection}{\numberline {6.5}Puntos claves de la historia}{10}
+\contentsline {subsection}{\numberline {6.6}Nivel 1.}{11}
+\contentsline {subsubsection}{\numberline {6.6.1}Entorno}{11}
+\contentsline {subsubsection}{\numberline {6.6.2}Enemigos}{11}
+\contentsline {subsection}{\numberline {6.7}Nivel 2.}{11}
+\contentsline {subsubsection}{\numberline {6.7.1}Entorno}{11}
+\contentsline {subsubsection}{\numberline {6.7.2}Enemigos}{12}
+\contentsline {subsection}{\numberline {6.8}Minijuego.}{12}
+\contentsline {subsection}{\numberline {6.9}Objetivos}{12}
+\contentsline {subsection}{\numberline {6.10}\textit {Gameplay}}{12}
+\contentsline {subsubsection}{\numberline {6.10.1}\textit {Alyssa}}{12}
+\contentsline {subsubsection}{\numberline {6.10.2}\textit {Morten}}{12}
+\contentsline {section}{\numberline {7}Recursos Art\IeC {\'\i }stcos}{13}
+\contentsline {subsection}{\numberline {7.1}\textit {Assets}}{13}
+\contentsline {subsection}{\numberline {7.2}Bocetos de niveles}{13}
+\contentsline {subsubsection}{\numberline {7.2.1}Nivel1}{13}
+\contentsline {subsubsection}{\numberline {7.2.2}Nivel2}{14}
+\contentsline {subsection}{\numberline {7.3}Bocetos de pantallas}{15}

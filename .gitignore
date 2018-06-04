@@ -1,12 +1,12 @@
 #LaTeX Garbage
-./GDD/GDD.aux
-./GDD/GDD.bbl
-./GDD/GDD.blg
-./GDD/GDD.tdo
-./GDD/GDD.pdf
-./GDD/GDD.log
-./GDD/GDD.toc
-./GDD/GDD.synctex.gz
+/Documentacion/**/*.aux
+/Documentacion/**/*.bbl
+/Documentacion/**/*.blg
+/Documentacion/**/*.tdo
+/Documentacion/**/*.pdf
+/Documentacion/**/*.log
+/Documentacion/**/*.toc
+/Documentacion/**/*.synctex.gz
 
 #Unreal built files
 Binaries/*

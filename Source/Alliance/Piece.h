@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Math/Color.h"
 #include "GameFramework/Actor.h"
 #include "Piece.generated.h"
 
@@ -23,6 +24,31 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	void SetMaterial(class UMaterialInstanceDynamic* NewMaterial);
+
+	UPROPERTY(EditAnywhere)
+		bool b_IsPlayer;
+	UPROPERTY(EditAnywhere)
+		int width;
+	UPROPERTY(EditAnywhere)
+		int height;
+	UPROPERTY(EditAnywhere)
+		int rowPosition;
+	UPROPERTY(EditAnywhere)
+		int columnPosition;
+
+	UPROPERTY(EditAnywhere)
+		UStaticMesh* PieceStaticMesh;
 	
+	UPROPERTY(EditAnywhere)
+		class UMaterialInstance* PieceMaterial;
+
+	UPROPERTY(EditAnywhere)
+		FLinearColor Color;
+
+private:
 	
+	UPROPERTY()
+		UStaticMeshComponent* PieceMesh;
+
 };

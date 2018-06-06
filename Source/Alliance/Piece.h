@@ -22,7 +22,7 @@ protected:
 
 public:	
 	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	// virtual void Tick(float DeltaTime) override;
 
 	void SetMaterial(class UMaterialInstanceDynamic* NewMaterial);
 
@@ -36,9 +36,8 @@ public:
 		int rowPosition;
 	UPROPERTY(EditAnywhere)
 		int columnPosition;
-
 	UPROPERTY(EditAnywhere)
-		UStaticMesh* PieceStaticMesh;
+		FString Shape;
 	
 	UPROPERTY(EditAnywhere)
 		class UMaterialInstance* PieceMaterial;
@@ -50,5 +49,9 @@ private:
 	
 	UPROPERTY()
 		UStaticMeshComponent* PieceMesh;
+
+	UStaticMesh* cosa1;
+	UStaticMesh* cosa2;
+	UStaticMesh* cosa3;
 
 };

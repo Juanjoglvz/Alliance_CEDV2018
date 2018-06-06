@@ -36,11 +36,11 @@ public:
 		int rowPosition;
 	UPROPERTY(EditAnywhere)
 		int columnPosition;
-	UPROPERTY(EditAnywhere)
-		FString Shape;
 	
 	UPROPERTY(EditAnywhere)
 		class UMaterialInstance* PieceMaterial;
+	UPROPERTY(EditAnywhere)
+		class UStaticMesh* PieceMesh;
 
 	UPROPERTY(EditAnywhere)
 		FLinearColor Color;
@@ -48,10 +48,6 @@ public:
 private:
 	
 	UPROPERTY()
-		UStaticMeshComponent* PieceMesh;
-
-	UStaticMesh* cosa1;
-	UStaticMesh* cosa2;
-	UStaticMesh* cosa3;
+		UStaticMeshComponent* PieceMeshComponent;
 
 };

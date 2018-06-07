@@ -5,7 +5,7 @@
 
 
 // Sets default values
-APiece::APiece() : b_IsPlayer(false), width(1), height(1)
+APiece::APiece() : b_IsPlayer(false), width{ 1 }, height{ 1 }
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
@@ -21,12 +21,12 @@ void APiece::BeginPlay()
 {
 	Super::BeginPlay();
 
-	PieceMeshComponent->SetStaticMesh(PieceMesh);
-	PieceMeshComponent->SetRelativeRotation(FRotator(0.f, 0.f, 0.f));
+	PieceMeshComponent->SetStaticMesh(PieceMesh);	
+	PieceMeshComponent->SetRelativeLocation(FVector(0.f, 0.f, 0.f));
 	PieceMeshComponent->SetMaterial(0, PieceMaterial);
 	PieceMeshComponent->SetupAttachment(RootComponent);
 
-	if (PieceMaterial)
+	if (IsValid(PieceMaterial))
 	{
 		auto DynamicMaterialInstance = UMaterialInstanceDynamic::Create(PieceMaterial, this);
 		DynamicMaterialInstance->SetVectorParameterValue("Color", Color);

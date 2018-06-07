@@ -7,6 +7,8 @@
 #include "GameFramework/Actor.h"
 #include "Piece.generated.h"
 
+
+
 UCLASS()
 class ALLIANCE_API APiece : public AActor
 {

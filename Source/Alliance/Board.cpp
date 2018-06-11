@@ -21,6 +21,8 @@ void ABoard::BeginPlay()
 	
 	// Setup the actions that are going to be executed when player press a certain key         
 	SetupInputComponent();
+
+	Timeline = GetWorld()->SpawnActor<AMyTimeline>();
 }
 
 // Called every frame
@@ -71,6 +73,8 @@ void ABoard::MovePieceToRowAndColumn(int row, int column)
 {
 	if (CurrentFocus >= Pieces.Num())
 		return;
+	if (!Timeline->Finished)
+		return;
 
 	APiece* piece = Pieces[CurrentFocus];
 
@@ -104,7 +108,6 @@ void ABoard::MovePieceToRowAndColumn(int row, int column)
 		}
 
 		// Move the Piece in the world
-		AMyTimeline* Timeline = GetWorld()->SpawnActor<AMyTimeline>();
 		Timeline->SetPiece(piece, column, row);
 		Timeline->PlayTimeline();
 

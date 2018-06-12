@@ -24,9 +24,9 @@ void APiece::BeginPlay()
 	PieceMeshComponent->SetStaticMesh(PieceMesh);	
 	PieceMeshComponent->SetRelativeLocation(FVector(0.f, 0.f, 0.f));
 	PieceMeshComponent->SetMaterial(0, PieceMaterial);
-	PieceMeshComponent->SetupAttachment(RootComponent);
+	PieceMeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 
-	if (IsValid(PieceMaterial))
+	if (PieceMaterial)
 	{
 		auto DynamicMaterialInstance = UMaterialInstanceDynamic::Create(PieceMaterial, this);
 		DynamicMaterialInstance->SetVectorParameterValue("Color", Color);

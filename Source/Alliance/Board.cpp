@@ -21,9 +21,6 @@ void ABoard::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	// Setup the actions that are going to be executed when player press a certain key         
-	SetupInputComponent();
-
 	// Set the selected color for the piece
 	ChangeColorToPiece(Pieces[CurrentFocus], FLinearColor(1.f, 0.f, 0.6171f, 1.f));
 
@@ -82,12 +79,6 @@ void ABoard::RemovePuzzleBindings()
 
 	while(PlayerController->InputComponent->GetNumActionBindings() > 0)
 	{
-	/*  
-		auto x = PlayerController->InputComponent->GetActionBinding(0);
-		FString a = x.ActionName.GetPlainNameString();
-		std::string test2 = std::string(TCHAR_TO_UTF8(*a));
-		UE_LOG(LogTemp, Warning, TEXT("%s"),*FString(test2.c_str()));
-	*/	
 		PlayerController->InputComponent->RemoveActionBinding(0);
 	}
 
@@ -180,8 +171,6 @@ bool ABoard::PieceCanMoveTo(int left, int up, APiece* piece)
 {
 	FIntPoint movement(up, left);
 	FIntRect OriginalRectangle = PieceToRectangle(piece); 
-	UE_LOG(LogTemp, Warning, TEXT("OG: MinX: %d  MinY: %d  MaxX: %d  MaxY: %d"), OriginalRectangle.Min.X, OriginalRectangle.Min.Y, OriginalRectangle.Max.X, OriginalRectangle.Max.Y);
-
 
 	FIntRect NewRectangle = OriginalRectangle;
 
@@ -191,18 +180,13 @@ bool ABoard::PieceCanMoveTo(int left, int up, APiece* piece)
 	if (NewRectangle.Min.X < 0 || NewRectangle.Min.Y < 0 || NewRectangle.Max.X >= NumberOfRows || NewRectangle.Max.Y >= NumberOfColumns)
 		return false;
 
-
-	UE_LOG(LogTemp, Warning, TEXT("NEW: MinX: %d  MinY: %d  MaxX: %d  MaxY: %d"), NewRectangle.Min.X, NewRectangle.Min.Y, NewRectangle.Max.X, NewRectangle.Max.Y);
-
 	for (int i = NewRectangle.Min.X; i <= NewRectangle.Max.X; i++)
 	{
 		for (int j = NewRectangle.Min.Y; j <= NewRectangle.Max.Y; j++)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("i: %d  j: %d"), i, j);
 			// Check if this basic block is occupied
 			if (Representation[GetBoardCoordinates(i, j)])
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Pasamos"));
 				// Is it occupied by the old block?
 				if (i >= OriginalRectangle.Min.X && i <= OriginalRectangle.Max.X &&
 					j >= OriginalRectangle.Min.Y && j <= OriginalRectangle.Max.Y)

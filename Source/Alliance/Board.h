@@ -55,7 +55,9 @@ private:
 	std::vector<bool> Representation;
 
 	// Setup player's input to move and select pieces in the board
-	void SetupInputComponent();
+	UFUNCTION(BlueprintCallable)
+		void SetupInputComponent();
+
 	void RemovePuzzleBindings();
 	
 	// Methods to move a piece through the board

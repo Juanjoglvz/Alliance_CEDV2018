@@ -28,29 +28,15 @@ void AMyTimeline::BeginPlay()
 
 	if (FloatCurve != NULL)
 	{
-		MyTimeline = NewObject<UTimelineComponent>(this, FName("TimelineAnimation"));
-		MyTimeline->CreationMethod = EComponentCreationMethod::UserConstructionScript; // Indicate it comes from a blueprint so it gets cleared when we rerun construction scripts
-		this->BlueprintCreatedComponents.Add(MyTimeline); // Add to array so it gets saved
-		MyTimeline->SetNetAddressable();	// This component has a stable name that can be referenced for replication
-
-		MyTimeline->SetPropertySetObject(this); // Set which object the timeline should drive properties on
-		MyTimeline->SetDirectionPropertyName(FName("TimelineDirection"));
-
-		MyTimeline->SetLooping(false);
-		MyTimeline->SetTimelineLength(0.2f);
-		MyTimeline->SetTimelineLengthMode(ETimelineLengthMode::TL_LastKeyFrame);
-
-		MyTimeline->SetPlaybackPosition(0.0f, false);
-
-		//Add the float curve to the timeline and connect it to your timelines's interpolation function
 		onTimelineCallback.BindUFunction(this, FName{ TEXT("TimelineCallback") });
 		onTimelineFinishedCallback.BindUFunction(this, FName{ TEXT("TimelineFinishedCallback") });
-		MyTimeline->AddInterpFloat(FloatCurve, onTimelineCallback);
-		MyTimeline->SetTimelineFinishedFunc(onTimelineFinishedCallback);
 
-		MyTimeline->RegisterComponent();
-	}
-	
+		MyTimeline.AddInterpFloat(FloatCurve, onTimelineCallback);
+		MyTimeline.SetLooping(false);
+
+		MyTimeline.SetTimelineLength(0.2f);
+		MyTimeline.SetTimelineFinishedFunc(onTimelineFinishedCallback);
+	}	
 }
 
 // Called every frame
@@ -58,17 +44,14 @@ void AMyTimeline::Tick(float deltaTime)
 {
 	Super::Tick(deltaTime);
 
-	if (MyTimeline != NULL)
-	{
-		MyTimeline->TickComponent(deltaTime, ELevelTick::LEVELTICK_TimeOnly, NULL);
-	}
+	MyTimeline.TickTimeline(deltaTime);
 }
 
 void AMyTimeline::TimelineCallback(float interpolatedVal)
 {
-	this->Piece->SetActorLocation(FVector(Piece->GetActorLocation().X - (interpolatedVal * Col),
-										Piece->GetActorLocation().Y - (interpolatedVal * Row),
-										Piece->GetActorLocation().Z));
+	this->Piece->SetActorLocation(FVector(this->StartingPosition.X - (interpolatedVal * Col),
+											this->StartingPosition.Y - (interpolatedVal * Row),
+											this->StartingPosition.Z));
 }
 
 void AMyTimeline::SetPiece(APiece* Piece, int col, int row)
@@ -76,18 +59,18 @@ void AMyTimeline::SetPiece(APiece* Piece, int col, int row)
 	this->Piece = Piece;
 	this->Col = col;
 	this->Row = row;
+	this->StartingPosition = Piece->GetActorLocation();
 }
 
 void AMyTimeline::TimelineFinishedCallback()
 {
-	this->Destroy();
+	UE_LOG(LogTemp, Warning, TEXT("ola"));
+	this->Finished = true;
 }
 
 void AMyTimeline::PlayTimeline()
 {
-	if (MyTimeline != NULL)
-	{
-		MyTimeline->PlayFromStart();
-	}
+	this->Finished = false;
+		MyTimeline.PlayFromStart();
 }
 

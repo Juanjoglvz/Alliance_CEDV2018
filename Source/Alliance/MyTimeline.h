@@ -21,8 +21,10 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UPROPERTY()
-		UTimelineComponent* MyTimeline;
+	/*UPROPERTY()
+		UTimelineComponent* MyTimeline;*/
+
+	FVector StartingPosition;
 
 	UPROPERTY()
 		UCurveFloat* FloatCurve;
@@ -43,8 +45,12 @@ public:
 	void SetPiece(class APiece* Piece, int col, int row);
 
 	void PlayTimeline();
+
+	bool Finished = true;
 	
 private:
+	FTimeline MyTimeline;
+
 	TWeakObjectPtr<APiece> Piece;
 	int Col;
 	int Row;

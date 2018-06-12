@@ -26,6 +26,8 @@ void ABoard::BeginPlay()
 
 	// Set the selected color for the piece
 	ChangeColorToPiece(Pieces[CurrentFocus], FLinearColor(1.f, 0.f, 0.6171f, 1.f));
+
+	Timeline = GetWorld()->SpawnActor<AMyTimeline>();
 }
 
 // Called every frame
@@ -94,6 +96,8 @@ void ABoard::MovePieceToRowAndColumn(int row, int column)
 {
 	if (CurrentFocus >= Pieces.Num())
 		return;
+	if (!Timeline->Finished)
+		return;
 
 	APiece* piece = Pieces[CurrentFocus];
 
@@ -140,7 +144,6 @@ void ABoard::MovePieceToRowAndColumn(int row, int column)
 		}
 
 		// Move the Piece in the world
-		AMyTimeline* Timeline = GetWorld()->SpawnActor<AMyTimeline>();
 		Timeline->SetPiece(piece, column, row);
 		Timeline->PlayTimeline();
 

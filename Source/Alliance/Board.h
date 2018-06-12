@@ -2,6 +2,8 @@
 
 #pragma once
 
+class AMyTimeline;
+
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include <vector>
@@ -47,6 +49,8 @@ public:
 		FGameFinished OnMiniGameFinished;
 
 private:
+	AMyTimeline* Timeline;
+
 	int CurrentFocus;
 	std::vector<bool> Representation;
 

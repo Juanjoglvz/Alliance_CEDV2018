@@ -3,8 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Math/Color.h"
 #include "GameFramework/Actor.h"
 #include "Piece.generated.h"
+
+
 
 UCLASS()
 class ALLIANCE_API APiece : public AActor
@@ -21,8 +24,32 @@ protected:
 
 public:	
 	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	// virtual void Tick(float DeltaTime) override;
 
+	void SetMaterial(class UMaterialInstanceDynamic* NewMaterial);
+
+	UPROPERTY(EditAnywhere)
+		bool b_IsPlayer;
+	UPROPERTY(EditAnywhere)
+		int width;
+	UPROPERTY(EditAnywhere)
+		int height;
+	UPROPERTY(EditAnywhere)
+		int rowPosition;
+	UPROPERTY(EditAnywhere)
+		int columnPosition;
 	
+	UPROPERTY(EditAnywhere)
+		class UMaterialInstance* PieceMaterial;
+	UPROPERTY(EditAnywhere)
+		class UStaticMesh* PieceMesh;
+
+	UPROPERTY(EditAnywhere)
+		FLinearColor Color;
+
+private:
 	
+	UPROPERTY()
+		UStaticMeshComponent* PieceMeshComponent;
+
 };

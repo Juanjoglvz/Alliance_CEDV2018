@@ -28,6 +28,29 @@ void ABoard::BeginPlay()
 	ChangeColorToPiece(Pieces[CurrentFocus], FLinearColor(1.f, 0.f, 0.6171f, 1.f));
 
 	Timeline = GetWorld()->SpawnActor<AMyTimeline>();
+
+	// Initialize the representation to false
+	for (int i = 0; i < NumberOfColumns; i++)
+	{
+		for (int j = 0; j < NumberOfRows; j++)
+		{
+			Representation.push_back(false);
+		}
+	}
+
+	// Initialize the positions of the pieces in the representation
+	for (APiece* P : Pieces)
+	{
+		FIntRect Rectangle = PieceToRectangle(P);
+
+		for (int i = Rectangle.Min.X; i <= Rectangle.Max.X; i++)
+		{
+			for (int j = Rectangle.Min.Y; j <= Rectangle.Max.Y; j++)
+			{
+				Representation[GetBoardCoordinates(i, j)] = true;
+			}
+		}
+	}
 }
 
 // Called every frame
@@ -116,28 +139,28 @@ void ABoard::MovePieceToRowAndColumn(int row, int column)
 
 	if (PieceCanMoveTo(column, row, piece))
 	{
-		FIntPoint movement(column, row);
+		FIntPoint movement(row, column);
 		FIntRect OriginalRectangle = PieceToRectangle(piece);
 
 		// Rectangle resulting of moving the piece in the desired direction
 		FIntRect NewRectangle = OriginalRectangle;
 
 		// TODO: Why minus?
-		NewRectangle.Min -= movement;
-		NewRectangle.Max -= movement;
+		NewRectangle.Min += movement;
+		NewRectangle.Max += movement;
 
 		// Update boolean matrix
-		for (int i = OriginalRectangle.Min.X; i < OriginalRectangle.Max.X; i++)
+		for (int i = OriginalRectangle.Min.X; i <= OriginalRectangle.Max.X; i++)
 		{
-			for (int j = OriginalRectangle.Min.Y; i < OriginalRectangle.Max.Y; j++)
+			for (int j = OriginalRectangle.Min.Y; j <= OriginalRectangle.Max.Y; j++)
 			{
 				Representation[GetBoardCoordinates(i, j)] = false;
 			}
 		}
 
-		for (int i = NewRectangle.Min.X; i < NewRectangle.Max.X; i++)
+		for (int i = NewRectangle.Min.X; i <= NewRectangle.Max.X; i++)
 		{
-			for (int j = NewRectangle.Min.Y; i < NewRectangle.Max.Y; j++)
+			for (int j = NewRectangle.Min.Y; j <= NewRectangle.Max.Y; j++)
 			{
 				Representation[GetBoardCoordinates(i, j)] = true;
 			}
@@ -156,7 +179,9 @@ void ABoard::MovePieceToRowAndColumn(int row, int column)
 bool ABoard::PieceCanMoveTo(int left, int up, APiece* piece)
 {
 	FIntPoint movement(up, left);
-	FIntRect OriginalRectangle = PieceToRectangle(piece);
+	FIntRect OriginalRectangle = PieceToRectangle(piece); 
+	UE_LOG(LogTemp, Warning, TEXT("OG: MinX: %d  MinY: %d  MaxX: %d  MaxY: %d"), OriginalRectangle.Min.X, OriginalRectangle.Min.Y, OriginalRectangle.Max.X, OriginalRectangle.Max.Y);
+
 
 	FIntRect NewRectangle = OriginalRectangle;
 
@@ -166,12 +191,25 @@ bool ABoard::PieceCanMoveTo(int left, int up, APiece* piece)
 	if (NewRectangle.Min.X < 0 || NewRectangle.Min.Y < 0 || NewRectangle.Max.X >= NumberOfRows || NewRectangle.Max.Y >= NumberOfColumns)
 		return false;
 
-	for (int i = NewRectangle.Min.X; i < NewRectangle.Max.X; i++)
+
+	UE_LOG(LogTemp, Warning, TEXT("NEW: MinX: %d  MinY: %d  MaxX: %d  MaxY: %d"), NewRectangle.Min.X, NewRectangle.Min.Y, NewRectangle.Max.X, NewRectangle.Max.Y);
+
+	for (int i = NewRectangle.Min.X; i <= NewRectangle.Max.X; i++)
 	{
-		for (int j = NewRectangle.Min.Y; i < NewRectangle.Max.Y; j++)
+		for (int j = NewRectangle.Min.Y; j <= NewRectangle.Max.Y; j++)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("i: %d  j: %d"), i, j);
+			// Check if this basic block is occupied
 			if (Representation[GetBoardCoordinates(i, j)])
-				return false;
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Pasamos"));
+				// Is it occupied by the old block?
+				if (i >= OriginalRectangle.Min.X && i <= OriginalRectangle.Max.X &&
+					j >= OriginalRectangle.Min.Y && j <= OriginalRectangle.Max.Y)
+					continue; // Then continue checking
+				else
+					return false; // Else return false (really occupied by another block)
+			}
 		}
 	}
 
@@ -186,7 +224,11 @@ FIntRect ABoard::PieceToRectangle(APiece* piece)
 
 int ABoard::GetBoardCoordinates(int row, int column)
 {
-	return row * NumberOfColumns + column - 1;
+	int pos = row * NumberOfColumns + column;
+
+	if (row != 0)
+		pos--;
+	return pos;
 }
 
 bool ABoard::IsVictory()

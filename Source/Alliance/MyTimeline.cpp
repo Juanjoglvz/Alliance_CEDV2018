@@ -64,7 +64,6 @@ void AMyTimeline::SetPiece(APiece* Piece, int col, int row)
 
 void AMyTimeline::TimelineFinishedCallback()
 {
-	UE_LOG(LogTemp, Warning, TEXT("ola"));
 	this->Finished = true;
 }
 

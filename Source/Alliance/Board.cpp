@@ -2,7 +2,9 @@
 
 #include "Board.h"
 #include "Engine/World.h"
+#include "Engine.h"
 #include "MyTimeline.h"
+#include "AllianceCharacter.h"
 #include "Math/IntPoint.h"
 
 
@@ -21,6 +23,9 @@ void ABoard::BeginPlay()
 	
 	// Setup the actions that are going to be executed when player press a certain key         
 	SetupInputComponent();
+
+	// Set the selected color for the piece
+	ChangeColorToPiece(Pieces[CurrentFocus], FLinearColor(1.f, 0.f, 0.6171f, 1.f));
 }
 
 // Called every frame
@@ -43,6 +48,24 @@ void ABoard::SetupInputComponent()
 	PlayerController->InputComponent->BindAction("MovePieceDown", EInputEvent::IE_Pressed, this, &ABoard::MoveTo<Movement::MoveDown>).bConsumeInput = false;
 	PlayerController->InputComponent->BindAction("MovePieceRight", EInputEvent::IE_Pressed, this, &ABoard::MoveTo<Movement::MoveRight>).bConsumeInput = false;
 	PlayerController->InputComponent->BindAction("MovePieceLeft", EInputEvent::IE_Pressed, this, &ABoard::MoveTo<Movement::MoveLeft>).bConsumeInput = false;
+}
+
+void ABoard::RemovePuzzleBindings()
+{
+	// Get the player controller to setup the actions
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+
+	while(PlayerController->InputComponent->GetNumActionBindings() > 0)
+	{
+	/*  
+		auto x = PlayerController->InputComponent->GetActionBinding(0);
+		FString a = x.ActionName.GetPlainNameString();
+		std::string test2 = std::string(TCHAR_TO_UTF8(*a));
+		UE_LOG(LogTemp, Warning, TEXT("%s"),*FString(test2.c_str()));
+	*/	
+		PlayerController->InputComponent->RemoveActionBinding(0);
+	}
+
 }
 
 void ABoard::MoveTo(Movement m_movement)
@@ -73,6 +96,19 @@ void ABoard::MovePieceToRowAndColumn(int row, int column)
 		return;
 
 	APiece* piece = Pieces[CurrentFocus];
+
+	// If player's piece moves to right, check if the movement is victory
+	if (column == 1 && piece->b_IsPlayer && IsVictory())
+	{
+		// Remove puzzle bindings, so the player is not going to be able to move the pieces
+		RemovePuzzleBindings();
+		// Set player's movement once the puzzle has been finished
+		AAllianceCharacter* Character = Cast<AAllianceCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+		Character->SetCharacterMovement(Character->GetCharacterInputComponent());
+		// Execute callback, to open the door and setup the camera stuff
+		OnMiniGameFinished.Broadcast();
+		return;
+	}
 
 	if (PieceCanMoveTo(column, row, piece))
 	{
@@ -152,15 +188,46 @@ int ABoard::GetBoardCoordinates(int row, int column)
 
 bool ABoard::IsVictory()
 {
-	return true;
+	if (Pieces[CurrentFocus]->rowPosition == WinnerBox.X &&
+		Pieces[CurrentFocus]->columnPosition + Pieces[CurrentFocus]->width == WinnerBox.Y)
+		return true;
+	return false;
+}
+
+void ABoard::ChangeColorToPiece(APiece* piece, FLinearColor color)
+{
+	auto DynamicMaterialInstance = UMaterialInstanceDynamic::Create(piece->PieceMaterial, piece);
+	DynamicMaterialInstance->SetVectorParameterValue("Color", color);
+	piece->SetMaterial(DynamicMaterialInstance);
 }
 
 void ABoard::ChangeFocusToPrevious()
 {
+	// Set current piece its material
+	ChangeColorToPiece(Pieces[CurrentFocus], Pieces[CurrentFocus]->Color);
+	
+	// Change focus to a new piece
 	CurrentFocus = (CurrentFocus + 1) % Pieces.Num();
-}
 
+	// Set the selected material to new piece
+	ChangeColorToPiece(Pieces[CurrentFocus], FLinearColor(1.f, 0.f, 0.6171f, 1.f));
+}
+	
 void ABoard::ChangeFocusToNext()
 {
-	CurrentFocus = (CurrentFocus - 1) % Pieces.Num();
+	// Set current piece its material
+	ChangeColorToPiece(Pieces[CurrentFocus], Pieces[CurrentFocus]->Color);
+
+	// Change focus to a new piece
+	if (CurrentFocus - 1 < 0)
+	{
+		CurrentFocus = Pieces.Num() - 1;
+	}
+	else
+	{
+		CurrentFocus -= 1;
+	}
+
+	// Set the selected material to new piece
+	ChangeColorToPiece(Pieces[CurrentFocus], FLinearColor(1.f, 0.f, 0.6171f, 1.f));
 }

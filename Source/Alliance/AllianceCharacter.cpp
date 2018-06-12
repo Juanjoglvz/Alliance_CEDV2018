@@ -5,6 +5,7 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
+#include <string>
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -54,6 +55,9 @@ void AAllianceCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 {
 	// Set up gameplay key bindings
 	check(PlayerInputComponent);
+
+	CharacterMovementInputComponent = PlayerInputComponent;
+
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
@@ -130,5 +134,25 @@ void AAllianceCharacter::MoveRight(float Value)
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
+	}
+}
+
+void AAllianceCharacter::SetCharacterMovement(class UInputComponent* InputComponent)
+{
+	SetupPlayerInputComponent(InputComponent);
+}
+
+void AAllianceCharacter::RemoveCharacterMovementBindings()
+{
+	// Remove actions binded
+	while (CharacterMovementInputComponent->GetNumActionBindings() > 0)
+	{
+		CharacterMovementInputComponent->RemoveActionBinding(0);
+	}
+
+	// Remove axis binded
+	while (CharacterMovementInputComponent->AxisBindings.Num() > 0)
+	{
+		CharacterMovementInputComponent->AxisBindings.RemoveAt(0);
 	}
 }

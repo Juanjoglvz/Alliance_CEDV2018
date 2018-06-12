@@ -39,22 +39,38 @@ public:
 		int NumberOfColumns;
 	UPROPERTY(EditAnywhere)
 		TArray<APiece*> Pieces;
+	UPROPERTY(EditAnywhere)
+		FVector2D WinnerBox;
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FGameFinished);
+	UPROPERTY(BlueprintAssignable, Category = "MiniGame")
+		FGameFinished OnMiniGameFinished;
 
 private:
 	int CurrentFocus;
 	std::vector<bool> Representation;
 
+	// Setup player's input to move and select pieces in the board
 	void SetupInputComponent();
+	void RemovePuzzleBindings();
+	
+	// Methods to move a piece through the board
 	void MoveTo(Movement m_movement);
 	void MovePieceToRowAndColumn(int row, int column);
 	
 	template<Movement m_movement> 
-	void MoveTo() { MoveTo(m_movement); }
+		void MoveTo() { MoveTo(m_movement); }
 
 	bool IsVictory();
+
+	// These methods change the piece the player is going to move
 	void ChangeFocusToNext();
 	void ChangeFocusToPrevious();
 
+	// This method change the color of a given piece in the board
+	void ChangeColorToPiece(APiece* piece, FLinearColor color);
+
+	// Methods to check if a piece can move to a given cell
 	FIntRect PieceToRectangle(APiece* piece);
 	int GetBoardCoordinates(int row, int column);
 	bool PieceCanMoveTo(int left, int up, APiece* piece);

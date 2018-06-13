@@ -25,7 +25,7 @@ protected:
 
 public:	
 	// Called every frame
-	// virtual void Tick(float DeltaTime) override;
+	virtual void Tick(float DeltaTime) override;
 	//void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	void SetMaterial(class UMaterialInstanceDynamic* NewMaterial);
@@ -67,9 +67,18 @@ public:
 		void ExecutingTimeline(float interpolatedVal);
 	void ExecutingTimeline_Implementation(float interpolatedVal);
 
+	// RPC to change pieces color
+	UFUNCTION(Reliable, NetMulticast)
+		void ExecuteChangeColor(FLinearColor NewColor);
+	void ExecuteChangeColor_Implementation(FLinearColor NewColor);
+
 	void PlayTimeline(int col, int row);
 
 	bool TimelineFinished = true;
+
+	// This method changes the color of a given piece in the board
+	void ChangeColor(FLinearColor color);
+	FIntRect PieceToRectangle();
 private:
 	
 	UPROPERTY()

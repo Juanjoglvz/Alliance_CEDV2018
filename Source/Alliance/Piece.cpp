@@ -3,13 +3,14 @@
 #include "Piece.h"
 #include "UnrealNetwork.h"
 #include "Engine.h"
+#include "Math/IntPoint.h"
 
 
 // Sets default values
 APiece::APiece() : b_IsPlayer(false), width{ 1 }, height{ 1 }
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 	
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
 
@@ -60,6 +61,14 @@ void APiece::BeginPlay()
 	}
 }
 
+void APiece::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	MyTimeline.TickTimeline(DeltaTime);
+}
+
+
 //void APiece::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 //{
 //	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -82,16 +91,18 @@ void APiece::TimelineFinishedCallback()
 
 void APiece::ExecutingTimeline_Implementation(float interpolatedVal)
 {
-	if (GIsServer) {
-		UE_LOG(LogTemp, Warning, TEXT("Hello"));
-	}
-	else {
-		UE_LOG(LogTemp, Warning, TEXT("Bye"));
-	}
 	SetActorLocation(FVector(this->StartingPosition.X - (interpolatedVal * col),
 		this->StartingPosition.Y - (interpolatedVal * row),
 		this->StartingPosition.Z));
 }
+
+void APiece::ExecuteChangeColor_Implementation(FLinearColor NewColor)
+{
+	auto DynamicMaterialInstance = UMaterialInstanceDynamic::Create(this->PieceMaterial, this);
+	DynamicMaterialInstance->SetVectorParameterValue("Color", NewColor);
+	this->SetMaterial(DynamicMaterialInstance);
+}
+
 
 void APiece::PlayTimeline(int col, int row)
 {
@@ -101,4 +112,18 @@ void APiece::PlayTimeline(int col, int row)
 	this->row = row;
 
 	MyTimeline.PlayFromStart();
+}
+
+void APiece::ChangeColor(FLinearColor color)
+{
+	if (GIsServer)
+	{
+		ExecuteChangeColor(color);
+	}
+}
+
+FIntRect APiece::PieceToRectangle()
+{
+	return FIntRect(this->rowPosition, this->columnPosition,
+		this->rowPosition + this->height - 1, this->columnPosition + this->width - 1);
 }

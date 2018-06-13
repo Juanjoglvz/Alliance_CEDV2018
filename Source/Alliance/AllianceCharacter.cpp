@@ -30,8 +30,6 @@ AAllianceCharacter::AAllianceCharacter()
 	// Configure character movement
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // ...at this rotation rate
-	GetCharacterMovement()->JumpZVelocity = 600.f;
-	GetCharacterMovement()->AirControl = 0.2f;
 
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
@@ -58,8 +56,6 @@ void AAllianceCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 
 	CharacterMovementInputComponent = PlayerInputComponent;
 
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AAllianceCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AAllianceCharacter::MoveRight);
@@ -72,29 +68,13 @@ void AAllianceCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AAllianceCharacter::LookUpAtRate);
 
-	// handle touch devices
-	PlayerInputComponent->BindTouch(IE_Pressed, this, &AAllianceCharacter::TouchStarted);
-	PlayerInputComponent->BindTouch(IE_Released, this, &AAllianceCharacter::TouchStopped);
+	// Bindings for actions
+	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &AAllianceCharacter::StartSprint);
+	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &AAllianceCharacter::StopSprint);
 
-	// VR headset functionality
-	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &AAllianceCharacter::OnResetVR);
 }
 
 
-void AAllianceCharacter::OnResetVR()
-{
-	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
-}
-
-void AAllianceCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
-{
-		Jump();
-}
-
-void AAllianceCharacter::TouchStopped(ETouchIndex::Type FingerIndex, FVector Location)
-{
-		StopJumping();
-}
 
 void AAllianceCharacter::TurnAtRate(float Rate)
 {
@@ -155,4 +135,14 @@ void AAllianceCharacter::RemoveCharacterMovementBindings()
 	{
 		CharacterMovementInputComponent->AxisBindings.RemoveAt(0);
 	}
+}
+
+void AAllianceCharacter::StartSprint()
+{
+	GetCharacterMovement()->MaxWalkSpeed = 2400;
+}
+
+void AAllianceCharacter::StopSprint()
+{
+	GetCharacterMovement()->MaxWalkSpeed = 1200;
 }

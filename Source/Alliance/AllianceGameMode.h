@@ -13,6 +13,8 @@ class AAllianceGameMode : public AGameModeBase
 
 public:
 	AAllianceGameMode();
+
+	virtual void PostLogin(APlayerController* NewPlayer);
 };
 
 

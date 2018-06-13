@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Piece.h"
+#include "UnrealNetwork.h"
 #include "Engine.h"
 
 
@@ -15,6 +16,7 @@ APiece::APiece() : b_IsPlayer(false), width{ 1 }, height{ 1 }
 	// Create static mesh component
 	PieceMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PieceMesh"));
 	PieceMeshComponent->SetIsReplicated(true);
+	SetReplicates(true);
 }
 
 // Called when the game starts or when spawned
@@ -34,14 +36,11 @@ void APiece::BeginPlay()
 		SetMaterial(DynamicMaterialInstance);
 	}
 }
-/*
-// Called every frame
-void APiece::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
 
-}
-*/
+//void APiece::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+//{
+//	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+//}
 
 void APiece::SetMaterial(UMaterialInstanceDynamic* NewMaterial)
 {

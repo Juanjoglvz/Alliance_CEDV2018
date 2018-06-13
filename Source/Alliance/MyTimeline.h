@@ -35,6 +35,12 @@ protected:
 	UFUNCTION()
 		void TimelineFinishedCallback();
 
+	// RPC to move pieces. Every client will call ExecutingTimeline_Implementation
+	// This function doesn't need an implementation
+	UFUNCTION(Reliable, NetMulticast)
+		void ExecutingTimeline(float interpolatedVal);
+	void ExecutingTimeline_Implementation(float interpolatedVal);
+
 	UPROPERTY()
 		TEnumAsByte<ETimelineDirection::Type> TimelineDirection;
 

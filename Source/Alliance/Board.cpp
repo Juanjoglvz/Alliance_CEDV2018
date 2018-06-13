@@ -3,7 +3,6 @@
 #include "Board.h"
 #include "Engine/World.h"
 #include "Engine.h"
-#include "MyTimeline.h"
 #include "AllianceCharacter.h"
 #include "Math/IntPoint.h"
 
@@ -22,9 +21,9 @@ void ABoard::BeginPlay()
 	Super::BeginPlay();
 	
 	// Set the selected color for the piece
-	ChangeColorToPiece(Pieces[CurrentFocus], FLinearColor(1.f, 0.f, 0.6171f, 1.f));
+	Pieces[CurrentFocus]->ChangeColor(FLinearColor(1.f, 0.f, 0.6171f, 1.f));
 
-	Timeline = GetWorld()->SpawnActor<AMyTimeline>();
+	//Timeline = GetWorld()->SpawnActor<AMyTimeline>();
 
 	// Initialize the representation to false
 	for (int i = 0; i < NumberOfColumns; i++)
@@ -38,7 +37,7 @@ void ABoard::BeginPlay()
 	// Initialize the positions of the pieces in the representation
 	for (APiece* P : Pieces)
 	{
-		FIntRect Rectangle = PieceToRectangle(P);
+		FIntRect Rectangle = P->PieceToRectangle();
 
 		for (int i = Rectangle.Min.X; i <= Rectangle.Max.X; i++)
 		{
@@ -110,10 +109,11 @@ void ABoard::MovePieceToRowAndColumn(int row, int column)
 {
 	if (CurrentFocus >= Pieces.Num())
 		return;
-	if (!Timeline->Finished)
-		return;
 
 	APiece* piece = Pieces[CurrentFocus];
+
+	if (!piece->TimelineFinished)
+		return;
 
 	// If player's piece moves to right, check if the movement is victory
 	if (column == 1 && piece->b_IsPlayer && IsVictory())
@@ -128,15 +128,14 @@ void ABoard::MovePieceToRowAndColumn(int row, int column)
 		return;
 	}
 
-	if (PieceCanMoveTo(column, row, piece))
+	if (PieceCanMoveTo(column, row))
 	{
 		FIntPoint movement(row, column);
-		FIntRect OriginalRectangle = PieceToRectangle(piece);
+		FIntRect OriginalRectangle = piece->PieceToRectangle();
 
 		// Rectangle resulting of moving the piece in the desired direction
 		FIntRect NewRectangle = OriginalRectangle;
 
-		// TODO: Why minus?
 		NewRectangle.Min += movement;
 		NewRectangle.Max += movement;
 
@@ -158,8 +157,7 @@ void ABoard::MovePieceToRowAndColumn(int row, int column)
 		}
 
 		// Move the Piece in the world
-		Timeline->SetPiece(piece, column, row);
-		Timeline->PlayTimeline();
+		piece->PlayTimeline(column, row);
 
 		// Update the Piece's position
 		piece->columnPosition += column;
@@ -167,10 +165,10 @@ void ABoard::MovePieceToRowAndColumn(int row, int column)
 	}
 }
 
-bool ABoard::PieceCanMoveTo(int left, int up, APiece* piece)
+bool ABoard::PieceCanMoveTo(int left, int up)
 {
 	FIntPoint movement(up, left);
-	FIntRect OriginalRectangle = PieceToRectangle(piece); 
+	FIntRect OriginalRectangle = Pieces[CurrentFocus]->PieceToRectangle(); 
 
 	FIntRect NewRectangle = OriginalRectangle;
 
@@ -200,12 +198,6 @@ bool ABoard::PieceCanMoveTo(int left, int up, APiece* piece)
 	return true;
 }
 
-FIntRect ABoard::PieceToRectangle(APiece* piece)
-{
-	return FIntRect(piece->rowPosition, piece->columnPosition,
-		piece->rowPosition + piece->height - 1, piece->columnPosition + piece->width - 1);
-}
-
 int ABoard::GetBoardCoordinates(int row, int column)
 {
 	int pos = row * NumberOfColumns + column;
@@ -223,29 +215,22 @@ bool ABoard::IsVictory()
 	return false;
 }
 
-void ABoard::ChangeColorToPiece(APiece* piece, FLinearColor color)
-{
-	auto DynamicMaterialInstance = UMaterialInstanceDynamic::Create(piece->PieceMaterial, piece);
-	DynamicMaterialInstance->SetVectorParameterValue("Color", color);
-	piece->SetMaterial(DynamicMaterialInstance);
-}
-
 void ABoard::ChangeFocusToPrevious()
 {
 	// Set current piece its material
-	ChangeColorToPiece(Pieces[CurrentFocus], Pieces[CurrentFocus]->Color);
+	Pieces[CurrentFocus]->ChangeColor(Pieces[CurrentFocus]->Color);
 	
 	// Change focus to a new piece
 	CurrentFocus = (CurrentFocus + 1) % Pieces.Num();
 
 	// Set the selected material to new piece
-	ChangeColorToPiece(Pieces[CurrentFocus], FLinearColor(1.f, 0.f, 0.6171f, 1.f));
+	Pieces[CurrentFocus]->ChangeColor(FLinearColor(1.f, 0.f, 0.6171f, 1.f));
 }
 	
 void ABoard::ChangeFocusToNext()
 {
 	// Set current piece its material
-	ChangeColorToPiece(Pieces[CurrentFocus], Pieces[CurrentFocus]->Color);
+	Pieces[CurrentFocus]->ChangeColor(Pieces[CurrentFocus]->Color);
 
 	// Change focus to a new piece
 	if (CurrentFocus - 1 < 0)
@@ -258,5 +243,5 @@ void ABoard::ChangeFocusToNext()
 	}
 
 	// Set the selected material to new piece
-	ChangeColorToPiece(Pieces[CurrentFocus], FLinearColor(1.f, 0.f, 0.6171f, 1.f));
+	Pieces[CurrentFocus]->ChangeColor(FLinearColor(1.f, 0.f, 0.6171f, 1.f));
 }

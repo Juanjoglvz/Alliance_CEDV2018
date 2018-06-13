@@ -2,8 +2,6 @@
 
 #pragma once
 
-class AMyTimeline;
-
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include <vector>
@@ -49,7 +47,6 @@ public:
 		FGameFinished OnMiniGameFinished;
 
 private:
-	AMyTimeline* Timeline;
 
 	int CurrentFocus;
 	std::vector<bool> Representation;
@@ -73,12 +70,8 @@ private:
 	void ChangeFocusToNext();
 	void ChangeFocusToPrevious();
 
-	// This method change the color of a given piece in the board
-	void ChangeColorToPiece(APiece* piece, FLinearColor color);
-
 	// Methods to check if a piece can move to a given cell
-	FIntRect PieceToRectangle(APiece* piece);
 	int GetBoardCoordinates(int row, int column);
-	bool PieceCanMoveTo(int left, int up, APiece* piece);
+	bool PieceCanMoveTo(int left, int up);
 
 };

@@ -15,7 +15,9 @@ AMyTimeline::AMyTimeline()
 	check(Curve.Succeeded());
 
 	FloatCurve = Curve.Object;
-
+	SetReplicateMovement(true);
+	SetReplicates(true);
+	bAlwaysRelevant = true;
 }
 
 // Called when the game starts or when spawned
@@ -49,10 +51,24 @@ void AMyTimeline::Tick(float deltaTime)
 
 void AMyTimeline::TimelineCallback(float interpolatedVal)
 {
-	this->Piece->SetActorLocation(FVector(this->StartingPosition.X - (interpolatedVal * Col),
-											this->StartingPosition.Y - (interpolatedVal * Row),
-											this->StartingPosition.Z));
+	if (GIsServer) {
+		ExecutingTimeline(interpolatedVal);
+	}
 }
+
+void AMyTimeline::ExecutingTimeline_Implementation(float interpolatedVal)
+{
+	if (GIsServer) {
+		UE_LOG(LogTemp, Warning, TEXT("Hello"));
+	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("Bye"));
+	}
+	this->Piece->SetActorLocation(FVector(this->StartingPosition.X - (interpolatedVal * Col),
+		this->StartingPosition.Y - (interpolatedVal * Row),
+		this->StartingPosition.Z));
+}
+
 
 void AMyTimeline::SetPiece(APiece* Piece, int col, int row)
 {
@@ -70,6 +86,6 @@ void AMyTimeline::TimelineFinishedCallback()
 void AMyTimeline::PlayTimeline()
 {
 	this->Finished = false;
-		MyTimeline.PlayFromStart();
+	MyTimeline.PlayFromStart();
 }
 

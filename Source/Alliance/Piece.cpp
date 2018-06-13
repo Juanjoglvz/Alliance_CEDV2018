@@ -16,7 +16,15 @@ APiece::APiece() : b_IsPlayer(false), width{ 1 }, height{ 1 }
 	// Create static mesh component
 	PieceMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PieceMesh"));
 	PieceMeshComponent->SetIsReplicated(true);
+	
+	// Timeline
+	static ConstructorHelpers::FObjectFinder<UCurveFloat>Curve(TEXT("CurveFloat'/Game/ThirdPersonCPP/Blueprints/C_MyCurve.C_MyCurve'"));
+	check(Curve.Succeeded());
+
+	FloatCurve = Curve.Object;
+	SetReplicateMovement(true);
 	SetReplicates(true);
+	bAlwaysRelevant = true;
 }
 
 // Called when the game starts or when spawned
@@ -35,6 +43,21 @@ void APiece::BeginPlay()
 		DynamicMaterialInstance->SetVectorParameterValue("Color", Color);
 		SetMaterial(DynamicMaterialInstance);
 	}
+
+	FOnTimelineFloat onTimelineCallback;
+	FOnTimelineEventStatic onTimelineFinishedCallback;
+
+	if (FloatCurve)
+	{
+		onTimelineCallback.BindUFunction(this, FName{ TEXT("TimelineCallback") });
+		onTimelineFinishedCallback.BindUFunction(this, FName{ TEXT("TimelineFinishedCallback") });
+
+		MyTimeline.AddInterpFloat(FloatCurve, onTimelineCallback);
+		MyTimeline.SetLooping(false);
+
+		MyTimeline.SetTimelineLength(0.2f);
+		MyTimeline.SetTimelineFinishedFunc(onTimelineFinishedCallback);
+	}
 }
 
 //void APiece::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -45,4 +68,37 @@ void APiece::BeginPlay()
 void APiece::SetMaterial(UMaterialInstanceDynamic* NewMaterial)
 {
 	PieceMeshComponent->SetMaterial(0, NewMaterial);
+}
+
+void APiece::TimelineCallback(float val)
+{
+	ExecutingTimeline(val);
+}
+
+void APiece::TimelineFinishedCallback()
+{
+	TimelineFinished = true;
+}
+
+void APiece::ExecutingTimeline_Implementation(float interpolatedVal)
+{
+	if (GIsServer) {
+		UE_LOG(LogTemp, Warning, TEXT("Hello"));
+	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("Bye"));
+	}
+	SetActorLocation(FVector(this->StartingPosition.X - (interpolatedVal * col),
+		this->StartingPosition.Y - (interpolatedVal * row),
+		this->StartingPosition.Z));
+}
+
+void APiece::PlayTimeline(int col, int row)
+{
+	TimelineFinished = false;
+	this->StartingPosition = this->GetActorLocation();
+	this->col = col;
+	this->row = row;
+
+	MyTimeline.PlayFromStart();
 }

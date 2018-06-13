@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Math/Color.h"
 #include "GameFramework/Actor.h"
+#include "Runtime/Engine/Classes/Components/TimelineComponent.h"
 #include "Piece.generated.h"
 
 
@@ -48,9 +49,35 @@ public:
 	UPROPERTY(EditAnywhere)
 		FLinearColor Color;
 
+
+	UPROPERTY()
+		UCurveFloat* FloatCurve;
+	UFUNCTION()
+		void TimelineCallback(float val);
+
+	UFUNCTION()
+		void TimelineFinishedCallback();
+
+	UPROPERTY()
+		TEnumAsByte<ETimelineDirection::Type> TimelineDirection;
+
+	// RPC to move pieces. Every client will call ExecutingTimeline_Implementation
+	// This function doesn't need an implementation
+	UFUNCTION(Reliable, NetMulticast)
+		void ExecutingTimeline(float interpolatedVal);
+	void ExecutingTimeline_Implementation(float interpolatedVal);
+
+	void PlayTimeline(int col, int row);
+
+	bool TimelineFinished = true;
 private:
 	
 	UPROPERTY()
 		UStaticMeshComponent* PieceMeshComponent;
+	
+	FTimeline MyTimeline;
 
+	FVector StartingPosition;
+
+	int row, col;
 };

@@ -24,7 +24,7 @@ void ABoard::BeginPlay()
 	// Set the selected color for the piece
 	ChangeColorToPiece(Pieces[CurrentFocus], FLinearColor(1.f, 0.f, 0.6171f, 1.f));
 
-	Timeline = GetWorld()->SpawnActor<AMyTimeline>();
+	//Timeline = GetWorld()->SpawnActor<AMyTimeline>();
 
 	// Initialize the representation to false
 	for (int i = 0; i < NumberOfColumns; i++)
@@ -110,10 +110,11 @@ void ABoard::MovePieceToRowAndColumn(int row, int column)
 {
 	if (CurrentFocus >= Pieces.Num())
 		return;
-	if (!Timeline->Finished)
-		return;
 
 	APiece* piece = Pieces[CurrentFocus];
+
+	if (!piece->TimelineFinished)
+		return;
 
 	// If player's piece moves to right, check if the movement is victory
 	if (column == 1 && piece->b_IsPlayer && IsVictory())
@@ -136,7 +137,6 @@ void ABoard::MovePieceToRowAndColumn(int row, int column)
 		// Rectangle resulting of moving the piece in the desired direction
 		FIntRect NewRectangle = OriginalRectangle;
 
-		// TODO: Why minus?
 		NewRectangle.Min += movement;
 		NewRectangle.Max += movement;
 
@@ -158,8 +158,7 @@ void ABoard::MovePieceToRowAndColumn(int row, int column)
 		}
 
 		// Move the Piece in the world
-		Timeline->SetPiece(piece, column, row);
-		Timeline->PlayTimeline();
+		piece->PlayTimeline(column, row);
 
 		// Update the Piece's position
 		piece->columnPosition += column;

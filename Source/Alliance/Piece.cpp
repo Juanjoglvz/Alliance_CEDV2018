@@ -14,6 +14,7 @@ APiece::APiece() : b_IsPlayer(false), width{ 1 }, height{ 1 }
 
 	// Create static mesh component
 	PieceMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PieceMesh"));
+	PieceMeshComponent->SetIsReplicated(true);
 }
 
 // Called when the game starts or when spawned

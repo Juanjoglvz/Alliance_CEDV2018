@@ -5,13 +5,13 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
-#include <string>
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 
 
-AAllianceCharacter::AAllianceCharacter()
+AAllianceCharacter::AAllianceCharacter() : IsRunning{ false }, JumpAttacking{ false }, IsAttacking{ false }, ChainAttack{ false },
+Sprint{ 1200.f }, LaunchForce{ 1.f }, LaunchHeight{ 1.f }, Combo{ 0 }
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -53,8 +53,6 @@ void AAllianceCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 
 	CharacterMovementInputComponent = PlayerInputComponent;
 
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AAllianceCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AAllianceCharacter::MoveRight);
@@ -65,6 +63,7 @@ void AAllianceCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AAllianceCharacter::LookUpAtRate);
 
 }
+
 
 void AAllianceCharacter::TurnAtRate(float Rate)
 {
@@ -80,7 +79,7 @@ void AAllianceCharacter::LookUpAtRate(float Rate)
 
 void AAllianceCharacter::MoveForward(float Value)
 {
-	if ((Controller != NULL) && (Value != 0.0f))
+	if ((Controller != NULL) && (Value != 0.0f) && !IsAttacking && !JumpAttacking)
 	{
 		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
@@ -94,7 +93,7 @@ void AAllianceCharacter::MoveForward(float Value)
 
 void AAllianceCharacter::MoveRight(float Value)
 {
-	if ( (Controller != NULL) && (Value != 0.0f) )
+	if ( (Controller != NULL) && (Value != 0.0f) && !IsAttacking && !JumpAttacking)
 	{
 		// find out which way is right
 		const FRotator Rotation = Controller->GetControlRotation();

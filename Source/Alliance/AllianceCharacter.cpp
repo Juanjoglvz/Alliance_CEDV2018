@@ -13,7 +13,8 @@
 //////////////////////////////////////////////////////////////////////////
 // AAllianceCharacter
 
-AAllianceCharacter::AAllianceCharacter()
+AAllianceCharacter::AAllianceCharacter() : IsRunning{ false }, JumpAttacking{ false }, IsAttacking{ false }, ChainAttack{ false },
+Sprint{ 1200.f }, LaunchForce{ 1.f }, LaunchHeight{ 1.f }, Combo{ 0 }
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -69,8 +70,6 @@ void AAllianceCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AAllianceCharacter::LookUpAtRate);
 
 	// Bindings for actions
-	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &AAllianceCharacter::StartSprint);
-	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &AAllianceCharacter::StopSprint);
 
 }
 
@@ -90,7 +89,7 @@ void AAllianceCharacter::LookUpAtRate(float Rate)
 
 void AAllianceCharacter::MoveForward(float Value)
 {
-	if ((Controller != NULL) && (Value != 0.0f))
+	if ((Controller != NULL) && (Value != 0.0f) && !IsAttacking && !JumpAttacking)
 	{
 		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
@@ -104,7 +103,7 @@ void AAllianceCharacter::MoveForward(float Value)
 
 void AAllianceCharacter::MoveRight(float Value)
 {
-	if ( (Controller != NULL) && (Value != 0.0f) )
+	if ( (Controller != NULL) && (Value != 0.0f) && !IsAttacking && !JumpAttacking)
 	{
 		// find out which way is right
 		const FRotator Rotation = Controller->GetControlRotation();
@@ -135,14 +134,4 @@ void AAllianceCharacter::RemoveCharacterMovementBindings()
 	{
 		CharacterMovementInputComponent->AxisBindings.RemoveAt(0);
 	}
-}
-
-void AAllianceCharacter::StartSprint()
-{
-	GetCharacterMovement()->MaxWalkSpeed = 2400;
-}
-
-void AAllianceCharacter::StopSprint()
-{
-	GetCharacterMovement()->MaxWalkSpeed = 1200;
 }

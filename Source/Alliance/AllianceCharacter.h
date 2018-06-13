@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "EngineMinimal.h"
 #include "GameFramework/Character.h"
 #include "AllianceCharacter.generated.h"
 
@@ -50,11 +51,6 @@ protected:
 	 */
 	void LookUpAtRate(float Rate);
 
-	/**
-	* Called via input to Sprint.
-	*/
-	void StartSprint();
-	void StopSprint();
 
 protected:
 	// APawn interface
@@ -74,8 +70,28 @@ public:
 
 	UInputComponent* GetCharacterInputComponent() { return CharacterMovementInputComponent.Get(); }
 
+	// Variables used in blueprints for animations
+	UPROPERTY(BlueprintReadWrite, Category = MyCharacter)
+		bool IsRunning;
+	UPROPERTY(BlueprintReadWrite, Category = MyCharacter)
+		bool JumpAttacking;
+	UPROPERTY(BlueprintReadWrite, Category = MyCharacter)
+		bool IsAttacking;
+	UPROPERTY(BlueprintReadWrite, Category = MyCharacter)
+		bool ChainAttack;
+	UPROPERTY(BlueprintReadWrite, Category = MyCharacter)
+		float Sprint;
+	UPROPERTY(BlueprintReadWrite, Category = MyCharacter)
+		float LaunchForce;
+	UPROPERTY(BlueprintReadWrite, Category = MyCharacter)
+		float LaunchHeight;
+	UPROPERTY(BlueprintReadWrite, Category = MyCharacter)
+		int Combo;
+
 private:
 
 	TWeakObjectPtr<class UInputComponent> CharacterMovementInputComponent;
+
+	
 };
 

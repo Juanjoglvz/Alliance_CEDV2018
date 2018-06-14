@@ -11,7 +11,7 @@
 
 
 AAllianceCharacter::AAllianceCharacter() : IsRunning{ false }, JumpAttacking{ false }, IsAttacking{ false }, ChainAttack{ false },
-Sprint{ 1200.f }, LaunchForce{ 1.f }, LaunchHeight{ 1.f }, Combo{ 0 }, Health{ 100.f }, Stamina{ 100.f }, b_IsDead{ false }
+Sprint{ 1200.f }, LaunchForce{ 1.f }, LaunchHeight{ 1.f }, Combo{ 0 }, Health{ 100.f }, Stamina{ 100.f }, b_IsDead{ false }, InMinigame{ false }
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -66,6 +66,8 @@ void AAllianceCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AAllianceCharacter::LookUpAtRate);
 
+	// Bindings for actions
+	InMinigame = false;
 }
 
 void AAllianceCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -75,6 +77,14 @@ void AAllianceCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(AAllianceCharacter, Health);
 	DOREPLIFETIME(AAllianceCharacter, Stamina);
 	DOREPLIFETIME(AAllianceCharacter, b_IsDead);
+	DOREPLIFETIME(AAllianceCharacter, IsRunning);
+	DOREPLIFETIME(AAllianceCharacter, JumpAttacking);
+	DOREPLIFETIME(AAllianceCharacter, IsAttacking);
+	DOREPLIFETIME(AAllianceCharacter, ChainAttack);
+	DOREPLIFETIME(AAllianceCharacter, Sprint);
+	DOREPLIFETIME(AAllianceCharacter, LaunchForce);
+	DOREPLIFETIME(AAllianceCharacter, LaunchHeight);
+	DOREPLIFETIME(AAllianceCharacter, Combo);
 }
 
 void AAllianceCharacter::TurnAtRate(float Rate)
@@ -175,12 +185,7 @@ void AAllianceCharacter::SetCharacterMovement(class UInputComponent* InputCompon
 
 void AAllianceCharacter::RemoveCharacterMovementBindings()
 {
-	// Remove actions binded
-	while (CharacterMovementInputComponent->GetNumActionBindings() > 0)
-	{
-		CharacterMovementInputComponent->RemoveActionBinding(0);
-	}
-
+	InMinigame = true;
 	// Remove axis binded
 	while (CharacterMovementInputComponent->AxisBindings.Num() > 0)
 	{

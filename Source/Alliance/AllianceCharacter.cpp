@@ -11,7 +11,7 @@
 
 
 AAllianceCharacter::AAllianceCharacter() : IsRunning{ false }, JumpAttacking{ false }, IsAttacking{ false }, ChainAttack{ false },
-Sprint{ 1200.f }, LaunchForce{ 1.f }, LaunchHeight{ 1.f }, Combo{ 0 }
+Sprint{ 1200.f }, LaunchForce{ 1.f }, LaunchHeight{ 1.f }, Combo{ 0 }, Health{ 100.f }, Stamina{ 100.f }, b_IsDead{ false }
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -24,6 +24,10 @@ Sprint{ 1200.f }, LaunchForce{ 1.f }, LaunchHeight{ 1.f }, Combo{ 0 }
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
+
+	// Character replication stuff
+	bReplicates = true;
+	bReplicateMovement = true;
 
 	// Configure character movement
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
@@ -64,6 +68,14 @@ void AAllianceCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 
 }
 
+void AAllianceCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AAllianceCharacter, Health);
+	DOREPLIFETIME(AAllianceCharacter, Stamina);
+	DOREPLIFETIME(AAllianceCharacter, b_IsDead);
+}
 
 void AAllianceCharacter::TurnAtRate(float Rate)
 {
@@ -104,6 +116,56 @@ void AAllianceCharacter::MoveRight(float Value)
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
 	}
+}
+
+// Functions to implement and validate TakeDamage(). The server will only execute this function, the clients will
+// receive the updated health value
+float AAllianceCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
+{
+	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	
+	if (ActualDamage > 0.f)
+	{
+		Health -= ActualDamage;
+		if (Health <= 0)
+		{
+			// The character is dead
+			Health = 0.f;
+			ExecuteWhenDead();
+		}
+
+		if (Health <= 50)
+		{
+			Stamina -= 15;
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("IsServer: %d \t Health: %f \t Stamina: %f"), GIsServer, Health, Stamina);
+	}
+	return ActualDamage;
+}
+//bool AAllianceCharacter::SufferDamage_Validate(float ammount) { return true; }
+//void AAllianceCharacter::SufferDamage_Implementation(float ammount)
+//{
+//	Health -= ammount;
+//	if (Health  <= 0)
+//	{
+//		// The character is dead
+//		Health = 0.f;
+//		ExecuteWhenDead();
+//	}
+//	
+//	if (Health <= 50)
+//	{
+//		Stamina -= 15;
+//	}
+//	
+//	UE_LOG(LogTemp, Warning, TEXT("IsServer: %d \t Health: %f \t Stamina: %f"), GIsServer, Health, Stamina);
+//}
+
+void AAllianceCharacter::ExecuteWhenDead_Implementation()
+{
+	b_IsDead = true;
+	UE_LOG(LogTemp, Warning, TEXT("Player is dead"));
 }
 
 void AAllianceCharacter::SetCharacterMovement(class UInputComponent* InputComponent)

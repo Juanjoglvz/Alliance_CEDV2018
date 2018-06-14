@@ -3,7 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "EngineMinimal.h"
+#include "Engine.h"
+#include "UnrealNetwork.h"
 #include "GameFramework/Character.h"
 #include "AllianceCharacter.generated.h"
 
@@ -51,9 +52,7 @@ protected:
 	void LookUpAtRate(float Rate);
 
 protected:
-	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	// End of APawn interface
 
 public:
 	/** Returns CameraBoom subobject **/
@@ -86,7 +85,24 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = MyCharacter)
 		int Combo;
 
-private:
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser) override;
+	
+
+	/*UFUNCTION(Reliable, Server, WithValidation, BlueprintCallable)
+		void SufferDamage(float ammount);
+	bool SufferDamage_Validate(float ammount);
+	void SufferDamage_Implementation(float ammount);*/
+
+	UFUNCTION(Reliable, NetMulticast)
+		void ExecuteWhenDead();
+	void ExecuteWhenDead_Implementation();
+
+	UPROPERTY(Replicated, BlueprintReadOnly)
+		float Health;
+	UPROPERTY(Replicated, BlueprintReadOnly)
+		float Stamina;
+	UPROPERTY(Replicated, BlueprintReadOnly)
+		bool b_IsDead;
 
 	TWeakObjectPtr<class UInputComponent> CharacterMovementInputComponent;
 

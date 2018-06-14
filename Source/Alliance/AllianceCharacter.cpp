@@ -5,15 +5,13 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
-#include <string>
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 
-//////////////////////////////////////////////////////////////////////////
-// AAllianceCharacter
 
-AAllianceCharacter::AAllianceCharacter()
+AAllianceCharacter::AAllianceCharacter() : IsRunning{ false }, JumpAttacking{ false }, IsAttacking{ false }, ChainAttack{ false },
+Sprint{ 1200.f }, LaunchForce{ 1.f }, LaunchHeight{ 1.f }, Combo{ 0 }, Health{ 100.f }, Stamina{ 100.f }, b_IsDead{ false }
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -27,11 +25,17 @@ AAllianceCharacter::AAllianceCharacter()
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 
+	// Character replication stuff
+	bReplicates = true;
+	bReplicateMovement = true;
+
 	// Configure character movement
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // ...at this rotation rate
 	GetCharacterMovement()->JumpZVelocity = 600.f;
 	GetCharacterMovement()->AirControl = 0.2f;
+	GetCharacterMovement()->SetNetAddressable(); // Make DSO components net addressable
+	GetCharacterMovement()->SetIsReplicated(true); // Enable replication by default
 
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
@@ -44,12 +48,7 @@ AAllianceCharacter::AAllianceCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
-	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 }
-
-//////////////////////////////////////////////////////////////////////////
-// Input
 
 void AAllianceCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
@@ -58,42 +57,24 @@ void AAllianceCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 
 	CharacterMovementInputComponent = PlayerInputComponent;
 
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AAllianceCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AAllianceCharacter::MoveRight);
 
-	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
-	// "turn" handles devices that provide an absolute delta, such as a mouse.
-	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("TurnRate", this, &AAllianceCharacter::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AAllianceCharacter::LookUpAtRate);
 
-	// handle touch devices
-	PlayerInputComponent->BindTouch(IE_Pressed, this, &AAllianceCharacter::TouchStarted);
-	PlayerInputComponent->BindTouch(IE_Released, this, &AAllianceCharacter::TouchStopped);
-
-	// VR headset functionality
-	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &AAllianceCharacter::OnResetVR);
 }
 
-
-void AAllianceCharacter::OnResetVR()
+void AAllianceCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
-	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
-}
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-void AAllianceCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
-{
-		Jump();
-}
-
-void AAllianceCharacter::TouchStopped(ETouchIndex::Type FingerIndex, FVector Location)
-{
-		StopJumping();
+	DOREPLIFETIME(AAllianceCharacter, Health);
+	DOREPLIFETIME(AAllianceCharacter, Stamina);
+	DOREPLIFETIME(AAllianceCharacter, b_IsDead);
 }
 
 void AAllianceCharacter::TurnAtRate(float Rate)
@@ -110,7 +91,7 @@ void AAllianceCharacter::LookUpAtRate(float Rate)
 
 void AAllianceCharacter::MoveForward(float Value)
 {
-	if ((Controller != NULL) && (Value != 0.0f))
+	if ((Controller != NULL) && (Value != 0.0f) && !IsAttacking && !JumpAttacking)
 	{
 		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
@@ -124,7 +105,7 @@ void AAllianceCharacter::MoveForward(float Value)
 
 void AAllianceCharacter::MoveRight(float Value)
 {
-	if ( (Controller != NULL) && (Value != 0.0f) )
+	if ( (Controller != NULL) && (Value != 0.0f) && !IsAttacking && !JumpAttacking)
 	{
 		// find out which way is right
 		const FRotator Rotation = Controller->GetControlRotation();
@@ -135,6 +116,56 @@ void AAllianceCharacter::MoveRight(float Value)
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
 	}
+}
+
+// Functions to implement and validate TakeDamage(). The server will only execute this function, the clients will
+// receive the updated health value
+float AAllianceCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
+{
+	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	
+	if (ActualDamage > 0.f)
+	{
+		Health -= ActualDamage;
+		if (Health <= 0)
+		{
+			// The character is dead
+			Health = 0.f;
+			ExecuteWhenDead();
+		}
+
+		if (Health <= 50)
+		{
+			Stamina -= 15;
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("IsServer: %d \t Health: %f \t Stamina: %f"), GIsServer, Health, Stamina);
+	}
+	return ActualDamage;
+}
+//bool AAllianceCharacter::SufferDamage_Validate(float ammount) { return true; }
+//void AAllianceCharacter::SufferDamage_Implementation(float ammount)
+//{
+//	Health -= ammount;
+//	if (Health  <= 0)
+//	{
+//		// The character is dead
+//		Health = 0.f;
+//		ExecuteWhenDead();
+//	}
+//	
+//	if (Health <= 50)
+//	{
+//		Stamina -= 15;
+//	}
+//	
+//	UE_LOG(LogTemp, Warning, TEXT("IsServer: %d \t Health: %f \t Stamina: %f"), GIsServer, Health, Stamina);
+//}
+
+void AAllianceCharacter::ExecuteWhenDead_Implementation()
+{
+	b_IsDead = true;
+	UE_LOG(LogTemp, Warning, TEXT("Player is dead"));
 }
 
 void AAllianceCharacter::SetCharacterMovement(class UInputComponent* InputComponent)

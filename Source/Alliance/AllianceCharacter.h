@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Engine.h"
+#include "UnrealNetwork.h"
 #include "GameFramework/Character.h"
 #include "AllianceCharacter.generated.h"
 
@@ -31,9 +33,6 @@ public:
 
 protected:
 
-	/** Resets HMD orientation in VR. */
-	void OnResetVR();
-
 	/** Called for forwards/backward input */
 	void MoveForward(float Value);
 
@@ -52,16 +51,8 @@ protected:
 	 */
 	void LookUpAtRate(float Rate);
 
-	/** Handler for when a touch input begins. */
-	void TouchStarted(ETouchIndex::Type FingerIndex, FVector Location);
-
-	/** Handler for when a touch input stops. */
-	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
-
 protected:
-	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	// End of APawn interface
 
 public:
 	/** Returns CameraBoom subobject **/
@@ -76,8 +67,44 @@ public:
 
 	UInputComponent* GetCharacterInputComponent() { return CharacterMovementInputComponent.Get(); }
 
-private:
+	// Variables used in blueprints for animations
+	UPROPERTY(BlueprintReadWrite, Category = MyCharacter)
+		bool IsRunning;
+	UPROPERTY(BlueprintReadWrite, Category = MyCharacter)
+		bool JumpAttacking;
+	UPROPERTY(BlueprintReadWrite, Category = MyCharacter)
+		bool IsAttacking;
+	UPROPERTY(BlueprintReadWrite, Category = MyCharacter)
+		bool ChainAttack;
+	UPROPERTY(BlueprintReadWrite, Category = MyCharacter)
+		float Sprint;
+	UPROPERTY(BlueprintReadWrite, Category = MyCharacter)
+		float LaunchForce;
+	UPROPERTY(BlueprintReadWrite, Category = MyCharacter)
+		float LaunchHeight;
+	UPROPERTY(BlueprintReadWrite, Category = MyCharacter)
+		int Combo;
+
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser) override;
+	
+
+	/*UFUNCTION(Reliable, Server, WithValidation, BlueprintCallable)
+		void SufferDamage(float ammount);
+	bool SufferDamage_Validate(float ammount);
+	void SufferDamage_Implementation(float ammount);*/
+
+	UFUNCTION(Reliable, NetMulticast)
+		void ExecuteWhenDead();
+	void ExecuteWhenDead_Implementation();
+
+	UPROPERTY(Replicated, BlueprintReadOnly)
+		float Health;
+	UPROPERTY(Replicated, BlueprintReadOnly)
+		float Stamina;
+	UPROPERTY(Replicated, BlueprintReadOnly)
+		bool b_IsDead;
 
 	TWeakObjectPtr<class UInputComponent> CharacterMovementInputComponent;
+
 };
 

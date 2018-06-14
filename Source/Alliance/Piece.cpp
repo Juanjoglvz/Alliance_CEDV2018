@@ -21,8 +21,9 @@ APiece::APiece() : b_IsPlayer(false), width{ 1 }, height{ 1 }
 	// Timeline
 	static ConstructorHelpers::FObjectFinder<UCurveFloat>Curve(TEXT("CurveFloat'/Game/ThirdPersonCPP/Blueprints/C_MyCurve.C_MyCurve'"));
 	check(Curve.Succeeded());
-
 	FloatCurve = Curve.Object;
+	
+	// Replicate the pieces movement
 	SetReplicateMovement(true);
 	SetReplicates(true);
 	bAlwaysRelevant = true;
@@ -48,6 +49,7 @@ void APiece::BeginPlay()
 	FOnTimelineFloat onTimelineCallback;
 	FOnTimelineEventStatic onTimelineFinishedCallback;
 
+	// Bind Timeline events to C++ functions
 	if (FloatCurve)
 	{
 		onTimelineCallback.BindUFunction(this, FName{ TEXT("TimelineCallback") });
@@ -68,12 +70,6 @@ void APiece::Tick(float DeltaTime)
 	MyTimeline.TickTimeline(DeltaTime);
 }
 
-
-//void APiece::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-//{
-//	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-//}
-
 void APiece::SetMaterial(UMaterialInstanceDynamic* NewMaterial)
 {
 	PieceMeshComponent->SetMaterial(0, NewMaterial);
@@ -89,6 +85,7 @@ void APiece::TimelineFinishedCallback()
 	TimelineFinished = true;
 }
 
+// Update the piece location when the piece is moving. The location is updated by the server and replicated to all the clients.
 void APiece::ExecutingTimeline_Implementation(float interpolatedVal)
 {
 	SetActorLocation(FVector(this->StartingPosition.X - (interpolatedVal * col),
@@ -96,6 +93,7 @@ void APiece::ExecutingTimeline_Implementation(float interpolatedVal)
 		this->StartingPosition.Z));
 }
 
+// The color is changed in the server and replicated to all the clients
 void APiece::ExecuteChangeColor_Implementation(FLinearColor NewColor)
 {
 	auto DynamicMaterialInstance = UMaterialInstanceDynamic::Create(this->PieceMaterial, this);

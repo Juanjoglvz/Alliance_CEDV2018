@@ -23,8 +23,6 @@ void ABoard::BeginPlay()
 	// Set the selected color for the piece
 	Pieces[CurrentFocus]->ChangeColor(FLinearColor(1.f, 0.f, 0.6171f, 1.f));
 
-	//Timeline = GetWorld()->SpawnActor<AMyTimeline>();
-
 	// Initialize the representation to false
 	for (int i = 0; i < NumberOfColumns; i++)
 	{

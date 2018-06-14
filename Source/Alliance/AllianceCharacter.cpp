@@ -128,9 +128,7 @@ void AAllianceCharacter::MoveRight(float Value)
 	}
 }
 
-// Functions to implement and validate TakeDamage(). The server will only execute this function, the clients will
-// receive the updated health value
-float AAllianceCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
+float AAllianceCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	
@@ -153,24 +151,6 @@ float AAllianceCharacter::TakeDamage(float DamageAmount, struct FDamageEvent con
 	}
 	return ActualDamage;
 }
-//bool AAllianceCharacter::SufferDamage_Validate(float ammount) { return true; }
-//void AAllianceCharacter::SufferDamage_Implementation(float ammount)
-//{
-//	Health -= ammount;
-//	if (Health  <= 0)
-//	{
-//		// The character is dead
-//		Health = 0.f;
-//		ExecuteWhenDead();
-//	}
-//	
-//	if (Health <= 50)
-//	{
-//		Stamina -= 15;
-//	}
-//	
-//	UE_LOG(LogTemp, Warning, TEXT("IsServer: %d \t Health: %f \t Stamina: %f"), GIsServer, Health, Stamina);
-//}
 
 void AAllianceCharacter::ExecuteWhenDead_Implementation()
 {
@@ -186,7 +166,7 @@ void AAllianceCharacter::SetCharacterMovement(class UInputComponent* InputCompon
 void AAllianceCharacter::RemoveCharacterMovementBindings()
 {
 	InMinigame = true;
-	// Remove axis binded
+	// Remove axis bindings
 	while (CharacterMovementInputComponent->AxisBindings.Num() > 0)
 	{
 		CharacterMovementInputComponent->AxisBindings.RemoveAt(0);

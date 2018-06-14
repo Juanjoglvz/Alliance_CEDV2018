@@ -27,8 +27,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void SetMaterial(class UMaterialInstanceDynamic* NewMaterial);
-
+	// Piece properties
 	UPROPERTY(EditAnywhere)
 		bool b_IsPlayer;
 	UPROPERTY(EditAnywhere)
@@ -45,23 +44,35 @@ public:
 	UPROPERTY(EditAnywhere)
 		class UStaticMesh* PieceMesh;
 
+	// This variable stores the color of the piece. It is used to return the original color to the piece when it hasn't the focus
 	UPROPERTY(EditAnywhere)
 		FLinearColor Color;
 
-
+	// Timeline properties and functions
 	UPROPERTY()
 		UCurveFloat* FloatCurve;
-	UFUNCTION()
-		void TimelineCallback(float val);
-
-	UFUNCTION()
-		void TimelineFinishedCallback();
-
 	UPROPERTY()
 		TEnumAsByte<ETimelineDirection::Type> TimelineDirection;
+	// Variable to control if the timeline has finished
+	bool TimelineFinished = true;
+	
+	// Function executed when the timeline is called. The function is binded with onTimelineCallback event
+	UFUNCTION()
+		void TimelineCallback(float val);
+	// Function called when the timeline execution has finished. The function is binded with onTimelineFinishedCallback event
+	UFUNCTION()
+		void TimelineFinishedCallback();
+	
+	/**
+	 * Function called by the board when a piece has to be moved
+	 * @param col A -1 value indicates move to the left. A +1 value indicates move to the right
+	 * @param row A -1 value indicates move down. A +1 value indicates move up
+	 */
+	void PlayTimeline(int col, int row);
+
 
 	// RPC to move pieces. Every client will call ExecutingTimeline_Implementation
-	// This function doesn't need an implementation
+	// The function ExecutingTimeline doesn't need an implementation
 	UFUNCTION(Reliable, NetMulticast)
 		void ExecutingTimeline(float interpolatedVal);
 	void ExecutingTimeline_Implementation(float interpolatedVal);
@@ -71,20 +82,22 @@ public:
 		void ExecuteChangeColor(FLinearColor NewColor);
 	void ExecuteChangeColor_Implementation(FLinearColor NewColor);
 
-	void PlayTimeline(int col, int row);
-
-	bool TimelineFinished = true;
-
 	// This method changes the color of a given piece in the board
 	void ChangeColor(FLinearColor color);
+
+	// Change pieces material in runtime
+	void SetMaterial(class UMaterialInstanceDynamic* NewMaterial);
+
 	FIntRect PieceToRectangle();
+
 private:
-	
 	UPROPERTY()
 		UStaticMeshComponent* PieceMeshComponent;
 	
+	// Timeline property
 	FTimeline MyTimeline;
 
+	// Piece's location before the it moves. 
 	FVector StartingPosition;
 
 	int row, col;

@@ -20,6 +20,7 @@ class AAllianceCharacter : public ACharacter
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
+
 public:
 	AAllianceCharacter();
 
@@ -51,22 +52,11 @@ protected:
 	 */
 	void LookUpAtRate(float Rate);
 
-protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 public:
-	/** Returns CameraBoom subobject **/
-	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
-	/** Returns FollowCamera subobject **/
-	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
-
-	UFUNCTION(BlueprintCallable)
-		void RemoveCharacterMovementBindings();
-
-	void SetCharacterMovement(class UInputComponent* InputComponent);
-
-	UInputComponent* GetCharacterInputComponent() { return CharacterMovementInputComponent.Get(); }
-
+	// PROPERTIES
+	
 	// Variables used in blueprints for animations
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = MyCharacter)
 		bool IsRunning;
@@ -86,19 +76,8 @@ public:
 		int Combo;
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = MyCharacter)
 		bool InMinigame;
-
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser) override;
 	
-
-	/*UFUNCTION(Reliable, Server, WithValidation, BlueprintCallable)
-		void SufferDamage(float ammount);
-	bool SufferDamage_Validate(float ammount);
-	void SufferDamage_Implementation(float ammount);*/
-
-	UFUNCTION(Reliable, NetMulticast)
-		void ExecuteWhenDead();
-	void ExecuteWhenDead_Implementation();
-
+	// Variables to control player's health and stamine
 	UPROPERTY(Replicated, BlueprintReadOnly)
 		float Health;
 	UPROPERTY(Replicated, BlueprintReadOnly)
@@ -106,6 +85,33 @@ public:
 	UPROPERTY(Replicated, BlueprintReadOnly)
 		bool b_IsDead;
 
+	// FUNCTIONS
+
+	/** Returns CameraBoom subobject **/
+	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+	/** Returns FollowCamera subobject **/
+	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+	// This function remove the movement (axis and actions mappings) of the character
+	UFUNCTION(BlueprintCallable)
+		void RemoveCharacterMovementBindings();
+
+	// This function returns the movement (axis and actions mappings) to the character
+	void SetCharacterMovement(class UInputComponent* InputComponent);
+
+	FORCEINLINE UInputComponent* GetCharacterInputComponent() { return CharacterMovementInputComponent.Get(); }
+
+	// This function is executed only by the server. It reduces the amount of player's health
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser) override;
+	
+	// RPC function called when the player dies
+	UFUNCTION(Reliable, NetMulticast)
+		void ExecuteWhenDead();
+	void ExecuteWhenDead_Implementation();
+
+private:
+
+	// UInputComponent pointer used to add or remove the action and axis mappings
 	TWeakObjectPtr<class UInputComponent> CharacterMovementInputComponent;
 
 };

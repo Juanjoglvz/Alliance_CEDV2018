@@ -3,7 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "EngineMinimal.h"
+#include "Engine.h"
+#include "UnrealNetwork.h"
 #include "GameFramework/Character.h"
 #include "AllianceCharacter.generated.h"
 
@@ -71,22 +72,24 @@ public:
 	UInputComponent* GetCharacterInputComponent() { return CharacterMovementInputComponent.Get(); }
 
 	// Variables used in blueprints for animations
-	UPROPERTY(BlueprintReadWrite, Category = MyCharacter)
+	UPROPERTY(Replicated, BlueprintReadWrite, Category = MyCharacter)
 		bool IsRunning;
-	UPROPERTY(BlueprintReadWrite, Category = MyCharacter)
+	UPROPERTY(Replicated, BlueprintReadWrite, Category = MyCharacter)
 		bool JumpAttacking;
-	UPROPERTY(BlueprintReadWrite, Category = MyCharacter)
+	UPROPERTY(Replicated, BlueprintReadWrite, Category = MyCharacter)
 		bool IsAttacking;
-	UPROPERTY(BlueprintReadWrite, Category = MyCharacter)
+	UPROPERTY(Replicated, BlueprintReadWrite, Category = MyCharacter)
 		bool ChainAttack;
-	UPROPERTY(BlueprintReadWrite, Category = MyCharacter)
+	UPROPERTY(Replicated, BlueprintReadWrite, Category = MyCharacter)
 		float Sprint;
-	UPROPERTY(BlueprintReadWrite, Category = MyCharacter)
+	UPROPERTY(Replicated, BlueprintReadWrite, Category = MyCharacter)
 		float LaunchForce;
-	UPROPERTY(BlueprintReadWrite, Category = MyCharacter)
+	UPROPERTY(Replicated, BlueprintReadWrite, Category = MyCharacter)
 		float LaunchHeight;
-	UPROPERTY(BlueprintReadWrite, Category = MyCharacter)
+	UPROPERTY(Replicated, BlueprintReadWrite, Category = MyCharacter)
 		int Combo;
+	UPROPERTY(Replicated, BlueprintReadWrite, Category = MyCharacter)
+		bool InMinigame;
 
 private:
 

@@ -66,7 +66,7 @@ public:
 		bool IsAttacking;
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = MyCharacter)
 		bool ChainAttack;
-	UPROPERTY(Replicated, BlueprintReadWrite, Category = MyCharacter)
+	UPROPERTY(BlueprintReadWrite, Category = MyCharacter)
 		float Sprint;
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = MyCharacter)
 		float LaunchForce;

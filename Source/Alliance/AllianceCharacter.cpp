@@ -83,7 +83,6 @@ void AAllianceCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(AAllianceCharacter, JumpAttacking);
 	DOREPLIFETIME(AAllianceCharacter, IsAttacking);
 	DOREPLIFETIME(AAllianceCharacter, ChainAttack);
-	DOREPLIFETIME(AAllianceCharacter, Sprint);
 	DOREPLIFETIME(AAllianceCharacter, LaunchForce);
 	DOREPLIFETIME(AAllianceCharacter, LaunchHeight);
 	DOREPLIFETIME(AAllianceCharacter, Combo);

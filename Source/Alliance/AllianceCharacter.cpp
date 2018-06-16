@@ -25,6 +25,8 @@ Sprint{ 1200.f }, LaunchForce{ 1.f }, LaunchHeight{ 1.f }, Combo{ 0 }, Health{ 1
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 
+	AutoPossessPlayer = EAutoReceiveInput::Player0;
+
 	// Character replication stuff
 	bReplicates = true;
 	bReplicateMovement = true;

@@ -12,7 +12,6 @@ ABoard::ABoard() : CurrentFocus(0)
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 }
 
 // Called when the game starts or when spawned
@@ -28,7 +27,7 @@ void ABoard::BeginPlay()
 	{
 		for (int j = 0; j < NumberOfRows; j++)
 		{
-			Representation.push_back(false);
+			Representation.Add(false);
 		}
 	}
 
@@ -220,7 +219,7 @@ void ABoard::ChangeFocusToPrevious()
 	
 	// Change focus to a new piece
 	CurrentFocus = (CurrentFocus + 1) % Pieces.Num();
-
+	
 	// Set the selected material to new piece
 	Pieces[CurrentFocus]->ChangeColor(FLinearColor(1.f, 0.f, 0.6171f, 1.f));
 }

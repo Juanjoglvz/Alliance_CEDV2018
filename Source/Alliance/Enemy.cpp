@@ -17,8 +17,6 @@ void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 
-	AIController = GetWorld()->SpawnActor<AMeleeController>(AMeleeController::StaticClass());
-	AIController->Possess(this);
 	
 }
 

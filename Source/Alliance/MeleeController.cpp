@@ -18,6 +18,10 @@ void AMeleeController::Possess(APawn* InPawn)
 
 	if (Enemy)
 	{
+
+		BlackboardComp->InitializeBlackboard(*(BehaviourTree->BlackboardAsset));
+
 		BehaviorTreeComp->StartTree(*BehaviourTree);
+
 	}
 }

@@ -69,6 +69,10 @@ void AAllianceCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AAllianceCharacter::LookUpAtRate);
 
 	// Bindings for actions
+	PlayerInputComponent->BindAction("Primary_Attack", EInputEvent::IE_Pressed, this, &AAllianceCharacter::PrimaryAttack);
+	PlayerInputComponent->BindAction("Sprint", EInputEvent::IE_Pressed, this, &AAllianceCharacter::StartSprint);
+	PlayerInputComponent->BindAction("Sprint", EInputEvent::IE_Released, this, &AAllianceCharacter::StopSprint);
+	PlayerInputComponent->BindAction("Interact", EInputEvent::IE_Pressed, this, &AAllianceCharacter::Interact);
 	InMinigame = false;
 }
 
@@ -99,6 +103,59 @@ void AAllianceCharacter::LookUpAtRate(float Rate)
 	// calculate delta for this frame from the rate information
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
+
+void AAllianceCharacter::PrimaryAttack()
+{
+	if (HasAuthority())
+	{
+		OnAttackEvent.Broadcast();
+	}
+	else
+	{
+		// Client notifies server to attack
+		OnServerClientAttacking();
+	}
+}
+
+void AAllianceCharacter::StartSprint()
+{
+	if (HasAuthority())
+	{
+		StartSprinting();
+	}
+	else
+	{
+		// Client notifies server to start sprinting
+		OnServerClientStartSprinting();
+	}
+}
+
+void AAllianceCharacter::StopSprint()
+{
+	if (HasAuthority())
+	{
+		StopSprinting();
+	}
+	else
+	{
+		// Client notifies server to stop sprinting
+		OnServerClientStopSprinting();
+	}
+}
+
+void AAllianceCharacter::Interact()
+{
+	if (HasAuthority())
+	{
+		OnStartMinigame.Broadcast();
+	}
+	else
+	{
+		// Client notifies server to start the minigame
+		OnServerStartMinigame();
+	}
+}
+
 
 void AAllianceCharacter::MoveForward(float Value)
 {
@@ -147,8 +204,6 @@ float AAllianceCharacter::TakeDamage(float DamageAmount, struct FDamageEvent con
 		{
 			Stamina -= 15;
 		}
-
-		UE_LOG(LogTemp, Warning, TEXT("IsServer: %d \t Health: %f \t Stamina: %f"), GIsServer, Health, Stamina);
 	}
 	return ActualDamage;
 }
@@ -156,7 +211,56 @@ float AAllianceCharacter::TakeDamage(float DamageAmount, struct FDamageEvent con
 void AAllianceCharacter::ExecuteWhenDead_Implementation()
 {
 	b_IsDead = true;
-	UE_LOG(LogTemp, Warning, TEXT("Player is dead"));
+}
+
+void AAllianceCharacter::OnServerClientAttacking_Implementation()
+{
+	if (HasAuthority())
+	{
+		OnAttackEvent.Broadcast();
+	}
+}
+
+void AAllianceCharacter::StartSprinting_Implementation()
+{
+	if (!InMinigame)
+	{
+		GetCharacterMovement()->MaxWalkSpeed += Sprint;
+		IsRunning = true;
+	}
+}
+
+void AAllianceCharacter::StopSprinting_Implementation()
+{
+	if (!InMinigame)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = 1200.f;
+		IsRunning = false;
+	}
+}
+
+void AAllianceCharacter::OnServerClientStartSprinting_Implementation()
+{
+	if (HasAuthority())
+	{
+		StartSprinting();
+	}
+}
+
+void AAllianceCharacter::OnServerClientStopSprinting_Implementation()
+{
+	if (HasAuthority())
+	{
+		StopSprinting();
+	}
+}
+
+void AAllianceCharacter::OnServerStartMinigame_Implementation()
+{
+	if (HasAuthority())
+	{
+		OnStartMinigame.Broadcast();
+	}
 }
 
 void AAllianceCharacter::SetCharacterMovement(class UInputComponent* InputComponent)

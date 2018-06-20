@@ -13,3 +13,15 @@ AAllianceGameMode::AAllianceGameMode()
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
 }
+
+void AAllianceGameMode::PostLogin(APlayerController * NewPlayer)
+{
+	if (GIsServer)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Server: Post Login"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Client: Post Login"));
+	}
+}

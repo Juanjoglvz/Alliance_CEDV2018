@@ -2,6 +2,7 @@
 
 #include "AllianceCharacter.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
+#include "AlliancePlayerController.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
@@ -50,6 +51,17 @@ Sprint{ 1200.f }, LaunchForce{ 1.f }, LaunchHeight{ 1.f }, Combo{ 0 }, Health{ 1
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+}
+
+void AAllianceCharacter::BeginPlay()
+{
+	/*UE_LOG(LogTemp, Error, TEXT("Called begin play"));
+	AController* Controller = GetController();
+	AAlliancePlayerController* PlayerController = Cast<AAlliancePlayerController>(Controller);
+
+	UE_LOG(LogTemp, Error, TEXT("Obtained controller: %p"), Controller);
+	if (PlayerController)
+		PlayerController->OnClientLogin();*/
 }
 
 void AAllianceCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)

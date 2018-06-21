@@ -11,7 +11,7 @@
 
 
 AAllianceCharacter::AAllianceCharacter() : IsRunning{ false }, JumpAttacking{ false }, IsAttacking{ false }, ChainAttack{ false },
-Sprint{ 1200.f }, LaunchForce{ 1.f }, LaunchHeight{ 1.f }, Combo{ 0 }, Health{ 100.f }, Stamina{ 100.f }, b_IsDead{ false }, InMinigame{ false }
+Sprint{ 1200.f }, LaunchForce{ 1.f }, LaunchHeight{ 1.f }, Combo{ 0 }, b_IsDead{ false }, InMinigame{ false }
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -151,6 +151,11 @@ float AAllianceCharacter::TakeDamage(float DamageAmount, struct FDamageEvent con
 		UE_LOG(LogTemp, Warning, TEXT("IsServer: %d \t Health: %f \t Stamina: %f"), GIsServer, Health, Stamina);
 	}
 	return ActualDamage;
+}
+
+void AAllianceCharacter::DoDmg(AActor* DamagedActor)
+{
+	UGameplayStatics::ApplyDamage(DamagedActor, Primary_Attack_Dmg, nullptr, nullptr, nullptr);
 }
 
 void AAllianceCharacter::ExecuteWhenDead_Implementation()

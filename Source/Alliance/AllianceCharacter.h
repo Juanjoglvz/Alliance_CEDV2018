@@ -78,12 +78,16 @@ public:
 		bool InMinigame;
 	
 	// Variables to control player's health and stamine
-	UPROPERTY(Replicated, BlueprintReadOnly)
+	UPROPERTY(Replicated, BlueprintReadWrite, Category = "Combat")
 		float Health;
-	UPROPERTY(Replicated, BlueprintReadOnly)
+	UPROPERTY(Replicated, BlueprintReadWrite, Category = "Combat")
 		float Stamina;
-	UPROPERTY(Replicated, BlueprintReadOnly)
+	UPROPERTY(Replicated, BlueprintReadWrite, Category = "Combat")
 		bool b_IsDead;
+
+	// Variables for controlling Damage
+	UPROPERTY(BlueprintReadWrite, Category = "Combat")
+		float Primary_Attack_Dmg;
 
 	// FUNCTIONS
 
@@ -103,6 +107,10 @@ public:
 
 	// This function is executed only by the server. It reduces the amount of player's health
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser) override;
+
+	// This function applies damage other actor
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+		void DoDmg(AActor* DamagedActor);
 	
 	// RPC function called when the player dies
 	UFUNCTION(Reliable, NetMulticast)

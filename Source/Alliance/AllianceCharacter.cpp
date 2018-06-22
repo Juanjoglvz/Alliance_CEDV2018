@@ -55,13 +55,14 @@ Sprint{ 1200.f }, LaunchForce{ 1.f }, LaunchHeight{ 1.f }, Combo{ 0 }, Health{ 1
 
 void AAllianceCharacter::BeginPlay()
 {
-	/*UE_LOG(LogTemp, Error, TEXT("Called begin play"));
+	Super::BeginPlay();
+	UE_LOG(LogTemp, Error, TEXT("Called begin play, Server: %d"), GIsServer);
 	AController* Controller = GetController();
 	AAlliancePlayerController* PlayerController = Cast<AAlliancePlayerController>(Controller);
 
 	UE_LOG(LogTemp, Error, TEXT("Obtained controller: %p"), Controller);
 	if (PlayerController)
-		PlayerController->OnClientLogin();*/
+		PlayerController->OnClientLogin();
 }
 
 void AAllianceCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)

@@ -14,7 +14,7 @@ AAllianceGameMode::AAllianceGameMode()
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
 
-	PlayerControllerClass = AAlliancePlayerController::StaticClass();
+	//PlayerControllerClass = AAlliancePlayerController::StaticClass();
 }
 
 void AAllianceGameMode::PostLogin(APlayerController * NewPlayer)
@@ -27,8 +27,11 @@ void AAllianceGameMode::PostLogin(APlayerController * NewPlayer)
 		{
 			AAlliancePlayerController* PController = Cast<AAlliancePlayerController>(NewPlayer);
 
-			PController->OnClientLogin();
-			UE_LOG(LogTemp, Error, TEXT("Called onclientlogin from game mode"));
+			if (PController)
+			{
+				PController->OnClientLogin();
+				UE_LOG(LogTemp, Error, TEXT("Called onclientlogin from game mode"));
+			}
 		}
 	}
 	else

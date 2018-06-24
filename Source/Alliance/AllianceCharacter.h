@@ -59,19 +59,25 @@ public:
 	
 	// Variables used in blueprints for animations
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = MyCharacter)
-		bool IsRunning;
+		bool b_IsRunning;
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = MyCharacter)
-		bool JumpAttacking;
+		bool b_JumpAttacking;
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = MyCharacter)
-		bool IsAttacking;
+		bool b_IsAttacking;
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = MyCharacter)
-		bool ChainAttack;
+		bool b_ChainAttack;
+	UPROPERTY(BlueprintReadWrite, Category = MyCharacter)
+		bool b_IsBlocking;
+	UPROPERTY(BlueprintReadWrite, Category = MyCharacter)
+		bool b_IsEvading;
 	UPROPERTY(BlueprintReadWrite, Category = MyCharacter)
 		float Sprint;
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = MyCharacter)
 		float LaunchForce;
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = MyCharacter)
 		float LaunchHeight;
+	UPROPERTY(BlueprintReadWrite, Category = MyCharacter)
+		float DamageReduction;
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = MyCharacter)
 		int Combo;
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = MyCharacter)
@@ -110,7 +116,7 @@ public:
 
 	// This function applies damage other actor
 	UFUNCTION(BlueprintCallable, Category = "Combat")
-		void DoDmg(AActor* DamagedActor);
+		void DoDmg(AActor* DamagedActor) const;
 	
 	// RPC function called when the player dies
 	UFUNCTION(Reliable, NetMulticast)

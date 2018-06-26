@@ -136,7 +136,7 @@ float AAllianceCharacter::TakeDamage(float DamageAmount, struct FDamageEvent con
 {
 	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-	if (ActualDamage > 0.f)
+	if (ActualDamage > 0.f && !b_IsEvading)
 	{
 		ActualDamage *= DamageReduction;
 		Health -= ActualDamage;

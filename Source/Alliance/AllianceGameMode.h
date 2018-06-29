@@ -6,14 +6,19 @@
 #include "GameFramework/GameModeBase.h"
 #include "AllianceGameMode.generated.h"
 
-UCLASS(minimalapi)
+UCLASS()
 class AAllianceGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
 public:
 	AAllianceGameMode();
+
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class AAllianceCharacter> FirstCharacter;
+
 	virtual void PostLogin(APlayerController * NewPlayer);
+
 	UFUNCTION(Server, Reliable, WithValidation)
 	void RespawnSecondPlayer(APlayerController* SecondPlayer);
 	void RespawnSecondPlayer_Implementation(APlayerController* SecondPlayer);

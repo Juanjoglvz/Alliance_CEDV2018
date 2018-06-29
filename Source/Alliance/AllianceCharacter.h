@@ -95,6 +95,9 @@ public:
 	UPROPERTY(Replicated, BlueprintReadOnly)
 		bool b_IsDead;
 
+	UPROPERTY(BlueprintReadOnly)
+		bool b_IAmServer;
+
 	// Delegate executed when the player attacks
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAttackEvent);
 	UPROPERTY(BlueprintAssignable)
@@ -104,6 +107,10 @@ public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FStartMinigame);
 	UPROPERTY(BlueprintAssignable)
 		FStartMinigame OnStartMinigame;
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMovePiece);
+	UPROPERTY(BlueprintAssignable, BlueprintReadWrite)
+		FMovePiece OnMovePiece;
 
 	// FUNCTIONS
 

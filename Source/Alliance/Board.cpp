@@ -12,7 +12,6 @@ ABoard::ABoard() : CurrentFocus(0)
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 }
 
 // Called when the game starts or when spawned
@@ -155,7 +154,8 @@ void ABoard::MovePieceToRowAndColumn(int row, int column)
 		}
 
 		// Move the Piece in the world
-		piece->PlayTimeline(column, row);
+		// piece->PlayTimeline(column, row);
+		OnMovePiece.Broadcast(column, row, CurrentFocus);
 
 		// Update the Piece's position
 		piece->columnPosition += column;
@@ -216,19 +216,19 @@ bool ABoard::IsVictory()
 void ABoard::ChangeFocusToPrevious()
 {
 	// Set current piece its material
-	Pieces[CurrentFocus]->ChangeColor(Pieces[CurrentFocus]->Color);
-	
+	OnChangePieceToItsColor.Broadcast(CurrentFocus);
+
 	// Change focus to a new piece
 	CurrentFocus = (CurrentFocus + 1) % Pieces.Num();
 
 	// Set the selected material to new piece
-	Pieces[CurrentFocus]->ChangeColor(FLinearColor(1.f, 0.f, 0.6171f, 1.f));
+	OnChangePieceToSelected.Broadcast(CurrentFocus);
 }
 	
 void ABoard::ChangeFocusToNext()
 {
 	// Set current piece its material
-	Pieces[CurrentFocus]->ChangeColor(Pieces[CurrentFocus]->Color);
+	OnChangePieceToItsColor.Broadcast(CurrentFocus);
 
 	// Change focus to a new piece
 	if (CurrentFocus - 1 < 0)
@@ -241,5 +241,5 @@ void ABoard::ChangeFocusToNext()
 	}
 
 	// Set the selected material to new piece
-	Pieces[CurrentFocus]->ChangeColor(FLinearColor(1.f, 0.f, 0.6171f, 1.f));
+	OnChangePieceToSelected.Broadcast(CurrentFocus);
 }

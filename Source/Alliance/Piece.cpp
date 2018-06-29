@@ -99,8 +99,8 @@ void APiece::ExecuteChangeColor_Implementation(FLinearColor NewColor)
 	auto DynamicMaterialInstance = UMaterialInstanceDynamic::Create(this->PieceMaterial, this);
 	DynamicMaterialInstance->SetVectorParameterValue("Color", NewColor);
 	this->SetMaterial(DynamicMaterialInstance);
+	
 }
-
 
 void APiece::PlayTimeline(int col, int row)
 {
@@ -108,13 +108,16 @@ void APiece::PlayTimeline(int col, int row)
 	this->StartingPosition = this->GetActorLocation();
 	this->col = col;
 	this->row = row;
-
-	MyTimeline.PlayFromStart();
+	
+	if (HasAuthority())
+	{
+		MyTimeline.PlayFromStart();
+	}
 }
 
 void APiece::ChangeColor(FLinearColor color)
 {
-	if (GIsServer)
+	if (HasAuthority())
 	{
 		ExecuteChangeColor(color);
 	}

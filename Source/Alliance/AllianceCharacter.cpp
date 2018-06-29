@@ -28,7 +28,7 @@ LaunchHeight{ 1.f }, Combo{ 0 }, b_IsDead{ false }, InMinigame{ false }, b_IAmSe
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 
-	AutoPossessPlayer = EAutoReceiveInput::Player0;
+	//AutoPossessPlayer = EAutoReceiveInput::Disabled;
 
 	// Character replication stuff
 	bReplicates = true;

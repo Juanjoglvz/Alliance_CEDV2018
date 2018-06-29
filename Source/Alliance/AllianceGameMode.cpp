@@ -61,8 +61,8 @@ void AAllianceGameMode::RespawnSecondPlayer_Implementation(APlayerController * S
 
 	if (SecondPlayer->GetPawn()) // Player is in the world
 	{
+		UE_LOG(LogTemp, Error, TEXT("Second Player Destroyed: %s"), *SecondPlayer->GetPawn()->GetName());
 		SecondPlayer->GetPawn()->Destroy();
-		UE_LOG(LogTemp, Error, TEXT("Second Player Destroyed"));
 	}
 
 	FoundCharacters.Empty();
@@ -77,12 +77,11 @@ void AAllianceGameMode::RespawnSecondPlayer_Implementation(APlayerController * S
 		AAllianceCharacter* MainCharacter = Cast<AAllianceCharacter>(FoundCharacters[0]);
 
 		FVector NewPosition = MainCharacter->GetActorLocation();
-		NewPosition.Y -= 1000;
-		NewPosition.X -= 1000;
+		NewPosition.Y += 500;
+		//NewPosition.X -= 1000;
 
 		FActorSpawnParameters SpawnInfo; 
 		SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		//AAllianceCharacter* SpawnedCharacter = GetWorld()->SpawnActor<AAllianceCharacter>(NewPosition, MainCharacter->GetActorRotation(), SpawnInfo);
 		AAllianceCharacter* SpawnedCharacter = GetWorld()->SpawnActor<AAllianceCharacter>(FirstCharacter, NewPosition, MainCharacter->GetActorRotation(), SpawnInfo);
 
 		SecondPlayer->Possess(SpawnedCharacter);

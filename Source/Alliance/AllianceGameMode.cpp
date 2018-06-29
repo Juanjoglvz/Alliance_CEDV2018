@@ -14,7 +14,12 @@ AAllianceGameMode::AAllianceGameMode()
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
 
-	//PlayerControllerClass = AAlliancePlayerController::StaticClass();
+	PlayerControllerClass = AAlliancePlayerController::StaticClass();
+
+	static ConstructorHelpers::FObjectFinder<UBlueprint> CharBlueprint(TEXT("Blueprint'/Game/ThirdPersonCPP/Blueprints/ThirdPersonCharacter2.ThirdPersonCharacter2'"));
+	if (CharBlueprint.Object) {
+		FirstCharacter = (UClass*)CharBlueprint.Object->GeneratedClass;
+	}
 }
 
 void AAllianceGameMode::PostLogin(APlayerController * NewPlayer)
@@ -25,13 +30,14 @@ void AAllianceGameMode::PostLogin(APlayerController * NewPlayer)
 		UE_LOG(LogTemp, Error, TEXT("Server: Post Login   Controller: %p"), NewPlayer);
 		if (NewPlayer)
 		{
-			AAlliancePlayerController* PController = Cast<AAlliancePlayerController>(NewPlayer);
+			/*AAlliancePlayerController* PController = Cast<AAlliancePlayerController>(NewPlayer);
 
 			if (PController)
 			{
 				PController->OnClientLogin();
 				UE_LOG(LogTemp, Error, TEXT("Called onclientlogin from game mode"));
-			}
+			}*/
+			RespawnSecondPlayer_Implementation(NewPlayer);
 		}
 	}
 	else
@@ -43,17 +49,30 @@ void AAllianceGameMode::PostLogin(APlayerController * NewPlayer)
 void AAllianceGameMode::RespawnSecondPlayer_Implementation(APlayerController * SecondPlayer)
 {
 	UE_LOG(LogTemp, Error, TEXT("Respawnsecondplayer called"));
-	if (SecondPlayer->GetPawn()) // Player is in the world
-		SecondPlayer->GetPawn()->Destroy();
 
 	TArray<AActor*> FoundCharacters;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AAllianceCharacter::StaticClass(), FoundCharacters);
+	
+	if (FoundCharacters.Num() <= 1)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Not enough player characters"));
+		return;
+	}
+
+	if (SecondPlayer->GetPawn()) // Player is in the world
+	{
+		SecondPlayer->GetPawn()->Destroy();
+		UE_LOG(LogTemp, Error, TEXT("Second Player Destroyed"));
+	}
+
+	FoundCharacters.Empty();
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AAllianceCharacter::StaticClass(), FoundCharacters);
 
 	if (FoundCharacters.Num() == 0)
 	{
-		UE_LOG(LogTemp, Error, TEXT("Guat"));
+		UE_LOG(LogTemp, Error, TEXT("No found characters"));
 	}
-	else if (FoundCharacters.Num() == 1)
+	else if (FoundCharacters.Num() == 1 && FirstCharacter)
 	{
 		AAllianceCharacter* MainCharacter = Cast<AAllianceCharacter>(FoundCharacters[0]);
 
@@ -63,12 +82,13 @@ void AAllianceGameMode::RespawnSecondPlayer_Implementation(APlayerController * S
 
 		FActorSpawnParameters SpawnInfo; 
 		SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		AAllianceCharacter* SpawnedCharacter = GetWorld()->SpawnActor<AAllianceCharacter>(NewPosition, MainCharacter->GetActorRotation(), SpawnInfo);
+		//AAllianceCharacter* SpawnedCharacter = GetWorld()->SpawnActor<AAllianceCharacter>(NewPosition, MainCharacter->GetActorRotation(), SpawnInfo);
+		AAllianceCharacter* SpawnedCharacter = GetWorld()->SpawnActor<AAllianceCharacter>(FirstCharacter, NewPosition, MainCharacter->GetActorRotation(), SpawnInfo);
 
 		SecondPlayer->Possess(SpawnedCharacter);
 	}
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("Qicess"));
+		UE_LOG(LogTemp, Error, TEXT("A lot of characters found"));
 	}
 }

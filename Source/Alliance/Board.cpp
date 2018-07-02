@@ -154,7 +154,6 @@ void ABoard::MovePieceToRowAndColumn(int row, int column)
 		}
 
 		// Move the Piece in the world
-		// piece->PlayTimeline(column, row);
 		OnMovePiece.Broadcast(column, row, CurrentFocus);
 
 		// Update the Piece's position

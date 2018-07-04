@@ -3,15 +3,18 @@
 #include "AllianceCharacter.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Camera/CameraComponent.h"
+#include "Enemy.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
+#include "DrawDebugHelpers.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 
 
-AAllianceCharacter::AAllianceCharacter() : IsRunning{ false }, JumpAttacking{ false }, IsAttacking{ false }, ChainAttack{ false },
-Sprint{ 1200.f }, LaunchForce{ 1.f }, LaunchHeight{ 1.f }, Combo{ 0 }, Health{ 100.f }, Stamina{ 100.f }, b_IsDead{ false }, InMinigame{ false }, b_IAmServer { false }
+AAllianceCharacter::AAllianceCharacter() : b_IsRunning{ false }, b_JumpAttacking{ false }, b_IsAttacking{ false }, b_ChainAttack{ false },
+b_IsBlocking{ false }, b_IsEvading{ false }, Sprint{ 1200.f }, LaunchForce{ 1.f }, LaunchHeight{ 1.f }, Combo{ 0 }, b_IsDead{ false }, 
+InMinigame{ false }, b_IAmServer { false }
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -83,10 +86,10 @@ void AAllianceCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(AAllianceCharacter, Health);
 	DOREPLIFETIME(AAllianceCharacter, Stamina);
 	DOREPLIFETIME(AAllianceCharacter, b_IsDead);
-	DOREPLIFETIME(AAllianceCharacter, IsRunning);
-	DOREPLIFETIME(AAllianceCharacter, JumpAttacking);
-	DOREPLIFETIME(AAllianceCharacter, IsAttacking);
-	DOREPLIFETIME(AAllianceCharacter, ChainAttack);
+	DOREPLIFETIME(AAllianceCharacter, b_IsRunning);
+	DOREPLIFETIME(AAllianceCharacter, b_JumpAttacking);
+	DOREPLIFETIME(AAllianceCharacter, b_IsAttacking);
+	DOREPLIFETIME(AAllianceCharacter, b_ChainAttack);
 	DOREPLIFETIME(AAllianceCharacter, LaunchForce);
 	DOREPLIFETIME(AAllianceCharacter, LaunchHeight);
 	DOREPLIFETIME(AAllianceCharacter, Combo);
@@ -155,7 +158,7 @@ void AAllianceCharacter::Interact()
 
 void AAllianceCharacter::MoveForward(float Value)
 {
-	if ((Controller != NULL) && (Value != 0.0f) && !IsAttacking && !JumpAttacking)
+	if ((Controller != NULL) && (Value != 0.0f) && !b_IsAttacking && !b_JumpAttacking)
 	{
 		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
@@ -169,12 +172,12 @@ void AAllianceCharacter::MoveForward(float Value)
 
 void AAllianceCharacter::MoveRight(float Value)
 {
-	if ( (Controller != NULL) && (Value != 0.0f) && !IsAttacking && !JumpAttacking)
+	if ((Controller != NULL) && (Value != 0.0f) && !b_IsAttacking && !b_JumpAttacking)
 	{
 		// find out which way is right
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
-	
+
 		// get right vector 
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		// add movement in that direction
@@ -185,9 +188,10 @@ void AAllianceCharacter::MoveRight(float Value)
 float AAllianceCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	
-	if (ActualDamage > 0.f)
+
+	if (ActualDamage > 0.f && !b_IsEvading)
 	{
+		ActualDamage *= DamageReduction;
 		Health -= ActualDamage;
 		if (Health <= 0)
 		{
@@ -202,6 +206,11 @@ float AAllianceCharacter::TakeDamage(float DamageAmount, struct FDamageEvent con
 		}
 	}
 	return ActualDamage;
+}
+
+void AAllianceCharacter::DoDmg(AActor* DamagedActor) const
+{
+	UGameplayStatics::ApplyDamage(DamagedActor, Primary_Attack_Dmg, nullptr, nullptr, nullptr);
 }
 
 void AAllianceCharacter::ExecuteWhenDead_Implementation()

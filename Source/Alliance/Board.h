@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "Core.h"
 #include "GameFramework/Actor.h"
 #include <vector>
 #include "Piece.h"
@@ -67,7 +67,7 @@ public:
 
 private:
 	// Board representation. If a cell is false, it hasn't a piece on it. Otherwise, the cell will be true.
-	std::vector<bool> Representation;
+	TBitArray<> Representation{ false, 0 };
 
 	// Setup player's input to move and select pieces in the board
 	UFUNCTION(BlueprintCallable)

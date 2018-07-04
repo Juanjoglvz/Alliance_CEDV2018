@@ -27,7 +27,7 @@ void ABoard::BeginPlay()
 	{
 		for (int j = 0; j < NumberOfRows; j++)
 		{
-			Representation.push_back(false);
+			Representation.Add(false);
 		}
 	}
 
@@ -219,7 +219,7 @@ void ABoard::ChangeFocusToPrevious()
 
 	// Change focus to a new piece
 	CurrentFocus = (CurrentFocus + 1) % Pieces.Num();
-
+	
 	// Set the selected material to new piece
 	OnChangePieceToSelected.Broadcast(CurrentFocus);
 }

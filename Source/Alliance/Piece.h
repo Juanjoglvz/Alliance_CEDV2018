@@ -45,7 +45,7 @@ public:
 		class UStaticMesh* PieceMesh;
 
 	// This variable stores the color of the piece. It is used to return the original color to the piece when it hasn't the focus
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		FLinearColor Color;
 
 	// Timeline properties and functions
@@ -68,6 +68,7 @@ public:
 	 * @param col A -1 value indicates move to the left. A +1 value indicates move to the right
 	 * @param row A -1 value indicates move down. A +1 value indicates move up
 	 */
+	UFUNCTION(BlueprintCallable)
 	void PlayTimeline(int col, int row);
 
 
@@ -83,7 +84,8 @@ public:
 	void ExecuteChangeColor_Implementation(FLinearColor NewColor);
 
 	// This method changes the color of a given piece in the board
-	void ChangeColor(FLinearColor color);
+	UFUNCTION(BlueprintCallable)
+	void ChangeColor(FLinearColor NewColor);
 
 	// Change pieces material in runtime
 	void SetMaterial(class UMaterialInstanceDynamic* NewMaterial);

@@ -39,21 +39,33 @@ public:
 	UPROPERTY(EditAnywhere)
 		int NumberOfColumns;
 	// Reference to all the pieces the board has
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		TArray<APiece*> Pieces;
 	// Location the player has to reach to win the game
 	UPROPERTY(EditAnywhere)
 		FVector2D WinnerBox;
-
+	// Index to indicate the piece which will move if the player makes a movement action
+	UPROPERTY(BlueprintReadOnly)
+	int CurrentFocus;
+	
 	// Delegate executed when the minigame has finished. 
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FGameFinished);
 	UPROPERTY(BlueprintAssignable, Category = "MiniGame")
 		FGameFinished OnMiniGameFinished;
 
-private:
-	// Index to indicate the piece which will move if the player makes a movement action
-	int CurrentFocus;
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FChangePieceToSelected, int, current_focus);
+	UPROPERTY(BlueprintAssignable, Category = "MiniGame")
+		FChangePieceToSelected OnChangePieceToSelected;
 
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FChangePieceToItsColor, int, current_focus);
+	UPROPERTY(BlueprintAssignable, Category = "MiniGame")
+		FChangePieceToItsColor OnChangePieceToItsColor;
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FMovePiece, int, column, int, row, int, current_focus);
+	UPROPERTY(BlueprintAssignable, Category = "Minigame")
+		FMovePiece OnMovePiece;
+
+private:
 	// Board representation. If a cell is false, it hasn't a piece on it. Otherwise, the cell will be true.
 	TBitArray<> Representation{ false, 0 };
 

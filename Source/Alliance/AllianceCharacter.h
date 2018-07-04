@@ -40,6 +40,16 @@ protected:
 	/** Called for side to side input */
 	void MoveRight(float Value);
 
+	// Called when player attacks
+	void PrimaryAttack();
+
+	// Called when player sprints
+	void StartSprint();
+	void StopSprint();
+
+	// Called when player interact to start the minigame
+	void Interact();
+
 	/** 
 	 * Called via input to turn at a given rate. 
 	 * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
@@ -91,9 +101,27 @@ public:
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = "Combat")
 		bool b_IsDead;
 
+
 	// Variables for controlling Damage
 	UPROPERTY(BlueprintReadWrite, Category = "Combat")
 		float Primary_Attack_Dmg;
+
+	UPROPERTY(BlueprintReadOnly)
+		bool b_IAmServer;
+
+	// Delegate executed when the player attacks
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAttackEvent);
+	UPROPERTY(BlueprintAssignable)
+		FOnAttackEvent OnAttackEvent;
+
+	// Delegate executed when the player starts the minigame
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FStartMinigame);
+	UPROPERTY(BlueprintAssignable)
+		FStartMinigame OnStartMinigame;
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMovePiece);
+	UPROPERTY(BlueprintAssignable, BlueprintReadWrite)
+		FMovePiece OnMovePiece;
 
 	// FUNCTIONS
 
@@ -122,6 +150,34 @@ public:
 	UFUNCTION(Reliable, NetMulticast)
 		void ExecuteWhenDead();
 	void ExecuteWhenDead_Implementation();
+
+	UFUNCTION(Reliable, Server, WithValidation)
+		void OnServerClientAttacking();
+	void OnServerClientAttacking_Implementation();
+	FORCEINLINE bool OnServerClientAttacking_Validate() { return true; }
+
+	UFUNCTION(Reliable, NetMulticast)
+		void StartSprinting();
+	void StartSprinting_Implementation();
+
+	UFUNCTION(Reliable, NetMulticast)
+		void StopSprinting();
+	void StopSprinting_Implementation();
+
+	UFUNCTION(Reliable, Server, WithValidation)
+		void OnServerClientStartSprinting();
+	void OnServerClientStartSprinting_Implementation();
+	FORCEINLINE bool OnServerClientStartSprinting_Validate() { return true; }
+
+	UFUNCTION(Reliable, Server, WithValidation)
+		void OnServerClientStopSprinting();
+	void OnServerClientStopSprinting_Implementation();
+	FORCEINLINE bool OnServerClientStopSprinting_Validate() { return true; }
+
+	UFUNCTION(Reliable, Server, WithValidation)
+		void OnServerStartMinigame();
+	void OnServerStartMinigame_Implementation();
+	FORCEINLINE bool OnServerStartMinigame_Validate() { return true; }
 
 private:
 

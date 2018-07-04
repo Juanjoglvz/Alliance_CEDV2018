@@ -154,7 +154,7 @@ void ABoard::MovePieceToRowAndColumn(int row, int column)
 		}
 
 		// Move the Piece in the world
-		piece->PlayTimeline(column, row);
+		OnMovePiece.Broadcast(column, row, CurrentFocus);
 
 		// Update the Piece's position
 		piece->columnPosition += column;
@@ -215,19 +215,19 @@ bool ABoard::IsVictory()
 void ABoard::ChangeFocusToPrevious()
 {
 	// Set current piece its material
-	Pieces[CurrentFocus]->ChangeColor(Pieces[CurrentFocus]->Color);
-	
+	OnChangePieceToItsColor.Broadcast(CurrentFocus);
+
 	// Change focus to a new piece
 	CurrentFocus = (CurrentFocus + 1) % Pieces.Num();
 	
 	// Set the selected material to new piece
-	Pieces[CurrentFocus]->ChangeColor(FLinearColor(1.f, 0.f, 0.6171f, 1.f));
+	OnChangePieceToSelected.Broadcast(CurrentFocus);
 }
 	
 void ABoard::ChangeFocusToNext()
 {
 	// Set current piece its material
-	Pieces[CurrentFocus]->ChangeColor(Pieces[CurrentFocus]->Color);
+	OnChangePieceToItsColor.Broadcast(CurrentFocus);
 
 	// Change focus to a new piece
 	if (CurrentFocus - 1 < 0)
@@ -240,5 +240,5 @@ void ABoard::ChangeFocusToNext()
 	}
 
 	// Set the selected material to new piece
-	Pieces[CurrentFocus]->ChangeColor(FLinearColor(1.f, 0.f, 0.6171f, 1.f));
+	OnChangePieceToSelected.Broadcast(CurrentFocus);
 }

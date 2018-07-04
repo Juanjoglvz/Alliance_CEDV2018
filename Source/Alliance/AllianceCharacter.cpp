@@ -231,7 +231,7 @@ void AAllianceCharacter::StartSprinting_Implementation()
 	if (!InMinigame)
 	{
 		GetCharacterMovement()->MaxWalkSpeed += Sprint;
-		IsRunning = true;
+		b_IsRunning = true;
 	}
 }
 
@@ -240,7 +240,7 @@ void AAllianceCharacter::StopSprinting_Implementation()
 	if (!InMinigame)
 	{
 		GetCharacterMovement()->MaxWalkSpeed = 1200.f;
-		IsRunning = false;
+		b_IsRunning = false;
 	}
 }
 

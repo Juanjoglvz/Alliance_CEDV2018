@@ -11,7 +11,7 @@
 
 
 AAllianceCharacter::AAllianceCharacter() : IsRunning{ false }, JumpAttacking{ false }, IsAttacking{ false }, ChainAttack{ false },
-Sprint{ 1200.f }, LaunchForce{ 1.f }, LaunchHeight{ 1.f }, Combo{ 0 }, Health{ 100.f }, Stamina{ 100.f }, b_IsDead{ false }, InMinigame{ false }
+Sprint{ 1200.f }, LaunchForce{ 1.f }, LaunchHeight{ 1.f }, Combo{ 0 }, Health{ 100.f }, Stamina{ 100.f }, b_IsDead{ false }, InMinigame{ false }, b_IAmServer { false }
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -147,13 +147,9 @@ void AAllianceCharacter::Interact()
 {
 	if (HasAuthority())
 	{
-		OnStartMinigame.Broadcast();
+		b_IAmServer = true;
 	}
-	else
-	{
-		// Client notifies server to start the minigame
-		OnServerStartMinigame();
-	}
+	OnStartMinigame.Broadcast();
 }
 
 

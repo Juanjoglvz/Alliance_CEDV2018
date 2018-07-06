@@ -14,8 +14,11 @@ AGrenade::AGrenade() : Dmg{ 50 }, Timer{ 4.f }
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("Static Mesh");
 	RootComponent = StaticMeshComponent;
 	
-	PMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("Projectile Movement Component");
+	PMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("Projectile Movement");
 
+	PSystemComponent = CreateDefaultSubobject<UParticleSystemComponent>("Particle System");
+
+	// Load assets
 	auto StaticMeshAsset = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("StaticMesh'/Game/ThirdPersonCPP/Meshes/Morten_Grenade.Morten_Grenade'"));
 
 	if (StaticMeshAsset.Succeeded())
@@ -23,12 +26,19 @@ AGrenade::AGrenade() : Dmg{ 50 }, Timer{ 4.f }
 		StaticMeshComponent->SetStaticMesh(StaticMeshAsset.Object);
 	}
 
+	auto PSystemAsset = ConstructorHelpers::FObjectFinder<UParticleSystem>(TEXT("ParticleSystem'/Game/ThirdPersonCPP/Meshes/FX/P_GrenadeDirt.P_GrenadeDirt'"));
+
+	if (PSystemAsset.Succeeded())
+	{
+		PSystemComponent->SetTemplate(PSystemAsset.Object);
+	}
+
 	// Set properties for components
 	StaticMeshComponent->SetSimulatePhysics(true);
-	PMovementComponent->InitialSpeed = 1000.f;
-	PMovementComponent->bShouldBounce = true;
-	PMovementComponent->Bounciness = 0.1f;
-	PMovementComponent->Friction = 0.9f;
+	PMovementComponent->InitialSpeed = 750.f;
+	PMovementComponent->bShouldBounce = false;
+	PMovementComponent->Bounciness = 0.02f;
+	PMovementComponent->Friction = 1.f;
 
 }
 
@@ -62,6 +72,9 @@ void AGrenade::Explode()
 
 	// Deal Damage
 	UGameplayStatics::ApplyRadialDamageWithFalloff(GetWorld(), Dmg, Dmg / 5, GetActorLocation(), 300.f, 500.f, 1.f, nullptr, IgnoredActors, this, nullptr);
+
+	// Spawn Emitter and make sound
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), PSystemComponent->Template, GetActorTransform());
 
 	// Destroy Actor
 	this->Destroy();

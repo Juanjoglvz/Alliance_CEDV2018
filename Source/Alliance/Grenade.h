@@ -24,6 +24,8 @@ protected:
 		UStaticMeshComponent* StaticMeshComponent;
 	UPROPERTY()
 		UProjectileMovementComponent* PMovementComponent;
+	UPROPERTY()
+		UParticleSystemComponent* PSystemComponent;
 
 public:	
 	// Called every frame

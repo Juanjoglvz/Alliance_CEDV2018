@@ -12,7 +12,7 @@
 #include "GameFramework/SpringArmComponent.h"
 
 
-AAllianceCharacter::AAllianceCharacter() : b_IsRunning{ false }, b_JumpAttacking{ false }, b_IsAttacking{ false }, b_ChainAttack{ false },
+AAllianceCharacter::AAllianceCharacter() : b_IsRunning{ false }, b_JumpAttacking{ false }, b_IsAttacking{ false }, b_SpecialAttacking{ false }, b_ChainAttack{ false },
 b_IsBlocking{ false }, b_IsEvading{ false }, Sprint{ 1200.f }, LaunchForce{ 1.f }, LaunchHeight{ 1.f }, Combo{ 0 }, b_IsDead{ false }, 
 InMinigame{ false }, b_IAmServer { false }
 {
@@ -158,7 +158,7 @@ void AAllianceCharacter::Interact()
 
 void AAllianceCharacter::MoveForward(float Value)
 {
-	if ((Controller != NULL) && (Value != 0.0f) && !b_IsAttacking && !b_JumpAttacking)
+	if ((Controller != NULL) && (Value != 0.0f) && !b_IsAttacking && !b_JumpAttacking && !b_SpecialAttacking)
 	{
 		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
@@ -172,7 +172,7 @@ void AAllianceCharacter::MoveForward(float Value)
 
 void AAllianceCharacter::MoveRight(float Value)
 {
-	if ((Controller != NULL) && (Value != 0.0f) && !b_IsAttacking && !b_JumpAttacking)
+	if ((Controller != NULL) && (Value != 0.0f) && !b_IsAttacking && !b_JumpAttacking && !b_SpecialAttacking)
 	{
 		// find out which way is right
 		const FRotator Rotation = Controller->GetControlRotation();
@@ -208,9 +208,9 @@ float AAllianceCharacter::TakeDamage(float DamageAmount, struct FDamageEvent con
 	return ActualDamage;
 }
 
-void AAllianceCharacter::DoDmg(AActor* DamagedActor) const
+void AAllianceCharacter::DoDmg(AActor* DamagedActor, float Dmg) const
 {
-	UGameplayStatics::ApplyDamage(DamagedActor, Primary_Attack_Dmg, nullptr, nullptr, nullptr);
+	UGameplayStatics::ApplyDamage(DamagedActor, Dmg, nullptr, nullptr, nullptr);
 }
 
 void AAllianceCharacter::ExecuteWhenDead_Implementation()

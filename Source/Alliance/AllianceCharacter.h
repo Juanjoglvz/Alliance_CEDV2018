@@ -74,6 +74,8 @@ public:
 		bool b_JumpAttacking;
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = MyCharacter)
 		bool b_IsAttacking;
+    UPROPERTY(Replicated, BlueprintReadWrite, Category = MyCharacter)
+        bool b_SpecialAttacking;
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = MyCharacter)
 		bool b_ChainAttack;
 	UPROPERTY(BlueprintReadWrite, Category = MyCharacter)
@@ -144,7 +146,7 @@ public:
 
 	// This function applies damage other actor
 	UFUNCTION(BlueprintCallable, Category = "Combat")
-		void DoDmg(AActor* DamagedActor) const;
+		void DoDmg(AActor* DamagedActor, float Dmg) const;
 	
 	// RPC function called when the player dies
 	UFUNCTION(Reliable, NetMulticast)

@@ -146,6 +146,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Combat")
 		void DoDmg(AActor* DamagedActor) const;
 	
+	// These functions are used to increase player's health and stamina when the player obtains a pickup
+	FORCEINLINE void IncreaseHealth(float increase) { UE_LOG(LogTemp, Warning, TEXT("Increasing Health")); Health += increase; }
+	FORCEINLINE void IncreaseStamina(float increase) { UE_LOG(LogTemp, Warning, TEXT("Increasing Stamina")); Stamina += increase; }
+
 	// RPC function called when the player dies
 	UFUNCTION(Reliable, NetMulticast)
 		void ExecuteWhenDead();

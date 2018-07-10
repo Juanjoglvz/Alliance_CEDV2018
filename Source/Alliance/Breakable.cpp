@@ -17,22 +17,23 @@ ABreakable::ABreakable() : Super(), b_IsBroken{ false }
 	StaticMeshComponent->SetMobility(EComponentMobility::Movable);
 	StaticMeshComponent->SetSimulatePhysics(false);
 	StaticMeshComponent->SetIsReplicated(true);
-	//StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	StaticMeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 	
 	// Create collision component
 	auto BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
 	
-	BoxCollision->SetupAttachment(RootComponent);
 	BoxCollision->bGenerateOverlapEvents = true;
+	BoxCollision->SetWorldScale3D(FVector(4.f, 4.f, 4.f));
 	BoxCollision->SetCollisionResponseToChannel(ECollisionChannel::ECC_Destructible, ECollisionResponse::ECR_Overlap);
 	BoxCollision->AttachToComponent(StaticMeshComponent, FAttachmentTransformRules::KeepRelativeTransform);
 	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &ABreakable::OnAlyssaHit);
 
 	// Set pickup meshes
-	static ConstructorHelpers::FObjectFinder<UStaticMesh>MeshAsset(TEXT("StaticMesh'/Game/ThirdPersonCPP/Meshes/Morten_Grenade.Morten_Grenade'"));
-	Health_Asset = MeshAsset.Object;
-	Stamina_Asset = MeshAsset.Object;
+	static ConstructorHelpers::FObjectFinder<UStaticMesh>MeshAssetHealth(TEXT("StaticMesh'/Game/ThirdPersonCPP/Meshes/HealthPickup/heart_pickup_Sphere.heart_pickup_Sphere'"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh>MeshAssetStamina(TEXT("StaticMesh'/Game/ThirdPersonCPP/Meshes/StaminaPickup/StarPickup.StarPickup'"));
+
+	Health_Asset  = MeshAssetHealth.Object;
+	Stamina_Asset = MeshAssetStamina.Object;
 
 	OnMortenHitDelegate.AddDynamic(this, &ABreakable::OnMortenHit);
 }
@@ -47,12 +48,12 @@ void ABreakable::BeginPlay()
 	}
 }
 
-void ABreakable::ExecuteOnMortenHitDelegate()
+void ABreakable::ExecuteOnMortenHitDelegate(AAllianceCharacter* Morten)
 {
-	OnMortenHitDelegate.Broadcast();
+	OnMortenHitDelegate.Broadcast(Morten);
 }
 
-void ABreakable::RandomDrop()
+void ABreakable::RandomDrop(AAllianceCharacter* Character)
 {
 	int Probability = FMath::RandRange(0, 10);
 
@@ -60,10 +61,35 @@ void ABreakable::RandomDrop()
 	if (Probability > -1)
 	{
 		FActorSpawnParameters SpawnInfo;
-		APickup* Pickup = GetWorld()->SpawnActor<APickup>(GetActorLocation(), GetActorRotation(), SpawnInfo);
-		
-		Pickup->SetStaticMeshAsset(Stamina_Asset);
-		Pickup->SetPickupType(EPickup::Stamina_Pickup);
+		SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		APickup* Pickup = GetWorld()->SpawnActor<APickup>(	APickup::StaticClass(),
+															RootComponent->GetComponentLocation() + FVector(200.f, 200.f, 75.f),
+															FRotator(0.f, 0.f, 0.f), 
+															SpawnInfo);
+
+		// If health is less than a half, spawns always health pickup
+		if (Pickup != nullptr)
+		{
+			if (Character->Health < 50.f)
+			{
+				Pickup->SetStaticMeshAsset(Health_Asset);
+				Pickup->SetPickupType(EPickup::Health_Pickup);
+			}
+			// Otherwise, make a random choice between health and stamina
+			else
+			{
+				if (FMath::RandRange(0, 10) > 6)
+				{
+					Pickup->SetStaticMeshAsset(Stamina_Asset);
+					Pickup->SetPickupType(EPickup::Stamina_Pickup);
+				}
+				else
+				{
+					Pickup->SetStaticMeshAsset(Health_Asset);
+					Pickup->SetPickupType(EPickup::Health_Pickup);
+				}
+			}
+		}
 	}
 }
 
@@ -78,18 +104,18 @@ void ABreakable::OnAlyssaHit(UPrimitiveComponent* OverlappedComp, AActor* OtherA
 			{
 				StaticMeshComponent->SetStaticMesh(BreakableMesh_broken);
 				b_IsBroken = true;
-				RandomDrop();
+				RandomDrop(Alyssa);
 			}
 		}
 	}
 }
 
-void ABreakable::OnMortenHit()
+void ABreakable::OnMortenHit(AAllianceCharacter* Morten)
 {
-	if (BreakableMesh_broken && !b_IsBroken)
+	if (BreakableMesh_broken && !b_IsBroken && Morten)
 	{
 		StaticMeshComponent->SetStaticMesh(BreakableMesh_broken);
 		b_IsBroken = true;
-		RandomDrop();
+		RandomDrop(Morten);
 	}
 }

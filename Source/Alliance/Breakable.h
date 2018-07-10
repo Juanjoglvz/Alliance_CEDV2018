@@ -23,12 +23,12 @@ public:
 		UStaticMeshComponent* StaticMeshComponent;
 
 	// Delegate executed when the breakable is hit by Morten
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnMortenHit);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMortenHit, class AAllianceCharacter*, Morten);
 	UPROPERTY(BlueprintReadWrite)
 		FOnMortenHit OnMortenHitDelegate;
 
 	UFUNCTION(BlueprintCallable)
-		void ExecuteOnMortenHitDelegate();
+		void ExecuteOnMortenHitDelegate(class AAllianceCharacter* Morten);
 
 	ABreakable();
 	
@@ -40,9 +40,9 @@ protected:
 
 private:
 	UFUNCTION()
-		void OnMortenHit();
+		void OnMortenHit(class AAllianceCharacter* Morten);
 
-	void RandomDrop();
+	void RandomDrop(AAllianceCharacter* Character);
 	class UStaticMesh* Health_Asset;
 	class UStaticMesh* Stamina_Asset;
 

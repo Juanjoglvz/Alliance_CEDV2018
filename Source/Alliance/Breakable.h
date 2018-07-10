@@ -30,21 +30,35 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void ExecuteOnMortenHitDelegate(class AAllianceCharacter* Morten);
 
+	virtual void Tick(float DeltaSeconds) override;
+
 	ABreakable();
 	
 protected:
 	virtual void BeginPlay() override;
 	
 	UFUNCTION()
-	void OnAlyssaHit(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	void OnAlyssaBeginOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	UFUNCTION()
+		void OnAlyssaEndOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 private:
 	UFUNCTION()
 		void OnMortenHit(class AAllianceCharacter* Morten);
 
 	void RandomDrop(AAllianceCharacter* Character);
-	class UStaticMesh* Health_Asset;
-	class UStaticMesh* Stamina_Asset;
+	
+	// Pickup assets
+	UPROPERTY()
+		class UStaticMesh* Health_Asset;
+	UPROPERTY()
+		class UStaticMesh* Stamina_Asset;
+
+	// Overlaping character reference
+	UPROPERTY()
+		class AAllianceCharacter* OverlapingCharacter;
 
 	bool b_IsBroken;
+	bool b_Overlaping;
+
 };

@@ -5,10 +5,10 @@
 #include "Pickup.h"
 #include "Engine.h"
 
-ABreakable::ABreakable() : Super(), b_IsBroken{ false }
+ABreakable::ABreakable() : Super(), b_IsBroken{ false }, b_Overlaping{ false }, OverlapingCharacter { nullptr }
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
 
 	// Create static mesh component
@@ -26,7 +26,8 @@ ABreakable::ABreakable() : Super(), b_IsBroken{ false }
 	BoxCollision->SetWorldScale3D(FVector(4.f, 4.f, 4.f));
 	BoxCollision->SetCollisionResponseToChannel(ECollisionChannel::ECC_Destructible, ECollisionResponse::ECR_Overlap);
 	BoxCollision->AttachToComponent(StaticMeshComponent, FAttachmentTransformRules::KeepRelativeTransform);
-	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &ABreakable::OnAlyssaHit);
+	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &ABreakable::OnAlyssaBeginOverlap);
+	BoxCollision->OnComponentEndOverlap.AddDynamic(this, &ABreakable::OnAlyssaEndOverlap);
 
 	// Set pickup meshes
 	static ConstructorHelpers::FObjectFinder<UStaticMesh>MeshAssetHealth(TEXT("StaticMesh'/Game/ThirdPersonCPP/Meshes/HealthPickup/heart_pickup_Sphere.heart_pickup_Sphere'"));
@@ -45,6 +46,21 @@ void ABreakable::BeginPlay()
 	if (BreakableMesh)
 	{
 		StaticMeshComponent->SetStaticMesh(BreakableMesh);
+	}
+}
+
+void ABreakable::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	if (b_Overlaping && !b_IsBroken && OverlapingCharacter != nullptr)
+	{
+		if ((OverlapingCharacter->b_IsAttacking || OverlapingCharacter->b_JumpAttacking) && BreakableMesh_broken)
+		{
+			StaticMeshComponent->SetStaticMesh(BreakableMesh_broken);
+			b_IsBroken = true;
+			RandomDrop(OverlapingCharacter);
+		}
 	}
 }
 
@@ -93,22 +109,25 @@ void ABreakable::RandomDrop(AAllianceCharacter* Character)
 	}
 }
 
-void ABreakable::OnAlyssaHit(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ABreakable::OnAlyssaBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (OtherActor && OtherActor->GetClass()->IsChildOf(AAllianceCharacter::StaticClass()))
 	{
 		AAllianceCharacter* Alyssa = Cast<AAllianceCharacter>(OtherActor);
 		if (Alyssa)
 		{
-			if ((Alyssa->b_IsAttacking || Alyssa->b_JumpAttacking) && BreakableMesh_broken && !b_IsBroken)
-			{
-				StaticMeshComponent->SetStaticMesh(BreakableMesh_broken);
-				b_IsBroken = true;
-				RandomDrop(Alyssa);
-			}
+			b_Overlaping = true;
+			OverlapingCharacter = Alyssa;
 		}
 	}
 }
+
+void ABreakable::OnAlyssaEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	b_Overlaping = false;
+	OverlapingCharacter = nullptr;
+}
+
 
 void ABreakable::OnMortenHit(AAllianceCharacter* Morten)
 {

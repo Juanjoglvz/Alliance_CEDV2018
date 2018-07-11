@@ -5,7 +5,7 @@
 
 
 // Sets default values
-AFireball::AFireball() : TTL{ 4.f }, LivingTime{ 0.f }
+AFireball::AFireball() : TTL{ 6.f }, LivingTime{ 0.f }
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -27,7 +27,7 @@ AFireball::AFireball() : TTL{ 4.f }, LivingTime{ 0.f }
 	// Set properties for components
 	StaticMeshComponent->SetSimulatePhysics(true);
 	StaticMeshComponent->SetEnableGravity(false);
-	PMovementComponent->InitialSpeed = 400.f;
+	PMovementComponent->InitialSpeed = 600.f;
 	StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	StaticMeshComponent->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
 	StaticMeshComponent->SetNotifyRigidBodyCollision(true);

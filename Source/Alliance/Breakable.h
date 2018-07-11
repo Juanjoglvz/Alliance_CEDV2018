@@ -21,6 +21,10 @@ public:
 		class UStaticMesh* BreakableMesh_broken;
 	UPROPERTY(BlueprintReadWrite)
 		UStaticMeshComponent* StaticMeshComponent;
+	UPROPERTY(Replicated)
+		bool b_IsBroken;
+	UPROPERTY(Replicated)
+		bool b_Overlaping;
 
 	// Delegate executed when the breakable is hit by Morten
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMortenHit, class AAllianceCharacter*, Morten);
@@ -29,6 +33,17 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		void ExecuteOnMortenHitDelegate(class AAllianceCharacter* Morten);
+
+	// Functions to replicate over the network the actor is broken
+	UFUNCTION(Reliable, Server, WithValidation)
+		void OnServerIsBroken();
+	void OnServerIsBroken_Implementation();
+	FORCEINLINE bool OnServerIsBroken_Validate() { return true; }
+
+	UFUNCTION(Reliable, NetMulticast)
+		void ExecuteWhenBroken();
+	void ExecuteWhenBroken_Implementation();
+	void BreakableIsBroken();
 
 	virtual void Tick(float DeltaSeconds) override;
 
@@ -57,8 +72,5 @@ private:
 	// Overlaping character reference
 	UPROPERTY()
 		class AAllianceCharacter* OverlapingCharacter;
-
-	bool b_IsBroken;
-	bool b_Overlaping;
 
 };

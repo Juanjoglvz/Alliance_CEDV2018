@@ -9,6 +9,8 @@ ABreakable::ABreakable() : Super(), b_IsBroken{ false }, b_Overlaping{ false }, 
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	bReplicates = true;
+
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
 
 	// Create static mesh component
@@ -47,6 +49,19 @@ void ABreakable::BeginPlay()
 	{
 		StaticMeshComponent->SetStaticMesh(BreakableMesh);
 	}
+
+	// These lines of code are necessary to avoid the following warning:
+	// Warning: UIpNetDriver::ProcessRemoteFunction: No owning connection for actor XXX. Function OnServerIsBroken will not be processed.
+	Instigator = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+	SetOwner(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+}
+
+void ABreakable::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ABreakable, b_IsBroken);
+	DOREPLIFETIME(ABreakable, b_Overlaping);
 }
 
 void ABreakable::Tick(float DeltaSeconds)
@@ -57,8 +72,7 @@ void ABreakable::Tick(float DeltaSeconds)
 	{
 		if ((OverlapingCharacter->b_IsAttacking || OverlapingCharacter->b_JumpAttacking) && BreakableMesh_broken)
 		{
-			StaticMeshComponent->SetStaticMesh(BreakableMesh_broken);
-			b_IsBroken = true;
+			BreakableIsBroken();
 			RandomDrop(OverlapingCharacter);
 		}
 	}
@@ -133,8 +147,35 @@ void ABreakable::OnMortenHit(AAllianceCharacter* Morten)
 {
 	if (BreakableMesh_broken && !b_IsBroken && Morten)
 	{
-		StaticMeshComponent->SetStaticMesh(BreakableMesh_broken);
-		b_IsBroken = true;
-		RandomDrop(Morten);
+		BreakableIsBroken();
+		RandomDrop(OverlapingCharacter);
+	}
+}
+
+void ABreakable::BreakableIsBroken()
+{
+	if (HasAuthority())
+	{
+		ExecuteWhenBroken();
+	}
+	else
+	{
+		OnServerIsBroken();
+	}
+}
+
+// [MULTICAST] Server -> Clients
+void ABreakable::ExecuteWhenBroken_Implementation()
+{
+	StaticMeshComponent->SetStaticMesh(BreakableMesh_broken);
+	b_IsBroken = true;
+}
+
+// [SERVER] Only Server
+void ABreakable::OnServerIsBroken_Implementation()
+{
+	if (HasAuthority())
+	{
+		ExecuteWhenBroken();
 	}
 }

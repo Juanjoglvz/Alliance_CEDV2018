@@ -10,6 +10,7 @@ APickup::APickup()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
+	bReplicates = true;
 
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
 
@@ -17,6 +18,7 @@ APickup::APickup()
 	StaticMeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 	StaticMeshComponent->SetMobility(EComponentMobility::Movable);
 	StaticMeshComponent->SetSimulatePhysics(false);
+	StaticMeshComponent->SetIsReplicated(true);
 
 	auto BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
 
@@ -26,7 +28,20 @@ APickup::APickup()
 	BoxCollision->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
 	BoxCollision->AttachToComponent(StaticMeshComponent, FAttachmentTransformRules::KeepRelativeTransform);
 	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &APickup::OnOverlap);
-	
+
+	// Pickup sound
+	static ConstructorHelpers::FObjectFinder<USoundCue> soundCue(TEXT("SoundCue'/Game/ThirdPersonCPP/Sounds/PickupSound_Cue.PickupSound_Cue'"));
+	USoundCue* pickupAudioCue = soundCue.Object;
+
+	pickupAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
+	pickupAudioComponent->bAutoActivate = false;
+	pickupAudioComponent->bStopWhenOwnerDestroyed = false;
+	pickupAudioComponent->AttachTo(RootComponent);
+
+	if (pickupAudioCue->IsValidLowLevelFast()) {
+		pickupAudioComponent->SetSound(pickupAudioCue);
+	}
+
 	// By default will be health pickup
 	pickupType = EPickup::Health_Pickup;
 }
@@ -35,7 +50,18 @@ APickup::APickup()
 void APickup::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	// These lines of code are necessary to avoid the following warning:
+	// Warning: UIpNetDriver::ProcessRemoteFunction: No owning connection for actor XXX. Function OnServerIsBroken will not be processed.
+	Instigator = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+	SetOwner(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+}
+
+void APickup::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(APickup, pickupType);
 }
 
 void APickup::SetStaticMeshAsset(UStaticMesh* StaticMeshAsset)
@@ -61,11 +87,40 @@ void APickup::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 			{
 				Character->IncreaseStamina(25.f);
 			}
+			//BreakableIsBroken();
+			pickupAudioComponent->Play();
 			this->Destroy();
 		}
 	}
 }
 
+void APickup::BreakableIsBroken()
+{
+	if (HasAuthority())
+	{
+		ExecuteWhenBroken();
+	}
+	else
+	{
+		OnServerIsBroken();
+	}
+}
+
+// [MULTICAST] Server -> Clients
+void APickup::ExecuteWhenBroken_Implementation()
+{
+	pickupAudioComponent->Play();
+	this->Destroy();
+}
+
+// [SERVER] Only Server
+void APickup::OnServerIsBroken_Implementation()
+{
+	if (HasAuthority())
+	{
+		ExecuteWhenBroken();
+	}
+}
 
 
 

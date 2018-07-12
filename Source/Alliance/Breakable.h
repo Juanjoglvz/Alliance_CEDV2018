@@ -57,7 +57,10 @@ protected:
 
 	UFUNCTION()
 		void OnAlyssaEndOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
 private:
+	bool b_Success;
+
 	UFUNCTION()
 		void OnMortenHit(class AAllianceCharacter* Morten);
 
@@ -72,5 +75,9 @@ private:
 	// Overlaping character reference
 	UPROPERTY()
 		class AAllianceCharacter* OverlapingCharacter;
+
+	// Breakable sound when destroyed
+	UPROPERTY()
+		class UAudioComponent* breakableAudioComponent;
 
 };

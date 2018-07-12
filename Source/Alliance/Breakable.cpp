@@ -5,7 +5,7 @@
 #include "Pickup.h"
 #include "Engine.h"
 
-ABreakable::ABreakable() : Super(), b_IsBroken{ false }, b_Overlaping{ false }, OverlapingCharacter { nullptr }
+ABreakable::ABreakable() : Super(), b_IsBroken{ false }, b_Overlaping{ false }, OverlapingCharacter { nullptr }, b_Success{ false }
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -37,6 +37,19 @@ ABreakable::ABreakable() : Super(), b_IsBroken{ false }, b_Overlaping{ false }, 
 
 	Health_Asset  = MeshAssetHealth.Object;
 	Stamina_Asset = MeshAssetStamina.Object;
+
+	// Breakable sound
+	static ConstructorHelpers::FObjectFinder<USoundCue> soundCue(TEXT("SoundCue'/Game/ThirdPersonCPP/Sounds/BoxCrash_Cue.BoxCrash_Cue'"));
+	USoundCue* breakableAudioCue = soundCue.Object;
+
+	breakableAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
+	breakableAudioComponent->bAutoActivate = false;
+	breakableAudioComponent->bStopWhenOwnerDestroyed = false;
+	breakableAudioComponent->AttachTo(RootComponent);
+
+	if (breakableAudioCue->IsValidLowLevelFast()) {
+		breakableAudioComponent->SetSound(breakableAudioCue);
+	}
 
 	OnMortenHitDelegate.AddDynamic(this, &ABreakable::OnMortenHit);
 }
@@ -73,7 +86,10 @@ void ABreakable::Tick(float DeltaSeconds)
 		if ((OverlapingCharacter->b_IsAttacking || OverlapingCharacter->b_JumpAttacking) && BreakableMesh_broken)
 		{
 			BreakableIsBroken();
-			RandomDrop(OverlapingCharacter);
+			if (b_Success)
+			{
+				RandomDrop(OverlapingCharacter);
+			}
 		}
 	}
 }
@@ -148,7 +164,11 @@ void ABreakable::OnMortenHit(AAllianceCharacter* Morten)
 	if (BreakableMesh_broken && !b_IsBroken && Morten)
 	{
 		BreakableIsBroken();
-		RandomDrop(OverlapingCharacter);
+		if (b_Success)
+		{
+			RandomDrop(OverlapingCharacter);
+			breakableAudioComponent->Play();
+		}
 	}
 }
 
@@ -168,7 +188,9 @@ void ABreakable::BreakableIsBroken()
 void ABreakable::ExecuteWhenBroken_Implementation()
 {
 	StaticMeshComponent->SetStaticMesh(BreakableMesh_broken);
+	breakableAudioComponent->Play();
 	b_IsBroken = true;
+	b_Success = true;
 }
 
 // [SERVER] Only Server

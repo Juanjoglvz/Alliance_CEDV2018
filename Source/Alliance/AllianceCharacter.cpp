@@ -204,6 +204,8 @@ float AAllianceCharacter::TakeDamage(float DamageAmount, struct FDamageEvent con
 		{
 			Stamina -= 15;
 		}
+
+		UE_LOG(LogTemp, Error, TEXT("Taken %f damage. Remaining life: %f"), ActualDamage, Health);
 	}
 	return ActualDamage;
 }

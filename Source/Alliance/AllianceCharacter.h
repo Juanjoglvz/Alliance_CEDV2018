@@ -8,6 +8,17 @@
 #include "GameFramework/Character.h"
 #include "AllianceCharacter.generated.h"
 
+UENUM(BlueprintType)		//State of the character (Maybe some character does not use all of them)
+enum class EState : uint8
+{
+	S_Running	UMETA(DisplayName = "Running"),
+	S_Idle		UMETA(DisplayName = "Idle"),
+	S_Blocking	UMETA(DisplayName = "Blocking"),
+	S_JumpAttacking UMETA(DisplayName = "JumpAttacking"),
+	S_Attacking UMETA(DisplayName = "Attacking"),
+	S_SpecialAttacking UMETA(DisplayName = "SpecialAttacking")
+};
+
 UCLASS(config=Game)
 class AAllianceCharacter : public ACharacter
 {
@@ -47,6 +58,14 @@ protected:
 	void StartSprint();
 	void StopSprint();
 
+	// Called when player blocks
+	void StartBlock();
+	void StopBlock();
+
+	// Called to reset speed after attacking
+	UFUNCTION(BlueprintCallable)
+	void ResetMoveSpeed();
+
 	// Called when player interact to start the minigame
 	void Interact();
 
@@ -66,20 +85,15 @@ protected:
 
 public:
 	// PROPERTIES
+
+	// State of the character
+	UPROPERTY(BlueprintReadWrite, Category = MyCharacter)
+	EState CurrentState;
 	
 	// Variables used in blueprints for animations
-	UPROPERTY(Replicated, BlueprintReadWrite, Category = MyCharacter)
-		bool b_IsRunning;
-	UPROPERTY(Replicated, BlueprintReadWrite, Category = MyCharacter)
-		bool b_JumpAttacking;
-	UPROPERTY(Replicated, BlueprintReadWrite, Category = MyCharacter)
-		bool b_IsAttacking;
-    UPROPERTY(Replicated, BlueprintReadWrite, Category = MyCharacter)
-        bool b_SpecialAttacking;
+	
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = MyCharacter)
 		bool b_ChainAttack;
-	UPROPERTY(BlueprintReadWrite, Category = MyCharacter)
-		bool b_IsBlocking;
 	UPROPERTY(BlueprintReadWrite, Category = MyCharacter)
 		bool b_IsEvading;
 	UPROPERTY(BlueprintReadWrite, Category = MyCharacter)
@@ -89,7 +103,7 @@ public:
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = MyCharacter)
 		float LaunchHeight;
 	UPROPERTY(BlueprintReadWrite, Category = MyCharacter)
-		float DamageReduction;
+		float DamageMultiplier;
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = MyCharacter)
 		int Combo;
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = MyCharacter)
@@ -107,6 +121,8 @@ public:
 	// Variables for controlling Damage
 	UPROPERTY(BlueprintReadWrite, Category = "Combat")
 		float Primary_Attack_Dmg;
+	UPROPERTY(BlueprintReadWrite, Category = "Combat")
+		float Secondary_Attack_Dmg;
 
 	UPROPERTY(BlueprintReadOnly)
 		bool b_IAmServer;
@@ -166,6 +182,18 @@ public:
 		void StopSprinting();
 	void StopSprinting_Implementation();
 
+	UFUNCTION(Reliable, NetMulticast)
+		void StartBlocking();
+	void StartBlocking_Implementation();
+
+	UFUNCTION(Reliable, NetMulticast)
+		void StopBlocking();
+	void StopBlocking_Implementation();
+
+	UFUNCTION(Reliable, NetMulticast)
+		void ResetSpeed();
+	void ResetSpeed_Implementation();
+
 	UFUNCTION(Reliable, Server, WithValidation)
 		void OnServerClientStartSprinting();
 	void OnServerClientStartSprinting_Implementation();
@@ -175,6 +203,21 @@ public:
 		void OnServerClientStopSprinting();
 	void OnServerClientStopSprinting_Implementation();
 	FORCEINLINE bool OnServerClientStopSprinting_Validate() { return true; }
+
+	UFUNCTION(Reliable, Server, WithValidation)
+		void OnServerClientStartBlocking();
+	void OnServerClientStartBlocking_Implementation();
+	FORCEINLINE bool OnServerClientStartBlocking_Validate() { return true; }
+
+	UFUNCTION(Reliable, Server, WithValidation)
+		void OnServerClientStopBlocking();
+	void OnServerClientStopBlocking_Implementation();
+	FORCEINLINE bool OnServerClientStopBlocking_Validate() { return true; }
+
+	UFUNCTION(Reliable, Server, WithValidation)
+		void OnServerClientResetSpeed();
+	void OnServerClientResetSpeed_Implementation();
+	FORCEINLINE bool OnServerClientResetSpeed_Validate() { return true; }
 
 	UFUNCTION(Reliable, Server, WithValidation)
 		void OnServerStartMinigame();

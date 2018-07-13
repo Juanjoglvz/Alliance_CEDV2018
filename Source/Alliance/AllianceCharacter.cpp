@@ -195,6 +195,21 @@ void AAllianceCharacter::Interact()
 	OnStartMinigame.Broadcast();
 }
 
+EState AAllianceCharacter::GetState() const
+{
+	if (GetCharacterMovement()->MaxWalkSpeed == 600.f)
+	{
+		return EState::S_Blocking;
+	}
+	else if (GetCharacterMovement()->MaxWalkSpeed == 1200.f + Sprint)
+	{
+		return EState::S_Running;
+	}
+	else
+	{
+		return EState::S_Idle;
+	}
+}
 
 void AAllianceCharacter::MoveForward(float Value)
 {

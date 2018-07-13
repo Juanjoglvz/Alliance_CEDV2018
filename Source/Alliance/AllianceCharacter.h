@@ -66,6 +66,10 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void ResetMoveSpeed();
 
+	// Gets the state the character should be in
+	UFUNCTION(BlueprintCallable)
+		EState GetState() const;
+
 	// Called when player interact to start the minigame
 	void Interact();
 

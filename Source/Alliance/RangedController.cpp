@@ -1,16 +1,16 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "MeleeController.h"
+#include "RangedController.h"
 #include "Enemy.h"
 
 
-AMeleeController::AMeleeController()
+ARangedController::ARangedController()
 {
-	auto TreeAsset = ConstructorHelpers::FObjectFinder<UBehaviorTree>(TEXT("BehaviorTree'/Game/ThirdPersonCPP/Blueprints/Artificial_Intelligence/MeleeEnemy/MeleeEnemy_BT.MeleeEnemy_BT'"));
+	auto TreeAsset = ConstructorHelpers::FObjectFinder<UBehaviorTree>(TEXT("BehaviorTree'/Game/ThirdPersonCPP/Blueprints/Artificial_Intelligence/RangedEnemy/RangedEnemy_BT.RangedEnemy_BT'"));
 	BehaviourTree = TreeAsset.Object;
 }
 
-void AMeleeController::Possess(APawn* InPawn)
+void ARangedController::Possess(APawn* InPawn)
 {
 	Super::Possess(InPawn);
 
@@ -25,3 +25,6 @@ void AMeleeController::Possess(APawn* InPawn)
 
 	}
 }
+
+
+

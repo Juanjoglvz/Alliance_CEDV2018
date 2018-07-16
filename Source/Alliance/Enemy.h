@@ -7,6 +7,15 @@
 #include "GameFramework/Character.h"
 #include "Enemy.generated.h"
 
+UENUM(BlueprintType)		//State of the character (Maybe some character does not use all of them)
+enum class EEnemyState : uint8
+{
+	S_Running	UMETA(DisplayName = "Running"),
+	S_Idle		UMETA(DisplayName = "Idle"),
+	S_Attacking UMETA(DisplayName = "Attacking")
+};
+
+
 UCLASS()
 class ALLIANCE_API AEnemy : public ACharacter
 {
@@ -26,6 +35,8 @@ public:
 
 	// Public atributes for accessing in blueprints
 
+	UPROPERTY(BlueprintReadWrite, Category = "Combat")
+		EEnemyState CurrentState;
 	UPROPERTY(BlueprintReadWrite, Category = "Combat")
 		float Damage;
 	UPROPERTY(BlueprintReadWrite, Category = "Combat")

@@ -5,38 +5,36 @@
 #include "CoreMinimal.h"
 #include "Engine.h"
 #include "GameFramework/Actor.h"
-#include "Grenade.generated.h"
+#include "Fireball.generated.h"
 
 UCLASS()
-class ALLIANCE_API AGrenade : public AActor
+class ALLIANCE_API AFireball : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AGrenade();
+	AFireball();
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
 
-	UPROPERTY()
-		UStaticMeshComponent* StaticMeshComponent;
 	UPROPERTY()
 		UProjectileMovementComponent* PMovementComponent;
 	UPROPERTY()
-		UParticleSystemComponent* PSystemComponent;
+		UStaticMeshComponent* StaticMeshComponent;
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Function called when timer ends and grenade explodes
 	UFUNCTION()
-		void Explode();
+		void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
-private:
-	float Dmg;
-	float Timer;
 	
+private:
+
+	UPROPERTY()
+		float TTL;
+	UPROPERTY()
+		float LivingTime;
 };

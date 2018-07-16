@@ -12,9 +12,8 @@
 #include "GameFramework/SpringArmComponent.h"
 
 
-AAllianceCharacter::AAllianceCharacter() : b_IsRunning{ false }, b_JumpAttacking{ false }, b_IsAttacking{ false }, b_ChainAttack{ false },
-b_IsBlocking{ false }, b_IsEvading{ false }, Sprint{ 1200.f }, LaunchForce{ 1.f }, LaunchHeight{ 1.f }, Combo{ 0 }, b_IsDead{ false }, 
-InMinigame{ false }, b_IAmServer { false }
+AAllianceCharacter::AAllianceCharacter() : CurrentState{ EState::S_Idle }, b_ChainAttack{ false }, Sprint{ 1200.f }, LaunchForce{ 1.f },
+LaunchHeight{ 1.f }, Combo{ 0 }, b_IsDead{ false }, InMinigame{ false }, b_IAmServer{ false }, DamageMultiplier{ 1.f }
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -76,6 +75,8 @@ void AAllianceCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 	PlayerInputComponent->BindAction("Sprint", EInputEvent::IE_Pressed, this, &AAllianceCharacter::StartSprint);
 	PlayerInputComponent->BindAction("Sprint", EInputEvent::IE_Released, this, &AAllianceCharacter::StopSprint);
 	PlayerInputComponent->BindAction("Interact", EInputEvent::IE_Pressed, this, &AAllianceCharacter::Interact);
+	PlayerInputComponent->BindAction("Block", EInputEvent::IE_Pressed, this, &AAllianceCharacter::StartBlock);
+	PlayerInputComponent->BindAction("Block", EInputEvent::IE_Released, this, &AAllianceCharacter::StopBlock);
 	InMinigame = false;
 }
 
@@ -85,10 +86,10 @@ void AAllianceCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 
 	DOREPLIFETIME(AAllianceCharacter, Health);
 	DOREPLIFETIME(AAllianceCharacter, Stamina);
-	DOREPLIFETIME(AAllianceCharacter, b_IsDead);
+	DOREPLIFETIME(AAllianceCharacter, b_IsDead);/*
 	DOREPLIFETIME(AAllianceCharacter, b_IsRunning);
 	DOREPLIFETIME(AAllianceCharacter, b_JumpAttacking);
-	DOREPLIFETIME(AAllianceCharacter, b_IsAttacking);
+	DOREPLIFETIME(AAllianceCharacter, b_IsAttacking);*/
 	DOREPLIFETIME(AAllianceCharacter, b_ChainAttack);
 	DOREPLIFETIME(AAllianceCharacter, LaunchForce);
 	DOREPLIFETIME(AAllianceCharacter, LaunchHeight);
@@ -146,6 +147,45 @@ void AAllianceCharacter::StopSprint()
 	}
 }
 
+void AAllianceCharacter::StartBlock()
+{
+	if (HasAuthority())
+	{
+		StartBlocking();
+	}
+	else
+	{
+		// Client notifies server to start sprinting
+		OnServerClientStartBlocking();
+	}
+}
+
+void AAllianceCharacter::StopBlock()
+{
+	if (HasAuthority())
+	{
+		StopBlocking();
+	}
+	else
+	{
+		// Client notifies server to start sprinting
+		OnServerClientStopBlocking();
+	}
+}
+
+void AAllianceCharacter::ResetMoveSpeed()
+{
+	if (HasAuthority())
+	{
+		ResetSpeed();
+	}
+	else
+	{
+		// Client notifies server to start sprinting
+		OnServerClientResetSpeed();
+	}
+}
+
 void AAllianceCharacter::Interact()
 {
 	if (HasAuthority())
@@ -155,10 +195,26 @@ void AAllianceCharacter::Interact()
 	OnStartMinigame.Broadcast();
 }
 
+EState AAllianceCharacter::GetState() const
+{
+	if (GetCharacterMovement()->MaxWalkSpeed == 600.f)
+	{
+		return EState::S_Blocking;
+	}
+	else if (GetCharacterMovement()->MaxWalkSpeed == 1200.f + Sprint)
+	{
+		return EState::S_Running;
+	}
+	else
+	{
+		return EState::S_Idle;
+	}
+}
 
 void AAllianceCharacter::MoveForward(float Value)
 {
-	if ((Controller != NULL) && (Value != 0.0f) && !b_IsAttacking && !b_JumpAttacking)
+	if ((Controller != NULL) && (Value != 0.0f) && CurrentState != EState::S_Attacking 
+		&& CurrentState != EState::S_JumpAttacking && CurrentState != EState::S_SpecialAttacking)
 	{
 		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
@@ -172,7 +228,8 @@ void AAllianceCharacter::MoveForward(float Value)
 
 void AAllianceCharacter::MoveRight(float Value)
 {
-	if ((Controller != NULL) && (Value != 0.0f) && !b_IsAttacking && !b_JumpAttacking)
+	if ((Controller != NULL) && (Value != 0.0f) && CurrentState != EState::S_Attacking
+		&& CurrentState != EState::S_JumpAttacking && CurrentState != EState::S_SpecialAttacking)
 	{
 		// find out which way is right
 		const FRotator Rotation = Controller->GetControlRotation();
@@ -191,7 +248,7 @@ float AAllianceCharacter::TakeDamage(float DamageAmount, struct FDamageEvent con
 
 	if (ActualDamage > 0.f && !b_IsEvading)
 	{
-		ActualDamage *= DamageReduction;
+		ActualDamage *= DamageMultiplier;
 		Health -= ActualDamage;
 		if (Health <= 0)
 		{
@@ -204,13 +261,15 @@ float AAllianceCharacter::TakeDamage(float DamageAmount, struct FDamageEvent con
 		{
 			Stamina -= 15;
 		}
+
+		UE_LOG(LogTemp, Error, TEXT("Taken %f damage. Remaining life: %f"), ActualDamage, Health);
 	}
 	return ActualDamage;
 }
 
-void AAllianceCharacter::DoDmg(AActor* DamagedActor) const
+void AAllianceCharacter::DoDmg(AActor* DamagedActor, float Dmg) const
 {
-	UGameplayStatics::ApplyDamage(DamagedActor, Primary_Attack_Dmg, nullptr, nullptr, nullptr);
+	UGameplayStatics::ApplyDamage(DamagedActor, Dmg, nullptr, nullptr, nullptr);
 }
 
 void AAllianceCharacter::ExecuteWhenDead_Implementation()
@@ -230,8 +289,8 @@ void AAllianceCharacter::StartSprinting_Implementation()
 {
 	if (!InMinigame)
 	{
-		GetCharacterMovement()->MaxWalkSpeed += Sprint;
-		b_IsRunning = true;
+		CurrentState = EState::S_Running;
+		ResetMoveSpeed();
 	}
 }
 
@@ -239,8 +298,50 @@ void AAllianceCharacter::StopSprinting_Implementation()
 {
 	if (!InMinigame)
 	{
-		GetCharacterMovement()->MaxWalkSpeed = 1200.f;
-		b_IsRunning = false;
+		CurrentState = EState::S_Idle;
+		ResetMoveSpeed();
+	}
+}
+
+void AAllianceCharacter::StartBlocking_Implementation()
+{
+	if (!InMinigame)
+	{
+		CurrentState = EState::S_Blocking;
+		ResetMoveSpeed();
+		DamageMultiplier = 0.4f;
+	}
+}
+
+void AAllianceCharacter::StopBlocking_Implementation()
+{
+	if (!InMinigame)
+	{
+		CurrentState = EState::S_Idle;
+		ResetMoveSpeed();
+		DamageMultiplier = 1.f;
+	}
+}
+
+void AAllianceCharacter::ResetSpeed_Implementation()
+{
+	if (!InMinigame)
+	{
+		switch (CurrentState)
+		{
+		case EState::S_Idle:
+			GetCharacterMovement()->MaxWalkSpeed = 1200.f;
+			break;
+		case EState::S_Running:
+			GetCharacterMovement()->MaxWalkSpeed = 1200.f + Sprint;
+			break;
+		case EState::S_Blocking:
+			GetCharacterMovement()->MaxWalkSpeed = 600.f;
+			break;
+		default:
+			GetCharacterMovement()->MaxWalkSpeed = 1200.f;
+			break;
+		}
 	}
 }
 
@@ -257,6 +358,30 @@ void AAllianceCharacter::OnServerClientStopSprinting_Implementation()
 	if (HasAuthority())
 	{
 		StopSprinting();
+	}
+}
+
+void AAllianceCharacter::OnServerClientStartBlocking_Implementation()
+{
+	if (HasAuthority())
+	{
+		StartBlocking();
+	}
+}
+
+void AAllianceCharacter::OnServerClientStopBlocking_Implementation()
+{
+	if (HasAuthority())
+	{
+		StopBlocking();
+	}
+}
+
+void AAllianceCharacter::OnServerClientResetSpeed_Implementation()
+{
+	if (HasAuthority())
+	{
+		ResetSpeed();
 	}
 }
 

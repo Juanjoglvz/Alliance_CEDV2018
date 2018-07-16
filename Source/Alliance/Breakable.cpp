@@ -83,7 +83,7 @@ void ABreakable::Tick(float DeltaSeconds)
 
 	if (b_Overlaping && !b_IsBroken && OverlapingCharacter != nullptr)
 	{
-		if ((OverlapingCharacter->b_IsAttacking || OverlapingCharacter->b_JumpAttacking) && BreakableMesh_broken)
+		if ((OverlapingCharacter->CurrentState == EState::S_Attacking || OverlapingCharacter->CurrentState == EState::S_JumpAttacking) && BreakableMesh_broken)
 		{
 			BreakableIsBroken();
 			if (b_Success)

@@ -86,10 +86,7 @@ void AAllianceCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 
 	DOREPLIFETIME(AAllianceCharacter, Health);
 	DOREPLIFETIME(AAllianceCharacter, Stamina);
-	DOREPLIFETIME(AAllianceCharacter, b_IsDead);/*
-	DOREPLIFETIME(AAllianceCharacter, b_IsRunning);
-	DOREPLIFETIME(AAllianceCharacter, b_JumpAttacking);
-	DOREPLIFETIME(AAllianceCharacter, b_IsAttacking);*/
+	DOREPLIFETIME(AAllianceCharacter, b_IsDead);
 	DOREPLIFETIME(AAllianceCharacter, b_ChainAttack);
 	DOREPLIFETIME(AAllianceCharacter, LaunchForce);
 	DOREPLIFETIME(AAllianceCharacter, LaunchHeight);

@@ -152,7 +152,7 @@ void AAllianceCharacter::StartBlock()
 	}
 	else
 	{
-		// Client notifies server to start sprinting
+		// Client notifies server to start blocking
 		OnServerClientStartBlocking();
 	}
 }
@@ -165,7 +165,7 @@ void AAllianceCharacter::StopBlock()
 	}
 	else
 	{
-		// Client notifies server to start sprinting
+		// Client notifies server to stop blocking
 		OnServerClientStopBlocking();
 	}
 }
@@ -178,7 +178,7 @@ void AAllianceCharacter::ResetMoveSpeed()
 	}
 	else
 	{
-		// Client notifies server to start sprinting
+		// Client notifies server to reset the sprint speed
 		OnServerClientResetSpeed();
 	}
 }

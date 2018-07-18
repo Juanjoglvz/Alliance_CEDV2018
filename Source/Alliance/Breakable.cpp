@@ -166,7 +166,7 @@ void ABreakable::OnMortenHit(AAllianceCharacter* Morten)
 		BreakableIsBroken();
 		if (b_Success)
 		{
-			RandomDrop(OverlapingCharacter);
+			RandomDrop(Morten);
 			breakableAudioComponent->Play();
 		}
 	}

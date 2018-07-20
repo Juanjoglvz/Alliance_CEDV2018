@@ -11,18 +11,6 @@ void AAlliancePlayerController::BeginPlay()
 	UE_LOG(LogTemp, Warning, TEXT("Executing BeginPlay on PlayerController"));
 
 	OnServerAssignCharacter();
-
-	/*AGameModeBase* GMode = GetWorld()->GetAuthGameMode();
-	AAllianceGameMode* Gamemode = Cast<AAllianceGameMode>(GMode);
-
-	if (Gamemode)
-	{
-		Gamemode->RespawnPlayer(this);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("Gamemode is null on PlayerController"));
-	}*/
 }
 
 void AAlliancePlayerController::OnClientLogin_Implementation()
@@ -36,7 +24,7 @@ void AAlliancePlayerController::OnClientLogin_Implementation()
 		
 }
 
-FString AAlliancePlayerController::GetPlayerNameFromController()
+FString AAlliancePlayerController::GetPlayerNameFromController() const
 {
 	FString Name = FString();
 	Name = PlayerState->PlayerName;

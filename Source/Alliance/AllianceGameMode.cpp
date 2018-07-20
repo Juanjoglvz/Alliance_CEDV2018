@@ -73,7 +73,7 @@ void AAllianceGameMode::RespawnPlayer_Implementation(APlayerController * SecondP
 
 	if (!GInstance->AssignedCharacters.Contains(Name))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Player is has not been assigned a character"));
+		UE_LOG(LogTemp, Warning, TEXT("Player has not been assigned a character"));
 		if (GInstance->AssignedCharacters.Num() == 1) // Joining player should have the other character
 		{
 			TArray<FString> Keys;

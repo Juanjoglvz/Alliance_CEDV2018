@@ -234,12 +234,6 @@ public:
 	void OnServerStartMinigame_Implementation();
 	FORCEINLINE bool OnServerStartMinigame_Validate() { return true; }
 
-	// Character assignment
-	UFUNCTION(Reliable, Server, WithValidation)
-		void OnServerAssignCharacter();
-	void OnServerAssignCharacter_Implementation();
-	FORCEINLINE bool OnServerAssignCharacter_Validate() { return true; }
-
 private:
 
 	// UInputComponent pointer used to add or remove the action and axis mappings

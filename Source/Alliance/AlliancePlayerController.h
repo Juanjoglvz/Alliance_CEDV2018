@@ -23,7 +23,7 @@ public:
 	void OnClientLogin();
 	void OnClientLogin_Implementation();
 
-	FString GetPlayerNameFromController();
+	FString GetPlayerNameFromController() const;
 
 	// Character assignment
 	UFUNCTION(Reliable, Server, WithValidation)

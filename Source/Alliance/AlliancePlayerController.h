@@ -17,9 +17,18 @@ class ALLIANCE_API AAlliancePlayerController : public APlayerController
 	
 public:
 
+	virtual void BeginPlay();
+
 	UFUNCTION(Client, Reliable)
 	void OnClientLogin();
 	void OnClientLogin_Implementation();
-	
+
+	FString GetPlayerNameFromController();
+
+	// Character assignment
+	UFUNCTION(Reliable, Server, WithValidation)
+	void OnServerAssignCharacter();
+	void OnServerAssignCharacter_Implementation();
+	FORCEINLINE bool OnServerAssignCharacter_Validate() { return true; }
 	
 };

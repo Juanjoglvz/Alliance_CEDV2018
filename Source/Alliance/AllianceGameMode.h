@@ -16,13 +16,15 @@ public:
 
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class AAllianceCharacter> FirstCharacter;
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class AAllianceCharacter> SecondCharacter;
 
 	virtual void PostLogin(APlayerController * NewPlayer);
 
 	UFUNCTION(Server, Reliable, WithValidation)
-	void RespawnSecondPlayer(APlayerController* SecondPlayer);
-	void RespawnSecondPlayer_Implementation(APlayerController* SecondPlayer);
-	FORCEINLINE bool RespawnSecondPlayer_Validate(APlayerController* SecondPlayer) { return true; }
+	void RespawnPlayer(APlayerController* SecondPlayer);
+	void RespawnPlayer_Implementation(APlayerController* SecondPlayer);
+	FORCEINLINE bool RespawnPlayer_Validate(APlayerController* SecondPlayer) { return true; }
 };
 
 

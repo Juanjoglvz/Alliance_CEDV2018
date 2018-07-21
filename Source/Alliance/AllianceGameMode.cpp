@@ -20,12 +20,12 @@ AAllianceGameMode::AAllianceGameMode()
 	PlayerStateClass = AAlliancePlayerState::StaticClass();
 
 
-	static ConstructorHelpers::FObjectFinder<UBlueprint> CharBlueprint(TEXT("Blueprint'/Game/ThirdPersonCPP/Blueprints/ThirdPersonCharacter.ThirdPersonCharacter'"));
+	static ConstructorHelpers::FObjectFinder<UBlueprint> CharBlueprint(TEXT("Blueprint'/Game/ThirdPersonCPP/Blueprints/Alyssa.Alyssa'"));
 	if (CharBlueprint.Object) {
 		FirstCharacter = (UClass*)CharBlueprint.Object->GeneratedClass;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UBlueprint> CharBlueprint2(TEXT("Blueprint'/Game/ThirdPersonCPP/Blueprints/ThirdPersonCharacter2.ThirdPersonCharacter2'"));
+	static ConstructorHelpers::FObjectFinder<UBlueprint> CharBlueprint2(TEXT("Blueprint'/Game/ThirdPersonCPP/Blueprints/Morten.Morten'"));
 	if (CharBlueprint2.Object) {
 		SecondCharacter = (UClass*)CharBlueprint2.Object->GeneratedClass;
 	}

@@ -36,7 +36,7 @@ public:
 
 	// Public atributes for accessing in blueprints
 
-	UPROPERTY(Replicated, BlueprintReadWrite, Category = "Combat")
+	UPROPERTY(BlueprintReadWrite)
 		EEnemyState CurrentState;
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = "Combat")
 		float Damage;

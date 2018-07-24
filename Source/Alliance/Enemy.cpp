@@ -31,7 +31,7 @@ void AEnemy::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimePr
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(AEnemy, CurrentState);
+	//DOREPLIFETIME(AEnemy, CurrentState);
 	DOREPLIFETIME(AEnemy, Health);
 	DOREPLIFETIME(AEnemy, Damage);
 }

@@ -8,6 +8,8 @@
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Perception/AIPerceptionComponent.h"
+#include "Perception/AISenseConfig_Sight.h"
 #include "AIController.h"
 #include "EnemyController.generated.h"
 
@@ -35,6 +37,11 @@ protected:
 
 	/*A Blackboard component which will be used to initialize our Blackboard Values*/
 	UBlackboardComponent* BlackboardComp;
+
+	// Component for sensing the players
+	UAIPerceptionComponent* PerceptionComponent;
+	// Configuration for the sight of the controller
+	UAISenseConfig_Sight* SightConfig;
 
 
 

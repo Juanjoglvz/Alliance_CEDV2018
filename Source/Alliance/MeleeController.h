@@ -18,5 +18,9 @@ public:
 	AMeleeController();
 
 	virtual void Possess(APawn* InPawn) override;
+
+	UFUNCTION()
+		void SensePawn(const TArray<AActor*> &UpdatedActors);
+	
 	
 };

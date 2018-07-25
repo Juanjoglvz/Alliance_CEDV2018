@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine.h"
+#include "UnrealNetwork.h"
 #include "GameFramework/Character.h"
 #include "Enemy.generated.h"
 
@@ -35,11 +36,11 @@ public:
 
 	// Public atributes for accessing in blueprints
 
-	UPROPERTY(BlueprintReadWrite, Category = "Combat")
+	UPROPERTY(BlueprintReadWrite)
 		EEnemyState CurrentState;
-	UPROPERTY(BlueprintReadWrite, Category = "Combat")
+	UPROPERTY(Replicated, BlueprintReadWrite, Category = "Combat")
 		float Damage;
-	UPROPERTY(BlueprintReadWrite, Category = "Combat")
+	UPROPERTY(Replicated, BlueprintReadWrite, Category = "Combat")
 		float Health;
 
 	// Public functions for accessing in blueprints

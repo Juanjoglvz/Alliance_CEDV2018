@@ -17,7 +17,7 @@ AFireball::AFireball() : TTL{ 6.f }, LivingTime{ 0.f }
 	PMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("Projectile Movement");
 
 	// Load assets
-	auto StaticMeshAsset = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("StaticMesh'/Game/ThirdPersonCPP/Meshes/Pieces/1x1.1x1'"));
+	auto StaticMeshAsset = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("StaticMesh'/Game/ThirdPersonCPP/Meshes/untitled.untitled'"));
 
 	if (StaticMeshAsset.Succeeded())
 	{

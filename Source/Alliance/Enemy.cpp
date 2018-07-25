@@ -27,6 +27,16 @@ void AEnemy::Tick(float DeltaTime)
 
 }
 
+void AEnemy::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	//DOREPLIFETIME(AEnemy, CurrentState);
+	DOREPLIFETIME(AEnemy, Health);
+	DOREPLIFETIME(AEnemy, Damage);
+}
+
+
 void AEnemy::DoDmg(AActor* DamagedActor)
 {
 	UGameplayStatics::ApplyDamage(DamagedActor, Damage, nullptr, nullptr, nullptr);

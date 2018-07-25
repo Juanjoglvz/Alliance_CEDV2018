@@ -35,6 +35,8 @@ class AAllianceCharacter : public ACharacter
 public:
 	AAllianceCharacter();
 
+	virtual void BeginPlay();
+
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseTurnRate;
@@ -231,6 +233,12 @@ public:
 		void OnServerStartMinigame();
 	void OnServerStartMinigame_Implementation();
 	FORCEINLINE bool OnServerStartMinigame_Validate() { return true; }
+
+	// Character assignment
+	UFUNCTION(Reliable, Server, WithValidation)
+		void OnServerAssignCharacter();
+	void OnServerAssignCharacter_Implementation();
+	FORCEINLINE bool OnServerAssignCharacter_Validate() { return true; }
 
 private:
 

@@ -2,6 +2,8 @@
 
 #include "AllianceCharacter.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
+#include "AlliancePlayerController.h"
+#include "AllianceGameMode.h"
 #include "Camera/CameraComponent.h"
 #include "Enemy.h"
 #include "Components/CapsuleComponent.h"
@@ -27,7 +29,7 @@ LaunchHeight{ 1.f }, Combo{ 0 }, b_IsDead{ false }, InMinigame{ false }, b_IAmSe
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 
-	AutoPossessPlayer = EAutoReceiveInput::Player0;
+	//AutoPossessPlayer = EAutoReceiveInput::Disabled;
 
 	// Character replication stuff
 	bReplicates = true;
@@ -52,6 +54,11 @@ LaunchHeight{ 1.f }, Combo{ 0 }, b_IsDead{ false }, InMinigame{ false }, b_IAmSe
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+}
+
+void AAllianceCharacter::BeginPlay()
+{
+	Super::BeginPlay();	
 }
 
 void AAllianceCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -86,10 +93,7 @@ void AAllianceCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 
 	DOREPLIFETIME(AAllianceCharacter, Health);
 	DOREPLIFETIME(AAllianceCharacter, Stamina);
-	DOREPLIFETIME(AAllianceCharacter, b_IsDead);/*
-	DOREPLIFETIME(AAllianceCharacter, b_IsRunning);
-	DOREPLIFETIME(AAllianceCharacter, b_JumpAttacking);
-	DOREPLIFETIME(AAllianceCharacter, b_IsAttacking);*/
+	DOREPLIFETIME(AAllianceCharacter, b_IsDead);
 	DOREPLIFETIME(AAllianceCharacter, b_ChainAttack);
 	DOREPLIFETIME(AAllianceCharacter, LaunchForce);
 	DOREPLIFETIME(AAllianceCharacter, LaunchHeight);
@@ -155,7 +159,7 @@ void AAllianceCharacter::StartBlock()
 	}
 	else
 	{
-		// Client notifies server to start sprinting
+		// Client notifies server to start blocking
 		OnServerClientStartBlocking();
 	}
 }
@@ -168,7 +172,7 @@ void AAllianceCharacter::StopBlock()
 	}
 	else
 	{
-		// Client notifies server to start sprinting
+		// Client notifies server to stop blocking
 		OnServerClientStopBlocking();
 	}
 }
@@ -181,7 +185,7 @@ void AAllianceCharacter::ResetMoveSpeed()
 	}
 	else
 	{
-		// Client notifies server to start sprinting
+		// Client notifies server to reset the sprint speed
 		OnServerClientResetSpeed();
 	}
 }
@@ -390,6 +394,30 @@ void AAllianceCharacter::OnServerStartMinigame_Implementation()
 	if (HasAuthority())
 	{
 		OnStartMinigame.Broadcast();
+	}
+}
+
+void AAllianceCharacter::OnServerAssignCharacter_Implementation()
+{
+	if (GIsServer) // Should always be true
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Called character BeginPlay, Server: %d"), GIsServer);
+
+		AController* Controller = GetController();
+		AAlliancePlayerController* PlayerController = Cast<AAlliancePlayerController>(Controller);
+
+		AGameModeBase* GMode = GetWorld()->GetAuthGameMode();
+		AAllianceGameMode* Gamemode = Cast<AAllianceGameMode>(GMode);
+
+		UE_LOG(LogTemp, Warning, TEXT("Obtained controller: %p"), Controller);
+		if (PlayerController && Gamemode)
+		{
+			Gamemode->RespawnPlayer(PlayerController);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("Obtained controller: %p   ObtainedGameMode: %p"), Controller, Gamemode);
+		}
 	}
 }
 

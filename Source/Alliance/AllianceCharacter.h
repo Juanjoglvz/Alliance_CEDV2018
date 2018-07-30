@@ -51,10 +51,10 @@ public:
 
 	/** Dialogue System interface */
 
-	FName GetParticipantName_Implementation() const override { return DlgParticipantName; }
-	ETextGender GetParticipantGender_Implementation() const override { return ETextGender::Neuter; }
-	FText GetParticipantDisplayName_Implementation(FName ActiveSpeaker) const override { return DlgParticipantDisplayName; }
-	UTexture2D* GetParticipantIcon_Implementation(FName ActiveSpeaker, FName ActiveSpeakerState) const override { return DlgParticipantIcon; }
+	FORCEINLINE FName GetParticipantName_Implementation() const override { return DlgParticipantName; }
+	FORCEINLINE ETextGender GetParticipantGender_Implementation() const override { return ETextGender::Neuter; }
+	FORCEINLINE FText GetParticipantDisplayName_Implementation(FName ActiveSpeaker) const override { return DlgParticipantDisplayName; }
+	FORCEINLINE UTexture2D* GetParticipantIcon_Implementation(FName ActiveSpeaker, FName ActiveSpeakerState) const override { return DlgParticipantIcon; }
 
 	bool ModifyIntValue_Implementation(const FName& ValueName, bool bDelta, int32 Value) override;
 	bool ModifyFloatValue_Implementation(const FName& ValueName, bool bDelta, float Value) override;
@@ -274,7 +274,7 @@ private:
 		FDlgDialogueData DlgData;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgData, meta = (AllowPrivateAccess = "true"))
-		FName DlgParticipantName = FName("MyCharacterName");
+		FName DlgParticipantName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgData, meta = (AllowPrivateAccess = "true"))
 		FText DlgParticipantDisplayName;

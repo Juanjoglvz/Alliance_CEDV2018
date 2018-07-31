@@ -34,6 +34,12 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	uint32 SpawnerUniqueID;
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyDead, uint32, UniqueID);
+	UPROPERTY()
+		FOnEnemyDead OnEnemyDead;
+
 	// Public atributes for accessing in blueprints
 
 	UPROPERTY(BlueprintReadWrite)

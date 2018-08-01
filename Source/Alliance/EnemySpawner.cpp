@@ -73,6 +73,12 @@ void AEnemySpawner::Tick(float DeltaTime)
 		}
 	}
 
+	// When the spawner has finished its work, destroy it
+	if (SpawnedWaves >= NumberOfWaves)
+	{
+		this->Destroy();
+	}
+
 }
 
 void AEnemySpawner::EnemyDestroyed(uint32 UniqueID)

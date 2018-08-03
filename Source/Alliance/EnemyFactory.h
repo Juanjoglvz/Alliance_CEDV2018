@@ -32,7 +32,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	class AEnemy* SpawnAnEnemy(EEnemyType EnemyType, FVector Location, FRotator Rotation, uint32 SpawnerUniqueID);
-	
+
 private:
 	TSubclassOf<class AEnemy> EnemyTankReference;
 	TSubclassOf<class AEnemy> EnemyRangedReference;

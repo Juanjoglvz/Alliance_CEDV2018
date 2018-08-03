@@ -9,7 +9,8 @@ AEnemy::AEnemy() : CurrentState{ EEnemyState::S_Idle }, SpawnerUniqueID{ 0 }
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
-
+	
+	bReplicates = true;
 }
 
 // Called when the game starts or when spawned

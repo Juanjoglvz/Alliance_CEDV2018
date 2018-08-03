@@ -9,6 +9,8 @@ AEnemyFactory::AEnemyFactory()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	bReplicates = true;
+	bAlwaysRelevant = true;
 
 	// Get references to enemies blueprints
 	static ConstructorHelpers::FObjectFinder<UBlueprint> MeleeBP(TEXT("Blueprint'/Game/ThirdPersonCPP/Blueprints/MeleeEnemy.MeleeEnemy'"));
@@ -32,6 +34,8 @@ void AEnemyFactory::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	Instigator = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+	SetOwner(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 }
 
 // Called every frame

@@ -41,6 +41,9 @@ public:
 
 	virtual void BeginPlay();
 
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseTurnRate;
@@ -139,11 +142,15 @@ public:
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = MyCharacter)
 		bool InMinigame;
 	
-	// Variables to control player's health and stamine
+	// Variables to control player's health and stamina
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = "Combat")
 		float Health;
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = "Combat")
 		float Stamina;
+	UPROPERTY(Replicated, BlueprintReadWrite, Category = "Combat")
+		float MaxHealth;
+	UPROPERTY(Replicated, BlueprintReadWrite, Category = "Combat")
+		float MaxStamina;
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = "Combat")
 		bool b_IsDead;
 

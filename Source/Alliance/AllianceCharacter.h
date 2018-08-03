@@ -6,6 +6,10 @@
 #include "Engine.h"
 #include "UnrealNetwork.h"
 #include "GameFramework/Character.h"
+
+#include "DlgDialogueData.h"
+#include "DlgDialogueParticipant.h"
+
 #include "AllianceCharacter.generated.h"
 
 UENUM(BlueprintType)		//State of the character (Maybe some character does not use all of them)
@@ -20,7 +24,7 @@ enum class EState : uint8
 };
 
 UCLASS(config=Game)
-class AAllianceCharacter : public ACharacter
+class AAllianceCharacter : public ACharacter, public IDlgDialogueParticipant
 {
 	GENERATED_BODY()
 
@@ -44,6 +48,26 @@ public:
 	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseLookUpRate;
+
+	/** Dialogue System interface */
+
+	FName GetParticipantName_Implementation() const override { return DlgParticipantName; }
+	ETextGender GetParticipantGender_Implementation() const override { return ETextGender::Neuter; }
+	FText GetParticipantDisplayName_Implementation(FName ActiveSpeaker) const override { return DlgParticipantDisplayName; }
+	UTexture2D* GetParticipantIcon_Implementation(FName ActiveSpeaker, FName ActiveSpeakerState) const override { return DlgParticipantIcon; }
+
+	bool ModifyIntValue_Implementation(const FName& ValueName, bool bDelta, int32 Value) override;
+	bool ModifyFloatValue_Implementation(const FName& ValueName, bool bDelta, float Value) override;
+	bool ModifyBoolValue_Implementation(const FName& ValueName, bool bValue) override;
+	bool ModifyNameValue_Implementation(const FName& ValueName, const FName& NameValue) override;
+
+	float GetFloatValue_Implementation(const FName& ValueName) const override;
+	int32 GetIntValue_Implementation(const FName& ValueName) const override;
+	bool GetBoolValue_Implementation(const FName& ValueName) const override;
+	FName GetNameValue_Implementation(const FName& ValueName) const override;
+
+	bool OnDialogueEvent_Implementation(const FName& EventName) override { return false; }
+	bool CheckCondition_Implementation(const FName& ConditionName) const override { return false; }
 
 protected:
 
@@ -244,6 +268,19 @@ private:
 
 	// UInputComponent pointer used to add or remove the action and axis mappings
 	TWeakObjectPtr<class UInputComponent> CharacterMovementInputComponent;
+
+	// Dialogue variables
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgData, meta = (AllowPrivateAccess = "true"))
+		FDlgDialogueData DlgData;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgData, meta = (AllowPrivateAccess = "true"))
+		FName DlgParticipantName = FName("MyCharacterName");
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgData, meta = (AllowPrivateAccess = "true"))
+		FText DlgParticipantDisplayName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DlgData, meta = (AllowPrivateAccess = "true"))
+		UTexture2D* DlgParticipantIcon;
 
 };
 

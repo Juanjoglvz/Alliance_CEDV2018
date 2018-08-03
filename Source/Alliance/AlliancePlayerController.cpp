@@ -2,6 +2,7 @@
 
 #include "AlliancePlayerController.h"
 #include "AllianceGameMode.h"
+#include "AllianceCharacter.h"
 #include "DlgContext.h"
 #include "DlgManager.h"
 
@@ -17,7 +18,8 @@ void AAlliancePlayerController::BeginPlay()
 
 void AAlliancePlayerController::StartDialogue(class UDlgDialogue* Dialogue, UObject* OtherParticipant)
 {
-	ActiveContext = UDlgManager::StartDialogue2(Dialogue, GetPawn(), OtherParticipant);
+	AAllianceCharacter* Character = Cast<AAllianceCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	ActiveContext = UDlgManager::StartDialogue2(Dialogue, Character, OtherParticipant);
 }
 
 void AAlliancePlayerController::SelectDialogueOption(int32 Index)

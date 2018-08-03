@@ -19,6 +19,8 @@ public:
 		class UStaticMesh* BreakableMesh;
 	UPROPERTY(EditAnywhere)
 		class UStaticMesh* BreakableMesh_broken;
+	UPROPERTY(EditAnywhere)
+		int HealthSpawnProbability;
 	UPROPERTY(BlueprintReadWrite)
 		UStaticMeshComponent* StaticMeshComponent;
 	UPROPERTY(Replicated)

@@ -14,8 +14,8 @@
 #include "GameFramework/SpringArmComponent.h"
 
 
-AAllianceCharacter::AAllianceCharacter() : CurrentState{ EState::S_Idle }, b_ChainAttack{ false }, Sprint{ 1200.f }, LaunchForce{ 1.f },
-LaunchHeight{ 1.f }, Combo{ 0 }, b_IsDead{ false }, InMinigame{ false }, b_IAmServer{ false }, DamageMultiplier{ 1.f }
+AAllianceCharacter::AAllianceCharacter() : CurrentState{ EState::S_Idle }, b_ChainAttack{ false }, Sprint{ 1200.f }, LaunchForce{ 1.f }, 
+LaunchHeight{ 1.f }, Combo{ 0 }, b_IsDead{ false }, InMinigame{ false }, b_IAmServer{ false }, DamageMultiplier{ 1.f }, DlgParticipantName { "AllianceCharacter" }
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -59,6 +59,11 @@ LaunchHeight{ 1.f }, Combo{ 0 }, b_IsDead{ false }, InMinigame{ false }, b_IAmSe
 void AAllianceCharacter::BeginPlay()
 {
 	Super::BeginPlay();	
+
+	if (HasAuthority())
+	{
+		b_IAmServer = true;
+	}
 }
 
 void AAllianceCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)

@@ -17,6 +17,9 @@
 AAllianceCharacter::AAllianceCharacter() : CurrentState{ EState::S_Idle }, b_ChainAttack{ false }, Sprint{ 1200.f }, LaunchForce{ 1.f }, 
 LaunchHeight{ 1.f }, Combo{ 0 }, b_IsDead{ false }, InMinigame{ false }, b_IAmServer{ false }, DamageMultiplier{ 1.f }, DlgParticipantName { "AllianceCharacter" }
 {
+	// Set the actor to tick every frame
+	PrimaryActorTick.bCanEverTick = true;
+
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
@@ -29,7 +32,6 @@ LaunchHeight{ 1.f }, Combo{ 0 }, b_IsDead{ false }, InMinigame{ false }, b_IAmSe
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 
-	//AutoPossessPlayer = EAutoReceiveInput::Disabled;
 
 	// Character replication stuff
 	bReplicates = true;
@@ -64,6 +66,42 @@ void AAllianceCharacter::BeginPlay()
 	{
 		b_IAmServer = true;
 	}
+}
+
+// Called every frame
+void AAllianceCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+		switch (CurrentState)
+		{
+		case EState::S_Idle:
+			if (Stamina < MaxStamina - DeltaTime * 10)
+			{
+				Stamina += DeltaTime * 10;
+			}
+			break;
+		case EState::S_Running:
+			if (Stamina > 0)
+			{
+				Stamina -= DeltaTime * 10;
+			}
+			else 
+			{
+				CurrentState = EState::S_Idle;
+				ResetSpeed();
+			}
+			break;
+		case EState::S_Blocking:
+			if (Stamina < MaxStamina - DeltaTime * 4)
+			{
+				Stamina += DeltaTime * 4;
+			}
+			break;
+		default:
+			break;
+		}
+
 }
 
 void AAllianceCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)

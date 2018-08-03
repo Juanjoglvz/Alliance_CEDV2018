@@ -10,6 +10,6 @@ public class Alliance : ModuleRules
 
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "Networking", "Sockets" });
 
-        PrivateDependencyModuleNames.AddRange(new string[] { "AIModule" });
+        PrivateDependencyModuleNames.AddRange(new string[] { "AIModule", "DlgSystem" });
     }
 }

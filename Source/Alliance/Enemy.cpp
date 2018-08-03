@@ -5,11 +5,12 @@
 
 
 // Sets default values
-AEnemy::AEnemy() : CurrentState{EEnemyState::S_Idle}
+AEnemy::AEnemy() : CurrentState{ EEnemyState::S_Idle }, SpawnerUniqueID{ 0 }
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
-
+	
+	bReplicates = true;
 }
 
 // Called when the game starts or when spawned
@@ -53,6 +54,8 @@ float AEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEv
 		{
 			// The Enemy is dead
 			this->Destroy();
+			// Notify to spawner the enemy is dead
+			OnEnemyDead.Broadcast(SpawnerUniqueID);
 		}
 
 		UE_LOG(LogTemp, Error, TEXT("Hit the enmy: \t Health: %f \t"), Health);

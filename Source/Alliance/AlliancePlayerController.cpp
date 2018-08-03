@@ -2,6 +2,9 @@
 
 #include "AlliancePlayerController.h"
 #include "AllianceGameMode.h"
+#include "AllianceCharacter.h"
+#include "DlgContext.h"
+#include "DlgManager.h"
 
 
 void AAlliancePlayerController::BeginPlay()
@@ -11,6 +14,21 @@ void AAlliancePlayerController::BeginPlay()
 	UE_LOG(LogTemp, Warning, TEXT("Executing BeginPlay on PlayerController"));
 
 	OnServerAssignCharacter();
+}
+
+void AAlliancePlayerController::StartDialogue(class UDlgDialogue* Dialogue, UObject* OtherParticipant)
+{
+	AAllianceCharacter* Character = Cast<AAllianceCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	ActiveContext = UDlgManager::StartDialogue2(Dialogue, Character, OtherParticipant);
+}
+
+void AAlliancePlayerController::SelectDialogueOption(int32 Index)
+{
+	if (ActiveContext == nullptr || Index < 0 || Index >= ActiveContext->GetOptionNum())
+		return;
+
+	if (!ActiveContext->ChooseChild(Index))
+		ActiveContext = nullptr;
 }
 
 void AAlliancePlayerController::OnClientLogin_Implementation()

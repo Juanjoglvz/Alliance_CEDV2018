@@ -5,7 +5,7 @@
 #include "Pickup.h"
 #include "Engine.h"
 
-ABreakable::ABreakable() : Super(), b_IsBroken{ false }, b_Overlaping{ false }, OverlapingCharacter { nullptr }, b_Success{ false }
+ABreakable::ABreakable() : Super(), b_IsBroken{ false }, b_Overlaping{ false }, OverlapingCharacter { nullptr }, b_Success{ false }, HealthSpawnProbability{ 0 }
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -101,10 +101,16 @@ void ABreakable::ExecuteOnMortenHitDelegate(AAllianceCharacter* Morten)
 
 void ABreakable::RandomDrop(AAllianceCharacter* Character)
 {
-	int Probability = FMath::RandRange(0, 10);
+	// Sanitize health's spawn probability
+	if (HealthSpawnProbability < 0)
+	{
+		HealthSpawnProbability *= -1;
+	}
+
+	HealthSpawnProbability = HealthSpawnProbability % 100;
 
 	// Spawns a pickup
-	if (Probability > -1)
+	if (HealthSpawnProbability > 0)
 	{
 		FActorSpawnParameters SpawnInfo;
 		SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
@@ -124,15 +130,15 @@ void ABreakable::RandomDrop(AAllianceCharacter* Character)
 			// Otherwise, make a random choice between health and stamina
 			else
 			{
-				if (FMath::RandRange(0, 10) > 6)
-				{
-					Pickup->SetStaticMeshAsset(Stamina_Asset);
-					Pickup->SetPickupType(EPickup::Stamina_Pickup);
-				}
-				else
+				if (FMath::RandRange(0, 100) <= HealthSpawnProbability)
 				{
 					Pickup->SetStaticMeshAsset(Health_Asset);
 					Pickup->SetPickupType(EPickup::Health_Pickup);
+				}
+				else
+				{
+					Pickup->SetStaticMeshAsset(Stamina_Asset);
+					Pickup->SetPickupType(EPickup::Stamina_Pickup);
 				}
 			}
 		}

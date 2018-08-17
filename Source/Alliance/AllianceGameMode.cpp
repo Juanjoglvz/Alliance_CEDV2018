@@ -34,6 +34,9 @@ AAllianceGameMode::AAllianceGameMode()
 void AAllianceGameMode::PostLogin(APlayerController * NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
+	/*AAlliancePlayerController* PController = Cast<AAlliancePlayerController>(NewPlayer);
+	if (PController)
+		PController->OnServerAssignCharacter();*/
 	/*if (GIsServer)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Server: Post Login   Controller: %p"), NewPlayer);
@@ -66,6 +69,8 @@ void AAllianceGameMode::RespawnPlayer_Implementation(APlayerController * SecondP
 
 	AAlliancePlayerController* PController = Cast<AAlliancePlayerController>(SecondPlayer);
 	FString Name = PController->GetPlayerNameFromController(); // Unique player name
+	if (Name.Len() == 0)
+		return;
 
 	
 	UAllianceGameInstance* GInstance;
@@ -78,9 +83,9 @@ void AAllianceGameMode::RespawnPlayer_Implementation(APlayerController * SecondP
 		{
 			TArray<FString> Keys;
 			GInstance->AssignedCharacters.GetKeys(Keys);
-			FString MainName = Keys[0];
+			FString MainPlayerName = Keys[0];
 
-			if (GInstance->AssignedCharacters[MainName].Get()->IsChildOf(FirstCharacter.Get()))
+			if (GInstance->AssignedCharacters[MainPlayerName].Get()->IsChildOf(FirstCharacter.Get()))
 			{
 				GInstance->AssignedCharacters.Add(Name, SecondCharacter);
 			}
@@ -89,9 +94,9 @@ void AAllianceGameMode::RespawnPlayer_Implementation(APlayerController * SecondP
 				GInstance->AssignedCharacters.Add(Name, FirstCharacter);
 			}
 		}
-		else
+		else // Joining player has not been assigned a character (PIE, Alyssa first character by default)
 		{
-			return;
+			GInstance->AssignedCharacters.Add(Name, FirstCharacter);
 		}
 
 	}

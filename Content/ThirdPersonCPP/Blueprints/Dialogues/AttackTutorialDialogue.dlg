@@ -1,0 +1,100 @@
+DlgVersion 7
+DlgName "AttackTutorialDialogue"
+DlgGuid {  A -1800235269 B 1328095438 C 610462092 D -1462719756 }
+Node_Speech StartNode
+{
+	Text ""
+	SpeakerState "None"
+	bIsVirtualParent False
+	OwnerName "None"
+	bCheckChildrenOnEvaluation False
+	VoiceSoundWave ""
+	VoiceDialogueWave ""
+	Children { {  TargetIndex 0 Text "Next" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+}
+DlgParticipantClasses
+{
+	{  ParticipantName "FirstDialogue" ParticipantClass "/Game/ThirdPersonCPP/Blueprints/DialogueBP.DialogueBP_C" }
+	{  ParticipantName "Alyssa" ParticipantClass "/Script/Alliance.AllianceCharacter" }
+}
+Node Nodes
+{
+	// 0
+	Node_Speech 
+	{
+		Text ""
+		SpeakerState "None"
+		bIsVirtualParent False
+		OwnerName "FirstDialogue"
+		bCheckChildrenOnEvaluation False
+		VoiceSoundWave ""
+		VoiceDialogueWave ""
+		Children { {  TargetIndex 1 Text "Next" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+	}
+	// 1
+	Node_Speech 
+	{
+		Text "Hay algunos enemigos delante. Usa el boton izquierdo del raton para realizar el ataque basico."
+		SpeakerState "None"
+		bIsVirtualParent False
+		OwnerName "FirstDialogue"
+		bCheckChildrenOnEvaluation False
+		VoiceSoundWave ""
+		VoiceDialogueWave ""
+		Children { {  TargetIndex 2 Text "Next" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+	}
+	// 2
+	Node_Speech 
+	{
+		Text "Con el boton derecho del raton realizaras un ataque especial. Ten en cuenta que este tipo de ataques gastan mucha estamina."
+		SpeakerState "None"
+		bIsVirtualParent False
+		OwnerName "FirstDialogue"
+		bCheckChildrenOnEvaluation False
+		VoiceSoundWave ""
+		VoiceDialogueWave ""
+		Children { {  TargetIndex 3 Text "Next" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+	}
+	// 3
+	Node_Speech 
+	{
+		Text "Con la combinacion de la tecla SHIFT y el boton derecho del raton, realizaras otro ataque especial."
+		SpeakerState "None"
+		bIsVirtualParent False
+		OwnerName "FirstDialogue"
+		bCheckChildrenOnEvaluation False
+		VoiceSoundWave ""
+		VoiceDialogueWave ""
+		Children { {  TargetIndex 4 Text "Next" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+	}
+	// 4
+	Node_Speech 
+	{
+		Text "Bloquea ataques enemigos pulsando la tecla F. Mientras bloqueas, puedes realizar un ataque especial pulsando el boton izquierdo del raton."
+		SpeakerState "None"
+		bIsVirtualParent False
+		OwnerName "FirstDialogue"
+		bCheckChildrenOnEvaluation False
+		VoiceSoundWave ""
+		VoiceDialogueWave ""
+		Children { {  TargetIndex 5 Text "Next" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+	}
+	// 5
+	Node_Speech 
+	{
+		Text "Alla vamos"
+		SpeakerState "None"
+		bIsVirtualParent False
+		OwnerName "Alyssa"
+		bCheckChildrenOnEvaluation False
+		VoiceSoundWave ""
+		VoiceDialogueWave ""
+		Children { {  TargetIndex 6 Text "Finish" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+	}
+	// 6
+	Node_End 
+	{
+		OwnerName "FirstDialogue"
+		bCheckChildrenOnEvaluation False
+	}
+}

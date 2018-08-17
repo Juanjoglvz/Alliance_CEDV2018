@@ -1,0 +1,52 @@
+DlgVersion 7
+DlgName "TutorialComplete"
+DlgGuid {  A 1526892002 B 1149003515 C -813166452 D 1055998977 }
+Node_Speech StartNode
+{
+	Text ""
+	SpeakerState "None"
+	bIsVirtualParent False
+	OwnerName "None"
+	bCheckChildrenOnEvaluation False
+	VoiceSoundWave ""
+	VoiceDialogueWave ""
+	Children { {  TargetIndex 0 Text "Next" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+}
+DlgParticipantClasses
+{
+	{  ParticipantName "Morten" ParticipantClass "/Script/Alliance.AllianceCharacter" }
+	{  ParticipantName "Alyssa" ParticipantClass "/Script/Alliance.AllianceCharacter" }
+}
+Node Nodes
+{
+	// 0
+	Node_Speech 
+	{
+		Text ""
+		SpeakerState "None"
+		bIsVirtualParent False
+		OwnerName "Alyssa"
+		bCheckChildrenOnEvaluation False
+		VoiceSoundWave ""
+		VoiceDialogueWave ""
+		Children { {  TargetIndex 1 Text "Next" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+	}
+	// 1
+	Node_Speech 
+	{
+		Text "La puerta no debería estar muy lejos, sigamos el camino"
+		SpeakerState "None"
+		bIsVirtualParent False
+		OwnerName "Morten"
+		bCheckChildrenOnEvaluation False
+		VoiceSoundWave ""
+		VoiceDialogueWave ""
+		Children { {  TargetIndex 2 Text "Finish" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+	}
+	// 2
+	Node_End 
+	{
+		OwnerName "Alyssa"
+		bCheckChildrenOnEvaluation False
+	}
+}

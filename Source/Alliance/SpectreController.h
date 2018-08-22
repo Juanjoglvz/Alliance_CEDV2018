@@ -21,5 +21,10 @@ public:
 
 	UFUNCTION()
 		void SensePawn(const TArray<AActor*> &UpdatedActors);
+<<<<<<< HEAD
 
+=======
+	
+	
+>>>>>>> AI
 };

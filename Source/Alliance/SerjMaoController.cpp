@@ -2,11 +2,7 @@
 
 #include "SerjMaoController.h"
 #include "AllianceCharacter.h"
-<<<<<<< HEAD
-=======
 #include "Enemy.h"
-
->>>>>>> AI
 
 ASerjMaoController::ASerjMaoController()
 {
@@ -21,25 +17,15 @@ void ASerjMaoController::Possess(APawn* InPawn)
 
 	UAIPerceptionSystem::RegisterPerceptionStimuliSource(this, SightConfig->GetSenseImplementation(), InPawn);
 
-<<<<<<< HEAD
 	AAllianceCharacter* SerjMao = Cast<AAllianceCharacter>(InPawn);
 
 	if (SerjMao)
-=======
-	AAllianceCharacter* Pawn = Cast<AAllianceCharacter>(InPawn);
-
-	if (Pawn)
->>>>>>> AI
 	{
 
 		BlackboardComp->InitializeBlackboard(*(BehaviourTree->BlackboardAsset));
 
 		BehaviorTreeComp->StartTree(*BehaviourTree);
 
-<<<<<<< HEAD
-		BlackboardComp->SetValueAsBool(FName{ "GetAggro" }, true);
-
-=======
 		BlackboardComp->SetValueAsBool(FName{ "InBattle" }, false);
 
 		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
@@ -48,7 +34,6 @@ void ASerjMaoController::Possess(APawn* InPawn)
 		AAllianceCharacter* Player = Cast<AAllianceCharacter>(PlayerPawn);
 		BlackboardComp->SetValueAsObject(FName{ "Player" }, Player);
 		BlackboardComp->SetValueAsObject(FName{ "EnemyAggro" }, nullptr);
->>>>>>> AI
 	}
 }
 
@@ -56,18 +41,6 @@ void ASerjMaoController::SensePawn(const TArray<AActor*> &UpdatedActors)
 {
 	for (auto& Actor : UpdatedActors)
 	{
-<<<<<<< HEAD
-		AAllianceCharacter* Player = Cast<AAllianceCharacter>(Actor);
-
-		if (Player != nullptr)
-		{
-			if (BlackboardComp->GetValueAsBool(FName{ "GetAggro" }))
-			{
-				FName Key = FName{ "PlayerAggro" };
-				BlackboardComp->SetValueAsObject(Key, Player);
-				BlackboardComp->SetValueAsBool(FName{ "GetAggro" }, false);
-			}
-=======
 		AEnemy* Enemy = Cast<AEnemy>(Actor);
 
 		if (Enemy != nullptr)
@@ -88,14 +61,7 @@ void ASerjMaoController::SensePawn(const TArray<AActor*> &UpdatedActors)
 				BlackboardComp->SetValueAsObject(FName{ "EnemyAggro" }, Enemy);
 			}
 
->>>>>>> AI
 			break;
 		}
 	}
 }
-<<<<<<< HEAD
-
-
-
-=======
->>>>>>> AI

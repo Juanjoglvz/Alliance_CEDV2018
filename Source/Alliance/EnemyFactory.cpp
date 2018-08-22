@@ -13,17 +13,17 @@ AEnemyFactory::AEnemyFactory()
 	bAlwaysRelevant = true;
 
 	// Get references to enemies blueprints
-	static ConstructorHelpers::FObjectFinder<UBlueprint> MeleeBP(TEXT("Blueprint'/Game/ThirdPersonCPP/Blueprints/MeleeEnemy.MeleeEnemy'"));
+	static ConstructorHelpers::FObjectFinder<UBlueprint> MeleeBP(TEXT("Blueprint'/Game/ThirdPersonCPP/Blueprints/Enemies/MeleeEnemy.MeleeEnemy'"));
 	if (MeleeBP.Object) {
 		EnemyMeleeReference = (UClass*)MeleeBP.Object->GeneratedClass;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UBlueprint> RangedBP(TEXT("Blueprint'/Game/ThirdPersonCPP/Blueprints/RangedEnemy.RangedEnemy'"));
+	static ConstructorHelpers::FObjectFinder<UBlueprint> RangedBP(TEXT("Blueprint'/Game/ThirdPersonCPP/Blueprints/Enemies/RangedEnemy.RangedEnemy'"));
 	if (RangedBP.Object) {
 		EnemyRangedReference = (UClass*)RangedBP.Object->GeneratedClass;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UBlueprint> TankBP(TEXT("Blueprint'/Game/ThirdPersonCPP/Blueprints/TankEnemy.TankEnemy'"));
+	static ConstructorHelpers::FObjectFinder<UBlueprint> TankBP(TEXT("Blueprint'/Game/ThirdPersonCPP/Blueprints/Enemies/TankEnemy.TankEnemy'"));
 	if (TankBP.Object) {
 		EnemyTankReference = (UClass*)TankBP.Object->GeneratedClass;
 	}

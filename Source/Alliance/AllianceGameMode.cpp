@@ -10,7 +10,7 @@
 AAllianceGameMode::AAllianceGameMode()
 {
 	// set default pawn class to our Blueprinted character
-	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/ThirdPersonCPP/Blueprints/Alyssa"));
+	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/ThirdPersonCPP/Blueprints/Characters_and_NPCs/Alyssa"));
 	if (PlayerPawnBPClass.Class != NULL)
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
@@ -20,12 +20,12 @@ AAllianceGameMode::AAllianceGameMode()
 	PlayerStateClass = AAlliancePlayerState::StaticClass();
 
 
-	static ConstructorHelpers::FObjectFinder<UBlueprint> CharBlueprint(TEXT("Blueprint'/Game/ThirdPersonCPP/Blueprints/Alyssa.Alyssa'"));
+	static ConstructorHelpers::FObjectFinder<UBlueprint> CharBlueprint(TEXT("Blueprint'/Game/ThirdPersonCPP/Blueprints/Characters_and_NPCs/Alyssa.Alyssa'"));
 	if (CharBlueprint.Object) {
 		FirstCharacter = (UClass*)CharBlueprint.Object->GeneratedClass;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UBlueprint> CharBlueprint2(TEXT("Blueprint'/Game/ThirdPersonCPP/Blueprints/Morten.Morten'"));
+	static ConstructorHelpers::FObjectFinder<UBlueprint> CharBlueprint2(TEXT("Blueprint'/Game/ThirdPersonCPP/Blueprints/Characters_and_NPCs/Morten.Morten'"));
 	if (CharBlueprint2.Object) {
 		SecondCharacter = (UClass*)CharBlueprint2.Object->GeneratedClass;
 	}

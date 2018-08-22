@@ -6,6 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "AllianceGameMode.generated.h"
 
+
 UCLASS()
 class AAllianceGameMode : public AGameModeBase
 {
@@ -18,6 +19,13 @@ public:
 		TSubclassOf<class AAllianceCharacter> FirstCharacter;
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class AAllianceCharacter> SecondCharacter;
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class AAllianceAIPlayerController> FirstCharacterController;
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class AAllianceAIPlayerController> SecondCharacterController;
+
+	UPROPERTY(EditAnywhere)
+		TMap<TSubclassOf<class AAllianceCharacter>, TSubclassOf<class AAllianceAIPlayerController>> CharacterControllers;
 
 	virtual void PostLogin(APlayerController * NewPlayer);
 
@@ -25,6 +33,10 @@ public:
 	void RespawnPlayer(APlayerController* SecondPlayer);
 	void RespawnPlayer_Implementation(APlayerController* SecondPlayer);
 	FORCEINLINE bool RespawnPlayer_Validate(APlayerController* SecondPlayer) { return true; }
+
+private:
+	AAllianceCharacter* SpawnSecondPlayerNearFirst(FVector FirstPosition, FRotator FirstRotation, TSubclassOf<class AAllianceCharacter> SecondCharacter);
+	AAllianceCharacter* GetControlledPawnByAI(TArray<AActor*> CharactersInWorld);
 };
 
 

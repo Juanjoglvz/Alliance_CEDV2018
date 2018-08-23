@@ -25,7 +25,10 @@ public:
 
 	// Dialogue functions
 	UFUNCTION(BlueprintCallable, Category = DlgSystem)
-		void StartDialogue(class UDlgDialogue* Dialogue, UObject* OtherParticipant);
+		void StartDialogue(class UDlgDialogue* Dialogue, UObject* FirstParticipant, UObject* SecondParticipant);
+	
+	UFUNCTION(BlueprintCallable, Category = DlgSystem)
+		void StartDialogue3Characters(class UDlgDialogue* Dialogue, UObject* FirstParticipant, UObject* SecondParticipant, UObject* ThirdParticipant);
 
 	UFUNCTION(BlueprintCallable, Category = DlgSystem)
 		void SelectDialogueOption(int32 Index);

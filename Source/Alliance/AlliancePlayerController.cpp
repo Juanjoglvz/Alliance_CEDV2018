@@ -16,10 +16,14 @@ void AAlliancePlayerController::BeginPlay()
 	OnServerAssignCharacter();
 }
 
-void AAlliancePlayerController::StartDialogue(class UDlgDialogue* Dialogue, UObject* OtherParticipant)
+void AAlliancePlayerController::StartDialogue(class UDlgDialogue* Dialogue, UObject* FirstParticipant, UObject* SecondParticipant)
 {
-	AAllianceCharacter* Character = Cast<AAllianceCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-	ActiveContext = UDlgManager::StartDialogue2(Dialogue, Character, OtherParticipant);
+	ActiveContext = UDlgManager::StartDialogue2(Dialogue, FirstParticipant, SecondParticipant);
+}
+
+void AAlliancePlayerController::StartDialogue3Characters(class UDlgDialogue* Dialogue, UObject* FirstParticipant, UObject* SecondParticipant, UObject* ThirdParticipant)
+{
+	ActiveContext = UDlgManager::StartDialogue3(Dialogue, FirstParticipant, SecondParticipant, ThirdParticipant);
 }
 
 void AAlliancePlayerController::SelectDialogueOption(int32 Index)

@@ -1,0 +1,173 @@
+DlgVersion 7
+DlgName "FirstBossDialogue"
+DlgGuid {  A 1181526527 B 1082858024 C -983822179 D -97769686 }
+Node_Speech StartNode
+{
+	Text ""
+	SpeakerState "None"
+	bIsVirtualParent False
+	OwnerName "None"
+	bCheckChildrenOnEvaluation False
+	VoiceSoundWave ""
+	VoiceDialogueWave ""
+	Children { {  TargetIndex 0 Text "Next" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+}
+DlgParticipantClasses
+{
+	{  ParticipantName "Morten" ParticipantClass "/Script/Alliance.AllianceCharacter" }
+	{  ParticipantName "Alyssa" ParticipantClass "/Script/Alliance.AllianceCharacter" }
+	{  ParticipantName "SerjMao" ParticipantClass "/Script/Alliance.AllianceCharacter" }
+}
+Node Nodes
+{
+	// 0
+	Node_Speech 
+	{
+		Text ""
+		SpeakerState "None"
+		bIsVirtualParent False
+		OwnerName "Morten"
+		bCheckChildrenOnEvaluation False
+		VoiceSoundWave ""
+		VoiceDialogueWave ""
+		Children { {  TargetIndex 1 Text "Next" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+	}
+	// 1
+	Node_Speech 
+	{
+		Text "Ese ultimo si que era fuerte"
+		SpeakerState "None"
+		bIsVirtualParent False
+		OwnerName "Morten"
+		bCheckChildrenOnEvaluation False
+		VoiceSoundWave ""
+		VoiceDialogueWave ""
+		Children { {  TargetIndex 2 Text "Next" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+	}
+	// 2
+	Node_Speech 
+	{
+		Text "Ya solo deberia faltar derrotar al jefe del campamento y la zona quedara libre"
+		SpeakerState "None"
+		bIsVirtualParent False
+		OwnerName "Alyssa"
+		bCheckChildrenOnEvaluation False
+		VoiceSoundWave ""
+		VoiceDialogueWave ""
+		Children { {  TargetIndex 3 Text "Next" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+	}
+	// 3
+	Node_Speech 
+	{
+		Text "Esperad"
+		SpeakerState "None"
+		bIsVirtualParent False
+		OwnerName "SerjMao"
+		bCheckChildrenOnEvaluation False
+		VoiceSoundWave ""
+		VoiceDialogueWave ""
+		Children { {  TargetIndex 4 Text "Next" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+	}
+	// 4
+	Node_Speech 
+	{
+		Text "Quien eres"
+		SpeakerState "None"
+		bIsVirtualParent False
+		OwnerName "Morten"
+		bCheckChildrenOnEvaluation False
+		VoiceSoundWave ""
+		VoiceDialogueWave ""
+		Children { {  TargetIndex 5 Text "Next" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+	}
+	// 5
+	Node_Speech 
+	{
+		Text "Eso da igual, si nos habeis rescatado es que sois parte de la resistencia"
+		SpeakerState "None"
+		bIsVirtualParent False
+		OwnerName "SerjMao"
+		bCheckChildrenOnEvaluation False
+		VoiceSoundWave ""
+		VoiceDialogueWave ""
+		Children { {  TargetIndex 6 Text "Next" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+	}
+	// 6
+	Node_Speech 
+	{
+		Text "Si, lo somos. Que ocurre"
+		SpeakerState "None"
+		bIsVirtualParent False
+		OwnerName "Alyssa"
+		bCheckChildrenOnEvaluation False
+		VoiceSoundWave ""
+		VoiceDialogueWave ""
+		Children { {  TargetIndex 7 Text "Next" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+	}
+	// 7
+	Node_Speech 
+	{
+		Text "Creo que se como vencer a los aliens invasores de vuestro planeta"
+		SpeakerState "None"
+		bIsVirtualParent False
+		OwnerName "SerjMao"
+		bCheckChildrenOnEvaluation False
+		VoiceSoundWave ""
+		VoiceDialogueWave ""
+		Children { {  TargetIndex 8 Text "Next" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+	}
+	// 8
+	Node_Speech 
+	{
+		Text "Eso es imposible, todo el mundo sabe que no reciben daño. Si hubiera una forma ya lo habriamos descubierto hace años, cuando nuestros numeros no eran tan reducidos"
+		SpeakerState "None"
+		bIsVirtualParent False
+		OwnerName "Morten"
+		bCheckChildrenOnEvaluation False
+		VoiceSoundWave ""
+		VoiceDialogueWave ""
+		Children { {  TargetIndex 9 Text "Next" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+	}
+	// 9
+	Node_Speech 
+	{
+		Text "Teneis que creerme. Oi una conversacion entre el jefe del campamento con uno de ellos hace tiempo. Al parecer hay algo en su nave que les permite ser inmortales y sin ello no podrian hacer nada."
+		SpeakerState "None"
+		bIsVirtualParent False
+		OwnerName "SerjMao"
+		bCheckChildrenOnEvaluation False
+		VoiceSoundWave ""
+		VoiceDialogueWave ""
+		Children { {  TargetIndex 10 Text "Next" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+	}
+	// 10
+	Node_Speech 
+	{
+		Text "Como estas tan seguro"
+		SpeakerState "None"
+		bIsVirtualParent False
+		OwnerName "Alyssa"
+		bCheckChildrenOnEvaluation False
+		VoiceSoundWave ""
+		VoiceDialogueWave ""
+		Children { {  TargetIndex 11 Text "Next" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+	}
+	// 11
+	Node_Speech 
+	{
+		Text "No lo estoy, pero hay un humano en este campamento que deberia saber mas. Estara en la casa del jefe. Por favor, permitidme unirme a vosotros"
+		SpeakerState "None"
+		bIsVirtualParent False
+		OwnerName "SerjMao"
+		bCheckChildrenOnEvaluation False
+		VoiceSoundWave ""
+		VoiceDialogueWave ""
+		Children { {  TargetIndex 12 Text "Finish" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+	}
+	// 12
+	Node_End 
+	{
+		OwnerName "Morten"
+		bCheckChildrenOnEvaluation False
+	}
+}

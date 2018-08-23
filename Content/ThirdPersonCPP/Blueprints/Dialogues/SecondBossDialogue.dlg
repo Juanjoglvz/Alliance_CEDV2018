@@ -1,0 +1,149 @@
+DlgVersion 7
+DlgName "SecondBossDialogue"
+DlgGuid {  A 1269005657 B 1083935998 C 829181373 D -312896503 }
+Node_Speech StartNode
+{
+	Text ""
+	SpeakerState "None"
+	bIsVirtualParent False
+	OwnerName "None"
+	bCheckChildrenOnEvaluation False
+	VoiceSoundWave ""
+	VoiceDialogueWave ""
+	Children { {  TargetIndex 0 Text "Next" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+}
+DlgParticipantClasses
+{
+	{  ParticipantName "SerjMao" ParticipantClass "/Script/Alliance.AllianceCharacter" }
+	{  ParticipantName "Spectre" ParticipantClass "/Script/Alliance.AllianceCharacter" }
+	{  ParticipantName "Morten" ParticipantClass "/Script/Alliance.AllianceCharacter" }
+}
+Node Nodes
+{
+	// 0
+	Node_Speech 
+	{
+		Text ""
+		SpeakerState "None"
+		bIsVirtualParent False
+		OwnerName "SerjMao"
+		bCheckChildrenOnEvaluation False
+		VoiceSoundWave ""
+		VoiceDialogueWave ""
+		Children { {  TargetIndex 1 Text "Next" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+	}
+	// 1
+	Node_Speech 
+	{
+		Text "Ahora deberiamos buscar a aquel que se hace llamar Spectre"
+		SpeakerState "None"
+		bIsVirtualParent False
+		OwnerName "SerjMao"
+		bCheckChildrenOnEvaluation False
+		VoiceSoundWave ""
+		VoiceDialogueWave ""
+		Children { {  TargetIndex 2 Text "Next" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+	}
+	// 2
+	Node_Speech 
+	{
+		Text "Que pasa conmigo"
+		SpeakerState "None"
+		bIsVirtualParent False
+		OwnerName "Spectre"
+		bCheckChildrenOnEvaluation False
+		VoiceSoundWave ""
+		VoiceDialogueWave ""
+		Children { {  TargetIndex 3 Text "Next" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+	}
+	// 3
+	Node_Speech 
+	{
+		Text "Al parecer tu tienes que saber un punto debil en los alienigenas"
+		SpeakerState "None"
+		bIsVirtualParent False
+		OwnerName "Morten"
+		bCheckChildrenOnEvaluation False
+		VoiceSoundWave ""
+		VoiceDialogueWave ""
+		Children { {  TargetIndex 4 Text "Next" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+	}
+	// 4
+	Node_Speech 
+	{
+		Text "Puede"
+		SpeakerState "None"
+		bIsVirtualParent False
+		OwnerName "Spectre"
+		bCheckChildrenOnEvaluation False
+		VoiceSoundWave ""
+		VoiceDialogueWave ""
+		Children { {  TargetIndex 5 Text "Next" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+	}
+	// 5
+	Node_Speech 
+	{
+		Text "Y por que no nos has dicho nada aun"
+		SpeakerState "None"
+		bIsVirtualParent False
+		OwnerName "Morten"
+		bCheckChildrenOnEvaluation False
+		VoiceSoundWave ""
+		VoiceDialogueWave ""
+		Children { {  TargetIndex 6 Text "Next" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+	}
+	// 6
+	Node_Speech 
+	{
+		Text "No se por que deberia hacerlo. Estos aliens me tratan bastante bien, no tengo necesidad de ello"
+		SpeakerState "None"
+		bIsVirtualParent False
+		OwnerName "Spectre"
+		bCheckChildrenOnEvaluation False
+		VoiceSoundWave ""
+		VoiceDialogueWave ""
+		Children { {  TargetIndex 7 Text "Next" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+	}
+	// 7
+	Node_Speech 
+	{
+		Text "No lo entiendes. Su raza esta esclavizando al resto de seres vivos que encuentran. Es nuestra oportunidad de pararles los pies"
+		SpeakerState "None"
+		bIsVirtualParent False
+		OwnerName "SerjMao"
+		bCheckChildrenOnEvaluation False
+		VoiceSoundWave ""
+		VoiceDialogueWave ""
+		Children { {  TargetIndex 8 Text "Next" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+	}
+	// 8
+	Node_Speech 
+	{
+		Text "Ademas, si no vienes, te tomaremos por la fuerza"
+		SpeakerState "None"
+		bIsVirtualParent False
+		OwnerName "Morten"
+		bCheckChildrenOnEvaluation False
+		VoiceSoundWave ""
+		VoiceDialogueWave ""
+		Children { {  TargetIndex 9 Text "Next" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+	}
+	// 9
+	Node_Speech 
+	{
+		Text "Supongo que no me queda otra opcion entonces"
+		SpeakerState "None"
+		bIsVirtualParent False
+		OwnerName "Spectre"
+		bCheckChildrenOnEvaluation False
+		VoiceSoundWave ""
+		VoiceDialogueWave ""
+		Children { {  TargetIndex 10 Text "Finish" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+	}
+	// 10
+	Node_End 
+	{
+		OwnerName "SerjMao"
+		bCheckChildrenOnEvaluation False
+	}
+}

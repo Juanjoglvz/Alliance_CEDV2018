@@ -1,18 +1,18 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "AllysaController.h"
+#include "AlyssaController.h"
 #include "AllianceCharacter.h"
 #include "Enemy.h"
 
 
-AAllysaController::AAllysaController()
+AAlyssaController::AAlyssaController()
 {
-	auto TreeAsset = ConstructorHelpers::FObjectFinder<UBehaviorTree>(TEXT("BehaviorTree'/Game/ThirdPersonCPP/Blueprints/Artificial_Intelligence/SerjMao/SerjMao_BT.SerjMao_BT'"));
+	auto TreeAsset = ConstructorHelpers::FObjectFinder<UBehaviorTree>(TEXT("BehaviorTree'/Game/ThirdPersonCPP/Blueprints/Artificial_Intelligence/Alyssa/Alyssa_BT.Alyssa_BT'"));
 	BehaviourTree = TreeAsset.Object;
-	PerceptionComponent->OnPerceptionUpdated.AddDynamic(this, &AAllysaController::SensePawn);
+	PerceptionComponent->OnPerceptionUpdated.AddDynamic(this, &AAlyssaController::SensePawn);
 }
 
-void AAllysaController::Possess(APawn* InPawn)
+void AAlyssaController::Possess(APawn* InPawn)
 {
 	Super::Possess(InPawn);
 
@@ -38,7 +38,7 @@ void AAllysaController::Possess(APawn* InPawn)
 	}
 }
 
-void AAllysaController::SensePawn(const TArray<AActor*> &UpdatedActors)
+void AAlyssaController::SensePawn(const TArray<AActor*> &UpdatedActors)
 {
 	for (auto& Actor : UpdatedActors)
 	{

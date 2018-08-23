@@ -3,19 +3,19 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "EnemyController.h"
-#include "AllysaController.generated.h"
+#include "AllianceController.h"
+#include "AlyssaController.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ALLIANCE_API AAllysaController : public AEnemyController
+class ALLIANCE_API AAlyssaController : public AAllianceController
 {
 	GENERATED_BODY()
 	
 public:
-	AAllysaController();
+	AAlyssaController();
 
 	virtual void Possess(APawn* InPawn) override;
 

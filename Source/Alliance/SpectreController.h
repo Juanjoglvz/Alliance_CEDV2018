@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "EnemyController.h"
+#include "AllianceController.h"
 #include "SpectreController.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ALLIANCE_API ASpectreController : public AEnemyController
+class ALLIANCE_API ASpectreController : public AAllianceController
 {
 	GENERATED_BODY()
 	

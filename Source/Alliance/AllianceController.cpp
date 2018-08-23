@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "EnemyController.h"
+#include "AllianceController.h"
 
-AEnemyController::AEnemyController()
+AAllianceController::AAllianceController()
 {
 	BlackboardComp = CreateDefaultSubobject<UBlackboardComponent>(TEXT("BlackboardComp"));
 	BehaviorTreeComp = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("BehaviorComp"));
@@ -13,17 +13,17 @@ AEnemyController::AEnemyController()
 }
 
 
-void AEnemyController::Tick(float DeltaTime)
+void AAllianceController::Tick(float DeltaTime)
 {
 
 }
 
-void AEnemyController::Possess(APawn* InPawn)
+void AAllianceController::Possess(APawn* InPawn)
 {
 	Super::Possess(InPawn);
 	SightConfig->SightRadius = 3000.f;
 	SightConfig->LoseSightRadius = 3200.f;
-	SightConfig->PeripheralVisionAngleDegrees = 50.f;
+	SightConfig->PeripheralVisionAngleDegrees = 180.f;
 	SightConfig->DetectionByAffiliation.bDetectEnemies = true;
 	SightConfig->DetectionByAffiliation.bDetectNeutrals = true;
 	SightConfig->DetectionByAffiliation.bDetectFriendlies = true;

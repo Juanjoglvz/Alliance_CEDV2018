@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "EnemyController.h"
+#include "AllianceController.h"
 #include "HenkkaController.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ALLIANCE_API AHenkkaController : public AEnemyController
+class ALLIANCE_API AHenkkaController : public AAllianceController
 {
 	GENERATED_BODY()
 	

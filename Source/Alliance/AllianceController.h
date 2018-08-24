@@ -11,19 +11,19 @@
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "AIController.h"
-#include "EnemyController.generated.h"
+#include "AllianceController.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ALLIANCE_API AEnemyController : public AAIController
+class ALLIANCE_API AAllianceController : public AAIController
 {
 	GENERATED_BODY()
 
 public:
 
-	AEnemyController();
+	AAllianceController();
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

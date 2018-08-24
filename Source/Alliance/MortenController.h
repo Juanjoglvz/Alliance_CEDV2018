@@ -4,21 +4,22 @@
 
 #include "CoreMinimal.h"
 #include "AllianceController.h"
-#include "SerjMaoController.generated.h"
+#include "MortenController.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ALLIANCE_API ASerjMaoController : public AAllianceController
+class ALLIANCE_API AMortenController : public AAllianceController
 {
 	GENERATED_BODY()
 	
 public:
-	ASerjMaoController();
+	AMortenController();
 
 	virtual void Possess(APawn* InPawn) override;
 
 	UFUNCTION()
 		void SensePawn(const TArray<AActor*> &UpdatedActors);
+	
 };

@@ -5,6 +5,9 @@
 #include "AlliancePlayerController.h"
 #include "AlliancePlayerState.h"
 #include "AllianceGameInstance.h"
+#include "AllianceAIPlayerController.h"
+#include "AlyssaController.h"
+#include "MortenController.h"
 #include "UObject/ConstructorHelpers.h"
 
 AAllianceGameMode::AAllianceGameMode()
@@ -29,33 +32,17 @@ AAllianceGameMode::AAllianceGameMode()
 	if (CharBlueprint2.Object) {
 		SecondCharacter = (UClass*)CharBlueprint2.Object->GeneratedClass;
 	}
+
+	FirstCharacterController = (UClass*)AAlyssaController::StaticClass();
+	SecondCharacterController = (UClass*)AMortenController::StaticClass();
+
+	CharacterControllers.Add(FirstCharacter, FirstCharacterController);
+	CharacterControllers.Add(SecondCharacter, SecondCharacterController);
 }
 
 void AAllianceGameMode::PostLogin(APlayerController * NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
-	/*AAlliancePlayerController* PController = Cast<AAlliancePlayerController>(NewPlayer);
-	if (PController)
-		PController->OnServerAssignCharacter();*/
-	/*if (GIsServer)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Server: Post Login   Controller: %p"), NewPlayer);
-		if (NewPlayer)
-		{
-			//AAlliancePlayerController* PController = Cast<AAlliancePlayerController>(NewPlayer);
-
-			//if (PController)
-			//{
-			//	PController->OnClientLogin();
-			//	UE_LOG(LogTemp, Error, TEXT("Called onclientlogin from game mode"));
-			//}
-			RespawnPlayer_Implementation(NewPlayer);
-		}
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("Client: Post Login"));
-	}*/
 }
 
 void AAllianceGameMode::RespawnPlayer_Implementation(APlayerController * SecondPlayer)
@@ -70,29 +57,31 @@ void AAllianceGameMode::RespawnPlayer_Implementation(APlayerController * SecondP
 	AAlliancePlayerController* PController = Cast<AAlliancePlayerController>(SecondPlayer);
 	FString Name = PController->GetPlayerNameFromController(); // Unique player name
 	if (Name.Len() == 0)
+	{
+		if (PController->GetPawn()) // Player is in the world
+		{
+			SecondPlayer->GetPawn()->Destroy();
+		}
 		return;
+	}
 
 	
 	UAllianceGameInstance* GInstance;
 	GInstance = Cast<UAllianceGameInstance>(GetGameInstance());
 
-	if (!GInstance->AssignedCharacters.Contains(Name))
+	if (!GInstance->AssignedCharacters.Contains(Name)) // Joining player has not been assigned a character
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Player has not been assigned a character"));
-		if (GInstance->AssignedCharacters.Num() == 1) // Joining player should have the other character
+		if (GInstance->AssignedCharacters.Num() == 1) // Joining player should have the free character
 		{
 			TArray<FString> Keys;
 			GInstance->AssignedCharacters.GetKeys(Keys);
 			FString MainPlayerName = Keys[0];
 
 			if (GInstance->AssignedCharacters[MainPlayerName].Get()->IsChildOf(FirstCharacter.Get()))
-			{
 				GInstance->AssignedCharacters.Add(Name, SecondCharacter);
-			}
 			else
-			{
 				GInstance->AssignedCharacters.Add(Name, FirstCharacter);
-			}
 		}
 		else // Joining player has not been assigned a character (PIE, Alyssa first character by default)
 		{
@@ -101,7 +90,20 @@ void AAllianceGameMode::RespawnPlayer_Implementation(APlayerController * SecondP
 
 	}
 
-	TSubclassOf<AAllianceCharacter> AssignedCharacter = GInstance->AssignedCharacters[Name];
+	TSubclassOf<AAllianceCharacter> AssignedCharacter;
+	TSubclassOf<AAllianceCharacter> SecondAssignedCharacter;
+
+	AssignedCharacter = GInstance->AssignedCharacters[Name];
+
+	if (AssignedCharacter.Get()->IsChildOf(FirstCharacter.Get())) // Get the character that the AI should possess
+		SecondAssignedCharacter = SecondCharacter;
+	else
+		SecondAssignedCharacter = FirstCharacter;
+
+	if (AssignedCharacter == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Couldnt retrieve the assigned character"));
+	}
 
 	if (SecondPlayer->GetPawn()) // Player is in the world
 	{
@@ -112,7 +114,7 @@ void AAllianceGameMode::RespawnPlayer_Implementation(APlayerController * SecondP
 	TArray<AActor*> FoundCharacters; // Only one character should exist
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AAllianceCharacter::StaticClass(), FoundCharacters); 
 
-	if (FoundCharacters.Num() == 0) // First character in the world, use playerstart instead
+	if (FoundCharacters.Num() == 0) // First character in the world, use playerstart then spawn AI Character
 	{
 		TArray<AActor*> FoundPStarts;
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), FoundPStarts);
@@ -130,8 +132,30 @@ void AAllianceGameMode::RespawnPlayer_Implementation(APlayerController * SecondP
 		AAllianceCharacter* SpawnedCharacter = GetWorld()->SpawnActor<AAllianceCharacter>(AssignedCharacter, PStart->GetActorLocation() , PStart->GetActorRotation(), SpawnInfo);
 
 		SecondPlayer->Possess(SpawnedCharacter);
+
+		// Spawn the second player, this time controlled by AI
+
+		AAllianceCharacter* AIControlledCharacter = SpawnSecondPlayerNearFirst(SpawnedCharacter->GetActorLocation(), SpawnedCharacter->GetActorRotation(), SecondAssignedCharacter);
+
+		if (AIControlledCharacter == nullptr)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Second player controlled by AI couldnt be spawned"));
+			return;
+		}
+
+		UClass* AIPlayerControllerClass = CharacterControllers[SecondAssignedCharacter];
+		AAllianceController* AIPlayerController = GetWorld()->SpawnActor<AAllianceController>(AIPlayerControllerClass);
+
+		if (!AIPlayerController)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Couldnt spawn AI Player Controller"));
+			return;
+		}
+
+		AIPlayerController->Possess(AIControlledCharacter);
+
 	}
-	else if (FoundCharacters.Num() == 1)
+	else if (FoundCharacters.Num() == 1) // First character spawned, AI Character not spawned yet
 	{
 		AAllianceCharacter* MainCharacter = Cast<AAllianceCharacter>(FoundCharacters[0]);
 
@@ -145,8 +169,43 @@ void AAllianceGameMode::RespawnPlayer_Implementation(APlayerController * SecondP
 
 		SecondPlayer->Possess(SpawnedCharacter);
 	}
+	else if (FoundCharacters.Num() == 2) // Both characters spawned, just change the controller
+	{
+		AAllianceCharacter* SecondaryCharacter = GetControlledPawnByAI(FoundCharacters);
+
+		SecondPlayer->Possess(SecondaryCharacter);
+	}
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("A lot of characters found"));
 	}
+}
+
+AAllianceCharacter * AAllianceGameMode::SpawnSecondPlayerNearFirst(FVector FirstPosition, FRotator FirstRotation, TSubclassOf<class AAllianceCharacter> SecondCharacter)
+{
+	FVector NewPosition = FirstPosition;
+	NewPosition.Y += 500;
+
+	FActorSpawnParameters SpawnInfo;
+	SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	return GetWorld()->SpawnActor<AAllianceCharacter>(SecondCharacter, NewPosition, FirstRotation, SpawnInfo);
+}
+
+AAllianceCharacter* AAllianceGameMode::GetControlledPawnByAI(TArray<AActor*> CharactersInWorld)
+{
+	for (AActor* Character : CharactersInWorld)
+	{
+		AAllianceCharacter* ACharacter = Cast<AAllianceCharacter>(Character);
+		
+		if (ACharacter)
+		{
+			AController* Controller = ACharacter->GetController();
+
+			AAllianceController* TentativeController = Cast<AAllianceController>(Controller);
+
+			if (TentativeController)
+				return ACharacter;
+		}
+	}
+	return nullptr;
 }

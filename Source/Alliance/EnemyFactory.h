@@ -11,7 +11,10 @@ enum class EEnemyType: uint8
 {
 	ET_Melee 	UMETA(DisplayName = "Melee"),
 	ET_Ranged 	UMETA(DisplayName = "Ranged"),
-	ET_Tank		UMETA(DisplayName = "Tank")
+	ET_Tank		UMETA(DisplayName = "Tank"),
+	ET_Euronymous UMETA(DisplayName = "Euronymous"),
+	ET_Shiva	UMETA(DisplayName = "Shiva"),
+	ET_Henkka	UMETA(DisplayName = "Henkka")
 };
 
 UCLASS()
@@ -37,4 +40,7 @@ private:
 	TSubclassOf<class AEnemy> EnemyTankReference;
 	TSubclassOf<class AEnemy> EnemyRangedReference;
 	TSubclassOf<class AEnemy> EnemyMeleeReference;
+	TSubclassOf<class AEnemy> EnemyShivaReference;
+	TSubclassOf<class AEnemy> EnemyEuronymousReference;
+	TSubclassOf<class AEnemy> EnemyHenkkaReference;
 };

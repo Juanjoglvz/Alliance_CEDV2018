@@ -31,6 +31,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = EnemySpawner)
 		int NumberOfTankEnemiesToSpawn;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = EnemySpawner)
+		bool b_SpawnFirstBoss;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = EnemySpawner)
+		bool b_SpawnSecondBoss;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = EnemySpawner)
+		bool b_SpawnThirdBoss;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = EnemySpawner)
 		int NumberOfWaves;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = EnemySpawner)
 		FVector LocationWhereSpawn;
@@ -40,8 +46,14 @@ public:
 private:
 	int SpawnedWaves;
 	int NumberOfAliveEnemies;
+	bool b_BossHasBeenSpawned;
 	class AEnemyFactory* EnemyFactory;
 
+	void SpawnEnemies();
+	void SpawnBosses();
+
 	UFUNCTION()
-	void EnemyDestroyed(uint32 UniqueID);
+		void EnemyDestroyed(uint32 UniqueID);
+	UFUNCTION()
+		void BossDestroyed(uint32 UniqueID);
 };

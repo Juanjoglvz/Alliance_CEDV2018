@@ -49,7 +49,7 @@ void AAlliancePlayerController::OnClientLogin_Implementation()
 FString AAlliancePlayerController::GetPlayerNameFromController() const
 {
 	FString Name = FString();
-	Name = PlayerState->PlayerName;
+	Name = PlayerState->GetPlayerName();
 	return Name;
 }
 

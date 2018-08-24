@@ -5,7 +5,6 @@
 #include "AlliancePlayerController.h"
 #include "AlliancePlayerState.h"
 #include "AllianceGameInstance.h"
-#include "AllianceAIPlayerController.h"
 #include "AlyssaController.h"
 #include "MortenController.h"
 #include "UObject/ConstructorHelpers.h"

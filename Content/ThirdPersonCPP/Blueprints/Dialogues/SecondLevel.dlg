@@ -1,0 +1,77 @@
+DlgVersion 7
+DlgName "SecondLevel"
+DlgGuid {  A 243248142 B 1335717053 C -1503529338 D -2042200048 }
+Node_Speech StartNode
+{
+	Text ""
+	SpeakerState "None"
+	bIsVirtualParent False
+	OwnerName "None"
+	bCheckChildrenOnEvaluation False
+	VoiceSoundWave ""
+	VoiceDialogueWave ""
+	Children { {  TargetIndex 0 Text "Next" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+}
+DlgParticipantClasses
+{
+	{  ParticipantName "Spectre" ParticipantClass "/Script/Alliance.AllianceCharacter" }
+	{  ParticipantName "Morten" ParticipantClass "/Script/Alliance.AllianceCharacter" }
+	{  ParticipantName "Alyssa" ParticipantClass "/Script/Alliance.AllianceCharacter" }
+}
+Node Nodes
+{
+	// 0
+	Node_Speech 
+	{
+		Text ""
+		SpeakerState "None"
+		bIsVirtualParent False
+		OwnerName "Spectre"
+		bCheckChildrenOnEvaluation False
+		VoiceSoundWave ""
+		VoiceDialogueWave ""
+		Children { {  TargetIndex 1 Text "Next" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+	}
+	// 1
+	Node_Speech 
+	{
+		Text "Esta bien. En alguna parte de esta nave deberia haber un servidor que les permite regenerar su salud constantemente. Yo puedo tirar abajo ese servidor y volver a su jefe vulnerable durante un tiempo, tiempo suficiente para que sea derrotado."
+		SpeakerState "None"
+		bIsVirtualParent False
+		OwnerName "Spectre"
+		bCheckChildrenOnEvaluation False
+		VoiceSoundWave ""
+		VoiceDialogueWave ""
+		Children { {  TargetIndex 2 Text "Next" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+	}
+	// 2
+	Node_Speech 
+	{
+		Text "A trabajar entonces"
+		SpeakerState "None"
+		bIsVirtualParent False
+		OwnerName "Morten"
+		bCheckChildrenOnEvaluation False
+		VoiceSoundWave ""
+		VoiceDialogueWave ""
+		Children { {  TargetIndex 3 Text "Next" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+	}
+	// 3
+	Node_Speech 
+	{
+		Text "Si es cierto que no sabes pelear, intenta mantenerte a salvo, Spectre. Nosotros nos encargamos de los enemigos"
+		SpeakerState "None"
+		bIsVirtualParent False
+		OwnerName "Alyssa"
+		bCheckChildrenOnEvaluation False
+		VoiceSoundWave ""
+		VoiceDialogueWave ""
+		Children { {  TargetIndex 4 Text "Finish" SpeakerState "None" bIncludeInAllOptionListIfUnsatisfied True } }
+	}
+	// 4
+	Node_End 
+	{
+		OwnerName "Spectre"
+		bCheckChildrenOnEvaluation False
+	}
+}

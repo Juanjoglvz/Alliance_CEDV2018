@@ -6,6 +6,8 @@
 #include "AlliancePlayerState.h"
 #include "AllianceGameInstance.h"
 #include "AllianceAIPlayerController.h"
+#include "AlyssaController.h"
+#include "MortenController.h"
 #include "UObject/ConstructorHelpers.h"
 
 AAllianceGameMode::AAllianceGameMode()
@@ -31,15 +33,8 @@ AAllianceGameMode::AAllianceGameMode()
 		SecondCharacter = (UClass*)CharBlueprint2.Object->GeneratedClass;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UBlueprint> CharBlueprint3(TEXT("Blueprint'/Game/ThirdPersonCPP/Blueprints/AlyssaController.AlyssaController'"));
-	if (CharBlueprint.Object) {
-		FirstCharacterController = (UClass*)CharBlueprint3.Object->GeneratedClass;
-	}
-
-	static ConstructorHelpers::FObjectFinder<UBlueprint> CharBlueprint4(TEXT("Blueprint'/Game/ThirdPersonCPP/Blueprints/MortenController.MortenController'"));
-	if (CharBlueprint2.Object) {
-		SecondCharacterController = (UClass*)CharBlueprint4.Object->GeneratedClass;
-	}
+	FirstCharacterController = (UClass*)AAlyssaController::StaticClass();
+	SecondCharacterController = (UClass*)AMortenController::StaticClass();
 
 	CharacterControllers.Add(FirstCharacter, FirstCharacterController);
 	CharacterControllers.Add(SecondCharacter, SecondCharacterController);
@@ -148,8 +143,8 @@ void AAllianceGameMode::RespawnPlayer_Implementation(APlayerController * SecondP
 			return;
 		}
 
-		TSubclassOf<AAllianceAIPlayerController> AIPlayerControllerClass = CharacterControllers[SecondAssignedCharacter];
-		AAllianceAIPlayerController* AIPlayerController = GetWorld()->SpawnActor<AAllianceAIPlayerController>(AIPlayerControllerClass);
+		UClass* AIPlayerControllerClass = CharacterControllers[SecondAssignedCharacter];
+		AAllianceController* AIPlayerController = GetWorld()->SpawnActor<AAllianceController>(AIPlayerControllerClass);
 
 		if (!AIPlayerController)
 		{
@@ -206,7 +201,7 @@ AAllianceCharacter* AAllianceGameMode::GetControlledPawnByAI(TArray<AActor*> Cha
 		{
 			AController* Controller = ACharacter->GetController();
 
-			AAllianceAIPlayerController* TentativeController = Cast<AAllianceAIPlayerController>(Controller);
+			AAllianceController* TentativeController = Cast<AAllianceController>(Controller);
 
 			if (TentativeController)
 				return ACharacter;

@@ -20,12 +20,12 @@ public:
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class AAllianceCharacter> SecondCharacter;
 	UPROPERTY(EditAnywhere)
-		TSubclassOf<class AAllianceAIPlayerController> FirstCharacterController;
+		UClass* FirstCharacterController;
 	UPROPERTY(EditAnywhere)
-		TSubclassOf<class AAllianceAIPlayerController> SecondCharacterController;
+		UClass* SecondCharacterController;
 
 	UPROPERTY(EditAnywhere)
-		TMap<TSubclassOf<class AAllianceCharacter>, TSubclassOf<class AAllianceAIPlayerController>> CharacterControllers;
+		TMap<TSubclassOf<class AAllianceCharacter>, UClass*> CharacterControllers;
 
 	virtual void PostLogin(APlayerController * NewPlayer);
 

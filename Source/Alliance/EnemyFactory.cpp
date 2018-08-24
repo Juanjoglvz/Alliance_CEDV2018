@@ -27,6 +27,21 @@ AEnemyFactory::AEnemyFactory()
 	if (TankBP.Object) {
 		EnemyTankReference = (UClass*)TankBP.Object->GeneratedClass;
 	}
+
+	static ConstructorHelpers::FObjectFinder<UBlueprint> HenkkaBP(TEXT("Blueprint'/Game/ThirdPersonCPP/Blueprints/Enemies/Henkka.Henkka'"));
+	if (HenkkaBP.Object) {
+		EnemyHenkkaReference = (UClass*)HenkkaBP.Object->GeneratedClass;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UBlueprint> ShivaBP(TEXT("Blueprint'/Game/ThirdPersonCPP/Blueprints/Enemies/Shiva.Shiva'"));
+	if (ShivaBP.Object) {
+		EnemyShivaReference = (UClass*)ShivaBP.Object->GeneratedClass;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UBlueprint> EuronymousBP(TEXT("Blueprint'/Game/ThirdPersonCPP/Blueprints/Enemies/Euronymous.Euronymous'"));
+	if (EuronymousBP.Object) {
+		EnemyEuronymousReference = (UClass*)EuronymousBP.Object->GeneratedClass;
+	}
 }
 
 // Called when the game starts or when spawned
@@ -64,6 +79,18 @@ AEnemy* AEnemyFactory::SpawnAnEnemy(EEnemyType EnemyType, FVector Location, FRot
 		else if (EnemyType == EEnemyType::ET_Tank)
 		{
 			EnemyToReturn = GetWorld()->SpawnActor<AEnemy>(EnemyTankReference, Location, Rotation, SpawnParams);
+		} 
+		else if (EnemyType == EEnemyType::ET_Euronymous)
+		{
+			EnemyToReturn = GetWorld()->SpawnActor<AEnemy>(EnemyEuronymousReference, Location, Rotation, SpawnParams);
+		}
+		else if (EnemyType == EEnemyType::ET_Shiva)
+		{
+			EnemyToReturn = GetWorld()->SpawnActor<AEnemy>(EnemyShivaReference, Location, Rotation, SpawnParams);
+		}
+		else if (EnemyType == EEnemyType::ET_Henkka)
+		{
+			EnemyToReturn = GetWorld()->SpawnActor<AEnemy>(EnemyHenkkaReference, Location, Rotation, SpawnParams);
 		}
 		else
 		{

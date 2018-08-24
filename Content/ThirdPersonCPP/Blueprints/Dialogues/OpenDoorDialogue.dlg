@@ -15,7 +15,7 @@ Node_Speech StartNode
 DlgParticipantClasses
 {
 	{  ParticipantName "Alyssa" ParticipantClass "/Script/Alliance.AllianceCharacter" }
-	{  ParticipantName "FirstDialogue" ParticipantClass "/Game/ThirdPersonCPP/Blueprints/DialogueBP.DialogueBP_C" }
+	{  ParticipantName "Alliance" ParticipantClass "/Game/ThirdPersonCPP/Blueprints/DialogueBP.DialogueBP_C" }
 }
 Node Nodes
 {
@@ -25,7 +25,7 @@ Node Nodes
 		Text ""
 		SpeakerState "None"
 		bIsVirtualParent False
-		OwnerName "FirstDialogue"
+		OwnerName "Alliance"
 		bCheckChildrenOnEvaluation False
 		VoiceSoundWave ""
 		VoiceDialogueWave ""
@@ -46,7 +46,7 @@ Node Nodes
 	// 2
 	Node_End 
 	{
-		OwnerName "FirstDialogue"
+		OwnerName "Alliance"
 		bCheckChildrenOnEvaluation False
 	}
 }

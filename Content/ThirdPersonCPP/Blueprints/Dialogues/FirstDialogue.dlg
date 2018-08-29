@@ -34,7 +34,7 @@ Node Nodes
 	// 1
 	Node_Speech 
 	{
-		Text "Nuestro objetivo deberia estar cerca."
+		Text "Nuestro objetivo debería estar cerca."
 		SpeakerState "None"
 		bIsVirtualParent False
 		OwnerName "Alyssa"
@@ -46,7 +46,7 @@ Node Nodes
 	// 2
 	Node_Speech 
 	{
-		Text "Recuerdame por que estamos haciendo cosas tan inutiles, por favor."
+		Text "Recuerdame por qué estamos haciendo cosas tan inútiles, por favor."
 		SpeakerState "None"
 		bIsVirtualParent False
 		OwnerName "Morten"
@@ -58,7 +58,7 @@ Node Nodes
 	// 3
 	Node_Speech 
 	{
-		Text "¿Liberar esclavos te parece inutil? ¿Que mas podemos hacer los dos solos?"
+		Text "¿Liberar esclavos te parece inútil? ¿Qué mas podemos hacer los dos solos?"
 		SpeakerState "None"
 		bIsVirtualParent False
 		OwnerName "Alyssa"
@@ -70,7 +70,7 @@ Node Nodes
 	// 4
 	Node_Speech 
 	{
-		Text "Seguro que algo mas importante que esto."
+		Text "Seguro que algo más importante que esto."
 		SpeakerState "None"
 		bIsVirtualParent False
 		OwnerName "Morten"
@@ -82,7 +82,7 @@ Node Nodes
 	// 5
 	Node_Speech 
 	{
-		Text "Mira, ahi esta la primera patrulla."
+		Text "Mira, ahí está la primera patrulla."
 		SpeakerState "None"
 		bIsVirtualParent False
 		OwnerName "Alyssa"

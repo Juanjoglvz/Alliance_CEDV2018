@@ -34,7 +34,7 @@ Node Nodes
 	// 1
 	Node_Speech 
 	{
-		Text "Hemos... vencido"
+		Text "Hemos... vencido?"
 		SpeakerState "None"
 		bIsVirtualParent False
 		OwnerName "Alyssa"
@@ -46,7 +46,7 @@ Node Nodes
 	// 2
 	Node_Speech 
 	{
-		Text "No creo, no habia muchos de ellos. Parece que esta nave era solo una avanzadilla. Al menos ahora sabemos como derrotarlos, aunque no sera tarea facil"
+		Text "No creo, no había muchos de ellos. Parece que esta nave era solo una avanzadilla. Al menos ahora sabemos como derrotarlos, aunque no será tarea fácil"
 		SpeakerState "None"
 		bIsVirtualParent False
 		OwnerName "Morten"

@@ -58,6 +58,12 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseLookUpRate;
 
+	// This widget will be shown when the game ends
+	UPROPERTY(EditAnywhere, Category = "Widgets")
+		TSubclassOf<class UUserWidget> WGameEnd;
+	UPROPERTY()
+		class UUserWidget* pWGameEnd;
+
 	/** Dialogue System interface */
 
 	FORCEINLINE FName GetParticipantName_Implementation() const override { return DlgParticipantName; }

@@ -18,6 +18,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Blueprint/UserWidget.h"
 
 
 AAllianceCharacter::AAllianceCharacter() : CurrentState{ EState::S_Idle }, b_ChainAttack{ false }, Sprint{ 1200.f }, LaunchForce{ 1.f }, 
@@ -62,6 +63,9 @@ LaunchHeight{ 1.f }, Combo{ 0 }, b_IsDead{ false }, InMinigame{ false }, b_IAmSe
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+	// Get a reference to EndGame widget
+	static ConstructorHelpers::FObjectFinder<UUserWidget> EndGameWidgetBP(TEXT("WidgetBlueprint'/Game/ThirdPersonCPP/Blueprints/Widgets/EndGameWidget.EndGameWidget'"));
+	pWGameEnd = EndGameWidgetBP.Object;
 }
 
 void AAllianceCharacter::BeginPlay()
@@ -327,6 +331,8 @@ void AAllianceCharacter::ExecuteWhenDead_Implementation()
 {
 	this->Destroy();
 	b_IsDead = true;
+	pWGameEnd->AddToViewport();
+	UGameplayStatics::SetGamePaused(this, true);
 }
 
 void AAllianceCharacter::OnServerClientAttacking_Implementation()

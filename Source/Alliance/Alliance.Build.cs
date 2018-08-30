@@ -14,7 +14,7 @@ public class Alliance : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "Networking", "Sockets" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG", "HeadMountedDisplay", "Networking", "Sockets" });
 
         PrivateDependencyModuleNames.AddRange(new string[] { "AIModule", "DlgSystem" });
     }

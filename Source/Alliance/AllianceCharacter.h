@@ -58,11 +58,10 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseLookUpRate;
 
-	// This widget will be shown when the game ends
-	UPROPERTY(EditAnywhere, Category = "Widgets")
-		TSubclassOf<class UUserWidget> WGameEnd;
-	UPROPERTY()
-		class UUserWidget* pWGameEnd;
+	// This Delegate is used when the player dies, to show the end game screen
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerDies);
+	UPROPERTY(BlueprintAssignable)
+		FOnPlayerDies OnPlayerDies;
 
 	/** Dialogue System interface */
 

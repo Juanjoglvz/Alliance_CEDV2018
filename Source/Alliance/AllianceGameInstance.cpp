@@ -8,6 +8,7 @@
 
 #include "AllianceGameInstance.h"
 #include "UnrealNetwork.h"
+#include "Online.h"
 
 
 UAllianceGameInstance::UAllianceGameInstance()
@@ -20,4 +21,25 @@ void UAllianceGameInstance::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(UAllianceGameInstance, AssignedCharacters);
+}
+
+bool UAllianceGameInstance::isSteamActivated(APlayerController* PlayerController)
+{
+	IOnlineSubsystem* OnlineSubsystem = IOnlineSubsystem::Get(FName("Steam"));
+
+	if (OnlineSubsystem == nullptr)
+	{
+		return false;
+	}
+	
+	ELoginStatus::Type onlineStatus = OnlineSubsystem->GetIdentityInterface()->GetLoginStatus(PlayerController->GetLocalPlayer()->GetControllerId());
+	
+	if (onlineStatus == ELoginStatus::Type::LoggedIn)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }

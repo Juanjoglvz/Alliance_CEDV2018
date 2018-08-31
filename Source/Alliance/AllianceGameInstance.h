@@ -28,5 +28,8 @@ public:
 		TMap<FString, TSubclassOf<AAllianceCharacter>> AssignedCharacters;
 	
 	void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Online")
+		bool isSteamActivated(class APlayerController* PlayerController);
 	
 };

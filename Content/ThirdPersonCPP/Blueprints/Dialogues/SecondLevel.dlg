@@ -35,7 +35,7 @@ Node Nodes
 	// 1
 	Node_Speech 
 	{
-		Text "Esta bien. En alguna parte de esta nave deberia haber un servidor que les permite regenerar su salud constantemente. Yo puedo tirar abajo ese servidor y volver a su jefe vulnerable durante un tiempo, tiempo suficiente para que sea derrotado."
+		Text "Está bien. En alguna parte de esta nave debería haber un servidor que les permite regenerar su salud constantemente. Yo puedo tirar abajo ese servidor y volver a su jefe vulnerable durante un tiempo, tiempo suficiente para que sea derrotado."
 		SpeakerState "None"
 		bIsVirtualParent False
 		OwnerName "Spectre"

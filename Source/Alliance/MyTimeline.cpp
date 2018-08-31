@@ -1,4 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+/* Copyright (C) 2018 Iván García, Juan José Corroto and Javier Córdoba - All Rights Reserved
+* You may use, distribute and modify this code under the
+* terms of the GNU GPLv3 license.
+*
+* You should have received a copy of the GNU GPLv3 license with
+* this file. If not, please write to: ivan.garcia16@alu.uclm.es
+*/
 
 #include "MyTimeline.h"
 #include "UObject/ConstructorHelpers.h"
@@ -58,12 +64,6 @@ void AMyTimeline::TimelineCallback(float interpolatedVal)
 
 void AMyTimeline::ExecutingTimeline_Implementation(float interpolatedVal)
 {
-	if (GIsServer) {
-		UE_LOG(LogTemp, Warning, TEXT("Hello"));
-	}
-	else {
-		UE_LOG(LogTemp, Warning, TEXT("Bye"));
-	}
 	this->Piece->SetActorLocation(FVector(this->StartingPosition.X - (interpolatedVal * Col),
 		this->StartingPosition.Y - (interpolatedVal * Row),
 		this->StartingPosition.Z));

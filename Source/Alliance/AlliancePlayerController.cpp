@@ -1,4 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+/* Copyright (C) 2018 Iván García, Juan José Corroto and Javier Córdoba - All Rights Reserved
+* You may use, distribute and modify this code under the
+* terms of the GNU GPLv3 license.
+*
+* You should have received a copy of the GNU GPLv3 license with
+* this file. If not, please write to: ivan.garcia16@alu.uclm.es
+*/
 
 #include "AlliancePlayerController.h"
 #include "AllianceGameMode.h"
@@ -10,8 +16,6 @@
 void AAlliancePlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-
-	UE_LOG(LogTemp, Warning, TEXT("Executing BeginPlay on PlayerController"));
 
 	OnServerAssignCharacter();
 }
@@ -37,7 +41,6 @@ void AAlliancePlayerController::SelectDialogueOption(int32 Index)
 
 void AAlliancePlayerController::OnClientLogin_Implementation()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Executing onclientlogin"));
 	AAllianceGameMode* GameMode = Cast<AAllianceGameMode>(GetWorld()->GetAuthGameMode());
 	if (!GIsServer) // Only respawn if not server (Client will be the second player)
 	{

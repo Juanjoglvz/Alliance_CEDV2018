@@ -1,4 +1,10 @@
-// Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
+/* Copyright (C) 2018 Iván García, Juan José Corroto and Javier Córdoba - All Rights Reserved
+* You may use, distribute and modify this code under the
+* terms of the GNU GPLv3 license.
+*
+* You should have received a copy of the GNU GPLv3 license with
+* this file. If not, please write to: ivan.garcia16@alu.uclm.es
+*/
 
 using UnrealBuildTool;
 
@@ -8,7 +14,8 @@ public class Alliance : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "Networking", "Sockets" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG", "HeadMountedDisplay", "Networking", "Sockets", "OnlineSubsystem", "OnlineSubsystemSteam",
+             "OnlineSubsystemUtils" });
 
         PrivateDependencyModuleNames.AddRange(new string[] { "AIModule", "DlgSystem" });
     }

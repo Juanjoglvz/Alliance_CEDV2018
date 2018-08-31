@@ -34,7 +34,7 @@ Node Nodes
 	// 1
 	Node_Speech 
 	{
-		Text "Hay algunos enemigos delante. Usa el boton izquierdo del raton para realizar el ataque basico."
+		Text "Hay algunos enemigos delante. Usa el botón izquierdo del ratón para realizar el ataque básico."
 		SpeakerState "None"
 		bIsVirtualParent False
 		OwnerName "Alliance"
@@ -46,7 +46,7 @@ Node Nodes
 	// 2
 	Node_Speech 
 	{
-		Text "Con el boton derecho del raton realizaras un ataque especial. Ten en cuenta que este tipo de ataques gastan mucha estamina."
+		Text "Con el botón derecho del ratón realizarás un ataque especial. Ten en cuenta que este tipo de ataques gastan mucha estamina."
 		SpeakerState "None"
 		bIsVirtualParent False
 		OwnerName "Alliance"
@@ -58,7 +58,7 @@ Node Nodes
 	// 3
 	Node_Speech 
 	{
-		Text "Con la combinacion de la tecla SHIFT y el boton derecho del raton, realizaras otro ataque especial."
+		Text "Con la combinación de la tecla SHIFT y el botón derecho del ratón, realizarás otro ataque especial."
 		SpeakerState "None"
 		bIsVirtualParent False
 		OwnerName "Alliance"
@@ -70,7 +70,7 @@ Node Nodes
 	// 4
 	Node_Speech 
 	{
-		Text "Bloquea ataques enemigos pulsando la tecla F. Mientras bloqueas, puedes realizar un ataque especial pulsando el boton izquierdo del raton."
+		Text "Bloquea ataques enemigos pulsando la tecla F. Mientras bloqueas, puedes realizar un ataque especial pulsando el botón izquierdo del ratón."
 		SpeakerState "None"
 		bIsVirtualParent False
 		OwnerName "Alliance"
@@ -82,7 +82,7 @@ Node Nodes
 	// 5
 	Node_Speech 
 	{
-		Text "Alla vamos"
+		Text "Allá vamos"
 		SpeakerState "None"
 		bIsVirtualParent False
 		OwnerName "Alyssa"

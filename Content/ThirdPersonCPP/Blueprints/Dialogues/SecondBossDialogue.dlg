@@ -35,7 +35,7 @@ Node Nodes
 	// 1
 	Node_Speech 
 	{
-		Text "Ahora deberiamos buscar a aquel que se hace llamar Spectre"
+		Text "Ahora deberíamos buscar a aquel que se hace llamar Spectre"
 		SpeakerState "None"
 		bIsVirtualParent False
 		OwnerName "SerjMao"
@@ -47,7 +47,7 @@ Node Nodes
 	// 2
 	Node_Speech 
 	{
-		Text "Que pasa conmigo"
+		Text "Qué pasa conmigo?"
 		SpeakerState "None"
 		bIsVirtualParent False
 		OwnerName "Spectre"
@@ -59,7 +59,7 @@ Node Nodes
 	// 3
 	Node_Speech 
 	{
-		Text "Al parecer tu tienes que saber un punto debil en los alienigenas"
+		Text "Al parecer tú tienes que saber un punto débil en los alienígenas"
 		SpeakerState "None"
 		bIsVirtualParent False
 		OwnerName "Morten"
@@ -83,7 +83,7 @@ Node Nodes
 	// 5
 	Node_Speech 
 	{
-		Text "Y por que no nos has dicho nada aun"
+		Text "Y por qué no nos has dicho nada aun?"
 		SpeakerState "None"
 		bIsVirtualParent False
 		OwnerName "Morten"
@@ -95,7 +95,7 @@ Node Nodes
 	// 6
 	Node_Speech 
 	{
-		Text "No se por que deberia hacerlo. Estos aliens me tratan bastante bien, no tengo necesidad de ello"
+		Text "Por qué debería hacerlo? Estos aliens me tratan bastante bien, no tengo necesidad de ello"
 		SpeakerState "None"
 		bIsVirtualParent False
 		OwnerName "Spectre"
@@ -107,7 +107,7 @@ Node Nodes
 	// 7
 	Node_Speech 
 	{
-		Text "No lo entiendes. Su raza esta esclavizando al resto de seres vivos que encuentran. Es nuestra oportunidad de pararles los pies"
+		Text "No lo entiendes. Su raza está esclavizando al resto de seres vivos que encuentran. Es nuestra oportunidad de pararles los pies"
 		SpeakerState "None"
 		bIsVirtualParent False
 		OwnerName "SerjMao"
@@ -119,7 +119,7 @@ Node Nodes
 	// 8
 	Node_Speech 
 	{
-		Text "Ademas, si no vienes, te tomaremos por la fuerza"
+		Text "Además, si no vienes, te tomaremos por la fuerza"
 		SpeakerState "None"
 		bIsVirtualParent False
 		OwnerName "Morten"
@@ -131,7 +131,7 @@ Node Nodes
 	// 9
 	Node_Speech 
 	{
-		Text "Supongo que no me queda otra opcion entonces"
+		Text "Supongo que no me queda otra opción entonces"
 		SpeakerState "None"
 		bIsVirtualParent False
 		OwnerName "Spectre"

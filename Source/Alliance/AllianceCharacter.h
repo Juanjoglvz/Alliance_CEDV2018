@@ -1,4 +1,10 @@
-// Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
+/* Copyright (C) 2018 Iván García, Juan José Corroto and Javier Córdoba - All Rights Reserved
+* You may use, distribute and modify this code under the
+* terms of the GNU GPLv3 license.
+*
+* You should have received a copy of the GNU GPLv3 license with
+* this file. If not, please write to: ivan.garcia16@alu.uclm.es
+*/
 
 #pragma once
 
@@ -51,6 +57,11 @@ public:
 	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseLookUpRate;
+
+	// This Delegate is used when the player dies, to show the end game screen
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerDies);
+	UPROPERTY(BlueprintAssignable)
+		FOnPlayerDies OnPlayerDies;
 
 	/** Dialogue System interface */
 
@@ -154,7 +165,6 @@ public:
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = "Combat")
 		bool b_IsDead;
 
-
 	// Variables for controlling Damage
 	UPROPERTY(BlueprintReadWrite, Category = "Combat")
 		float Primary_Attack_Dmg;
@@ -195,15 +205,15 @@ public:
 	FORCEINLINE UInputComponent* GetCharacterInputComponent() { return CharacterMovementInputComponent.Get(); }
 
 	// This function is executed only by the server. It reduces the amount of player's health
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser) override;
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 	// This function applies damage other actor
 	UFUNCTION(BlueprintCallable, Category = "Combat")
 		void DoDmg(AActor* DamagedActor, float Dmg) const;
 	
 	// These functions are used to increase player's health and stamina when the player obtains a pickup
-	FORCEINLINE void IncreaseHealth(float increase) { UE_LOG(LogTemp, Warning, TEXT("Increasing Health")); Health += increase; }
-	FORCEINLINE void IncreaseStamina(float increase) { UE_LOG(LogTemp, Warning, TEXT("Increasing Stamina")); Stamina += increase; }
+	FORCEINLINE void IncreaseHealth(float increase) { Health += increase; }
+	FORCEINLINE void IncreaseStamina(float increase) { Stamina += increase; }
 
 	// RPC function called when the player dies
 	UFUNCTION(Reliable, NetMulticast)

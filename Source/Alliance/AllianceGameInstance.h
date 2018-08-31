@@ -1,4 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+/* Copyright (C) 2018 Iván García, Juan José Corroto and Javier Córdoba - All Rights Reserved
+* You may use, distribute and modify this code under the
+* terms of the GNU GPLv3 license.
+*
+* You should have received a copy of the GNU GPLv3 license with
+* this file. If not, please write to: ivan.garcia16@alu.uclm.es
+*/
 
 #pragma once
 
@@ -22,5 +28,8 @@ public:
 		TMap<FString, TSubclassOf<AAllianceCharacter>> AssignedCharacters;
 	
 	void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Online")
+		bool isSteamActivated(class APlayerController* PlayerController);
 	
 };

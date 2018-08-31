@@ -1,4 +1,10 @@
-// Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
+/* Copyright (C) 2018 Iván García, Juan José Corroto and Javier Córdoba - All Rights Reserved
+* You may use, distribute and modify this code under the
+* terms of the GNU GPLv3 license.
+*
+* You should have received a copy of the GNU GPLv3 license with
+* this file. If not, please write to: ivan.garcia16@alu.uclm.es
+*/
 
 #include "AllianceCharacter.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
@@ -12,6 +18,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Blueprint/UserWidget.h"
 
 
 AAllianceCharacter::AAllianceCharacter() : CurrentState{ EState::S_Idle }, b_ChainAttack{ false }, Sprint{ 1200.f }, LaunchForce{ 1.f }, 
@@ -55,7 +62,6 @@ LaunchHeight{ 1.f }, Combo{ 0 }, b_IsDead{ false }, InMinigame{ false }, b_IAmSe
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
-
 }
 
 void AAllianceCharacter::BeginPlay()
@@ -306,10 +312,8 @@ float AAllianceCharacter::TakeDamage(float DamageAmount, struct FDamageEvent con
 
 		if (Health <= 50)
 		{
-			Stamina -= 15;
+			Stamina -= 5;
 		}
-
-		UE_LOG(LogTemp, Error, TEXT("Taken %f damage. Remaining life: %f"), ActualDamage, Health);
 	}
 	return ActualDamage;
 }
@@ -322,6 +326,7 @@ void AAllianceCharacter::DoDmg(AActor* DamagedActor, float Dmg) const
 void AAllianceCharacter::ExecuteWhenDead_Implementation()
 {
 	b_IsDead = true;
+	OnPlayerDies.Broadcast();
 }
 
 void AAllianceCharacter::OnServerClientAttacking_Implementation()
@@ -444,22 +449,15 @@ void AAllianceCharacter::OnServerAssignCharacter_Implementation()
 {
 	if (GIsServer) // Should always be true
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Called character BeginPlay, Server: %d"), GIsServer);
-
 		AController* Controller = GetController();
 		AAlliancePlayerController* PlayerController = Cast<AAlliancePlayerController>(Controller);
 
 		AGameModeBase* GMode = GetWorld()->GetAuthGameMode();
 		AAllianceGameMode* Gamemode = Cast<AAllianceGameMode>(GMode);
 
-		UE_LOG(LogTemp, Warning, TEXT("Obtained controller: %p"), Controller);
 		if (PlayerController && Gamemode)
 		{
 			Gamemode->RespawnPlayer(PlayerController);
-		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT("Obtained controller: %p   ObtainedGameMode: %p"), Controller, Gamemode);
 		}
 	}
 }

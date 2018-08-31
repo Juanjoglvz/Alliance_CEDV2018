@@ -1,4 +1,10 @@
-// Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
+/* Copyright (C) 2018 Iván García, Juan José Corroto and Javier Córdoba - All Rights Reserved
+* You may use, distribute and modify this code under the
+* terms of the GNU GPLv3 license.
+*
+* You should have received a copy of the GNU GPLv3 license with
+* this file. If not, please write to: ivan.garcia16@alu.uclm.es
+*/
 
 #include "AllianceGameMode.h"
 #include "AllianceCharacter.h"
@@ -46,8 +52,6 @@ void AAllianceGameMode::PostLogin(APlayerController * NewPlayer)
 
 void AAllianceGameMode::RespawnPlayer_Implementation(APlayerController * SecondPlayer)
 {
-	UE_LOG(LogTemp, Error, TEXT("RespawnPlayer called"));
-
 	FString LevelName = UGameplayStatics::GetCurrentLevelName(GetWorld());
 
 	if (LevelName.Contains("Main") || LevelName.Contains("Menu"))
@@ -70,7 +74,6 @@ void AAllianceGameMode::RespawnPlayer_Implementation(APlayerController * SecondP
 
 	if (!GInstance->AssignedCharacters.Contains(Name)) // Joining player has not been assigned a character
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Player has not been assigned a character"));
 		if (GInstance->AssignedCharacters.Num() == 1) // Joining player should have the free character
 		{
 			TArray<FString> Keys;
@@ -86,7 +89,6 @@ void AAllianceGameMode::RespawnPlayer_Implementation(APlayerController * SecondP
 		{
 			GInstance->AssignedCharacters.Add(Name, FirstCharacter);
 		}
-
 	}
 
 	TSubclassOf<AAllianceCharacter> AssignedCharacter;
@@ -106,7 +108,6 @@ void AAllianceGameMode::RespawnPlayer_Implementation(APlayerController * SecondP
 
 	if (SecondPlayer->GetPawn()) // Player is in the world
 	{
-		UE_LOG(LogTemp, Error, TEXT("Second Player Destroyed: %s"), *SecondPlayer->GetPawn()->GetName());
 		SecondPlayer->GetPawn()->Destroy();
 	}
 

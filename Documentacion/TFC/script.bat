@@ -1,5 +1,6 @@
-pdflatex -synctex=1 -interaction=nonstopmode TFC.tex
+pdflatex -synctex=1 -interaction=nonstopmode TFC.tex > NUL
+bibtex TFC.aux > NUL
+pdflatex -synctex=1 -interaction=nonstopmode TFC.tex > NUL
+pdflatex -synctex=1 -interaction=nonstopmode TFC.tex > NUL
 
-pdflatex -synctex=1 -interaction=nonstopmode TFC.tex
-
-DEL TFC.aux TFC.synctex.gz TFC.toc TFC.log
+DEL TFC.aux TFC.synctex.gz TFC.toc TFC.log TFC.bbl TFC.blg

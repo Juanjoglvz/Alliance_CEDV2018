@@ -222,3 +222,18 @@
 \lstdefinestyle{C}
    {language=C,
    }
+   
+%% -- ACRÓNIMOS Y GLOSARIO -----------------------------------------------------
+\usepackage[printonlyused]{acronym}
+
+\renewcommand*{\acsfont}[1]{\textsc{{#1}}} % enunciado del acrónimo: OO
+\renewcommand*{\acfsfont}[1]{#1}
+\renewcommand*{\acffont}[1]{#1}
+
+% imprime: "Object Oriented (OO)"
+\newcommand{\acx}[1]{\acused{#1}\acs{#1} %
+  \nolinebreak[3] %
+  (\acl{#1})}
+
+\newcommand{\Acro}[2]{\acro{#1}{#2}\acused{#1}}
+\newcommand{\sigla}[1]{\textsc{\textscale{.85}{#1}}}

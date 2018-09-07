@@ -1,21 +1,34 @@
 \documentclass[twoside]{Plantilla}
-
+\newcommand{\newemptypage}{\clearpage\newpage\mbox{}\clearpage\newpage}
 \begin{document}
+
+% Portada del TFC
 \begin{titlepage}
 \input{Title.tex}
 \end{titlepage}
 
-% Primera pagina del TFC
+% Página en blanco para mantener el formato 'libro'
+\newemptypage
+
+% Primera página impar del TFC
 \input{FirstPage.tex}
 
-\newpage
+\newemptypage
+
+% Segunda página impar del TFC. Anexo III. página de calificación del TFC
+\input{AnexoIII.tex}
+\newemptypage
+
 \tableofcontents
 \newpage
 \listoftables
+\addcontentsline{toc}{section}{\protect\numberline{}Índice de Cuadros}
 \newpage
 \listoffigures
+\addcontentsline{toc}{section}{\protect\numberline{}Índice de Figuras}
 \newpage
 \lstlistoflistings
+\addcontentsline{toc}{section}{\protect\numberline{}Índice de Listados}
 \newpage
 \input{Acro.tex}
 % cuerpo del documento
@@ -36,6 +49,7 @@
 \pagestyle{insection}
 \section{Objetivos}
 \markboth{Objetivos}{}
+\input{Objetivos.tex}
 
 \newpage
 \pagestyle{insection}
@@ -60,13 +74,10 @@
 \newpage
 \pagestyle{insection}
 \markboth{Referencias}{}
+\addcontentsline{toc}{section}{\protect\numberline{}Referencias}
 
 \bibliographystyle{plain}
 \singlespacing
 \bibliography{main}
-
-% Anexo III.Pagina de calificacion del TFC
-\newpage
-\input{AnexoIII.tex}
 
 \end{document}

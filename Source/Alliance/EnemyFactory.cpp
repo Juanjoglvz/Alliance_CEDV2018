@@ -9,6 +9,7 @@
 #include "EnemyFactory.h"
 #include "Engine.h"
 #include "Enemy.h"
+#include "Boss.h"
 
 // Sets default values
 AEnemyFactory::AEnemyFactory()
@@ -89,14 +90,23 @@ AEnemy* AEnemyFactory::SpawnAnEnemy(EEnemyType EnemyType, FVector Location, FRot
 		else if (EnemyType == EEnemyType::ET_Euronymous)
 		{
 			EnemyToReturn = GetWorld()->SpawnActor<AEnemy>(EnemyEuronymousReference, Location, Rotation, SpawnParams);
+			ABoss* Boss = Cast<ABoss>(EnemyToReturn);
+			Boss->setBossName(FName("Euronymous")); 
+			Boss->setMaxBossHealth(200.f);
 		}
 		else if (EnemyType == EEnemyType::ET_Shiva)
 		{
 			EnemyToReturn = GetWorld()->SpawnActor<AEnemy>(EnemyShivaReference, Location, Rotation, SpawnParams);
+			ABoss* Boss = Cast<ABoss>(EnemyToReturn);
+			Boss->setBossName(FName("Shiva"));
+			Boss->setMaxBossHealth(200.f);
 		}
 		else if (EnemyType == EEnemyType::ET_Henkka)
 		{
 			EnemyToReturn = GetWorld()->SpawnActor<AEnemy>(EnemyHenkkaReference, Location, Rotation, SpawnParams);
+			ABoss* Boss = Cast<ABoss>(EnemyToReturn);
+			Boss->setBossName(FName("Henkka"));
+			Boss->setMaxBossHealth(200.f);
 		}
 		else
 		{

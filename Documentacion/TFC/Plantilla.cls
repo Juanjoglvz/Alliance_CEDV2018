@@ -14,6 +14,7 @@
 \usepackage{url}
 \usepackage{mathptmx} % Times New Roman
 \usepackage{multicol}
+\usepackage{lettrine}
 
 
 %----------------------------------------------------------------------------------------
@@ -61,6 +62,7 @@
 %	MARGIN, HEADER AND FOOTER
 %----------------------------------------------------------------------------------------
 % Margins
+\setlength{\parskip}{5mm}
 \usepackage{lipsum}
 
 \topmargin=-0.45in

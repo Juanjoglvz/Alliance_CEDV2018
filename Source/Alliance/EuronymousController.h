@@ -10,6 +10,7 @@
 
 #include "CoreMinimal.h"
 #include "AllianceController.h"
+#include "Boss.h"
 #include "EuronymousController.generated.h"
 
 /**
@@ -24,9 +25,15 @@ class ALLIANCE_API AEuronymousController : public AAllianceController
 public:
 	AEuronymousController();
 
+	UPROPERTY()
+		ABoss* EuronymousReference;
+
 	virtual void Possess(APawn* InPawn) override;
+
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION()
 		void SensePawn(const TArray<AActor*> &UpdatedActors);
-	
+
 };

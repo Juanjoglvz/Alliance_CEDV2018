@@ -1,64 +1,103 @@
 \documentclass[twoside]{Plantilla}
-
+\newcommand{\newemptypage}{\clearpage\newpage\mbox{}\clearpage\newpage}
 \begin{document}
+
+% Portada del TFC
 \begin{titlepage}
 \input{Title.tex}
 \end{titlepage}
 
-% Primera pagina del TFC
+% Página en blanco para mantener el formato 'libro'
+\newemptypage
+
+% Primera página impar del TFC
 \input{FirstPage.tex}
 
-\newpage
+\newemptypage
+
+% Segunda página impar del TFC. Anexo III. página de calificación del TFC
+\input{AnexoIII.tex}
+\newemptypage
+
+% Índice de Contenidos
 \tableofcontents
-% cuerpo del documento
 \newpage
 
+% Índice de Cuadros
+\listoftables
+\addcontentsline{toc}{section}{\protect\numberline{}Índice de Cuadros}
+\newpage
+
+% Índice de Figuras
+\listoffigures
+\addcontentsline{toc}{section}{\protect\numberline{}Índice de Figuras}
+\newpage
+
+% Índice de Listados
+\lstlistoflistings
+\addcontentsline{toc}{section}{\protect\numberline{}Índice de Listados}
+\newpage
+
+% Listado de acrónimos
+\input{Acro.tex}
+\newpage
+
+% Sección 1: Resumen del trabajo
 \pagestyle{insection}
 \section{Resumen del trabajo}
 \markboth{Resumen del trabajo}{}
-
+\input{Resumen.tex}
 \newpage
+
+% Sección 2: Introducción
 \pagestyle{insection}
 \section{Introducción}
 \markboth{Introducción}{}
 \input{Introduccion.tex}
-
 \newpage
+
+% Sección 3: Objetivos
 \pagestyle{insection}
 \section{Objetivos}
 \markboth{Objetivos}{}
-
+\input{Objetivos.tex}
 \newpage
+
+% Sección 4: Arquitectura de la solución
 \pagestyle{insection}
 \section{Arquitectura de la solución}
 \markboth{Arquitectura de la solución}{}
-
+\input{Arquitectura.tex}
 \newpage
+
+% Sección 5: Análisis de costes
 \pagestyle{insection}
 \section{Análisis de costes}
 \markboth{Análisis de costes}{}
-
+\input{AnalisisCostes.tex}
 \newpage
+
+% Sección 6: Manual de usuario
 \pagestyle{insection}
 \section{Manual de usuario}
 \markboth{Manual de usuario}{}
-
+\input{ManualUsuario.tex}
 \newpage
+
+% Sección 7: Conclusiones y propuestas de trabajo futuro
 \pagestyle{insection}
-\section{Conclusiones y propuestas de trabajo futuro}
+\section{Conclusiones y propuestas de \\ trabajo futuro}
 \markboth{Conclusiones y propuestas de trabajo futuro}{}
-
+\input{Conclusiones.tex}
 \newpage
-\pagestyle{insection}
-\section{Bibliografía}
-\markboth{Bibliografía}{}
 
-\bibliographystyle{alpha}
+% Bibliografía/Referencias
+\pagestyle{insection}
+\markboth{Referencias}{}
+\addcontentsline{toc}{section}{\protect\numberline{}Referencias}
+
+\bibliographystyle{plain}
 \singlespacing
 \bibliography{main}
-
-% Anexo III.Pagina de calificacion del TFC
-\newpage
-\input{AnexoIII.tex}
 
 \end{document}

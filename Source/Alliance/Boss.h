@@ -19,8 +19,29 @@ UCLASS()
 class ALLIANCE_API ABoss : public AEnemy
 {
 	GENERATED_BODY()
+
+public:
+	ABoss();
 	
+	FORCEINLINE void setBossName(FName name) { BossName = name; }
+	UFUNCTION(BlueprintCallable)
+		FORCEINLINE FName getBossName() const { return BossName; }
+	FORCEINLINE void setMaxBossHealth(float maxBossHealth) { MaxBossHealth = maxBossHealth; }
+	FORCEINLINE float getMaxBossHealth() const { return MaxBossHealth; }
+
+	virtual void Tick(float DeltaSeconds) override;
+
+	UFUNCTION(BlueprintCallable)
+		float ProgressBarHealthBinding();
+
+protected:
+	virtual void BeginPlay() override;
 	
-	
-	
+private:
+	FName BossName;
+	float MaxBossHealth;
+	UPROPERTY()
+		class USceneComponent* SceneComponent;
+	UPROPERTY()
+		class UWidgetComponent* WidgetComponent;
 };

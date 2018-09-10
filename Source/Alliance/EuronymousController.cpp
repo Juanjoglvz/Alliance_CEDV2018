@@ -10,7 +10,7 @@
 #include "AllianceCharacter.h"
 #include "Enemy.h"
 
-AEuronymousController::AEuronymousController()
+AEuronymousController::AEuronymousController() : EuronymousReference(nullptr)
 {
 	auto TreeAsset = ConstructorHelpers::FObjectFinder<UBehaviorTree>(TEXT("BehaviorTree'/Game/ThirdPersonCPP/Blueprints/Artificial_Intelligence/Euronymous/Euronymous_BT.Euronymous_BT'"));
 	BehaviourTree = TreeAsset.Object;
@@ -23,9 +23,9 @@ void AEuronymousController::Possess(APawn* InPawn)
 
 	UAIPerceptionSystem::RegisterPerceptionStimuliSource(this, SightConfig->GetSenseImplementation(), InPawn);
 
-	AEnemy* Enemy = Cast<AEnemy>(InPawn);
+	EuronymousReference = Cast<ABoss>(InPawn);
 
-	if (Enemy)
+	if (EuronymousReference)
 	{
 
 		BlackboardComp->InitializeBlackboard(*(BehaviourTree->BlackboardAsset));
@@ -33,7 +33,23 @@ void AEuronymousController::Possess(APawn* InPawn)
 		BehaviorTreeComp->StartTree(*BehaviourTree);
 
 		BlackboardComp->SetValueAsBool(FName{ "GetAggro" }, true);
+		BlackboardComp->SetValueAsBool(FName{ "CanPwUp" }, true);
+		BlackboardComp->SetValueAsFloat(FName{ "AttackRange" }, 150);
+		BlackboardComp->SetValueAsFloat(FName{ "PowerUpPerc" }, 0.2);
 
+	}
+}
+
+void AEuronymousController::Tick(float DeltaTime)
+{
+	if (EuronymousReference) 
+	{
+		BlackboardComp->SetValueAsFloat(FName{ "HP" }, EuronymousReference->Health);
+
+		if (EuronymousReference->Health < 200)
+		{
+			BlackboardComp->SetValueAsFloat(FName{ "PowerUpPerc" }, 0.6);
+		}
 	}
 }
 

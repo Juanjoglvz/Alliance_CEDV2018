@@ -297,6 +297,9 @@ void AAllianceCharacter::MoveRight(float Value)
 
 float AAllianceCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
+	if (!GetController()->IsA((UClass*)AAlliancePlayerController::StaticClass)) // If character is not controlled by a player then do not receive damage
+		return 0;
+
 	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	if (ActualDamage > 0.f && !b_IsEvading)

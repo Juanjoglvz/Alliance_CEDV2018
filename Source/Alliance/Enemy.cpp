@@ -7,6 +7,7 @@
 */
 
 #include "Enemy.h"
+#include "AllianceCharacter.h"
 #include "MeleeController.h"
 
 
@@ -45,7 +46,12 @@ void AEnemy::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimePr
 
 void AEnemy::DoDmg(AActor* DamagedActor)
 {
-	UGameplayStatics::ApplyDamage(DamagedActor, Damage, nullptr, nullptr, nullptr);
+	DamagedActor = Cast<AAllianceCharacter>(DamagedActor);
+
+	if (DamagedActor != nullptr)
+	{
+		UGameplayStatics::ApplyDamage(DamagedActor, Damage, nullptr, nullptr, nullptr);
+	}
 }
 
 float AEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

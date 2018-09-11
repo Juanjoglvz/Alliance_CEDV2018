@@ -320,7 +320,12 @@ float AAllianceCharacter::TakeDamage(float DamageAmount, struct FDamageEvent con
 
 void AAllianceCharacter::DoDmg(AActor* DamagedActor, float Dmg) const
 {
-	UGameplayStatics::ApplyDamage(DamagedActor, Dmg, nullptr, nullptr, nullptr);
+	DamagedActor = Cast<AEnemy>(DamagedActor);
+
+	if (DamagedActor != nullptr)
+	{
+		UGameplayStatics::ApplyDamage(DamagedActor, Dmg, nullptr, nullptr, nullptr);
+	}
 }
 
 void AAllianceCharacter::ExecuteWhenDead_Implementation()

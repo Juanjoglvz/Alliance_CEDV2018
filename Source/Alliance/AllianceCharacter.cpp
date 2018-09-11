@@ -112,9 +112,9 @@ void AAllianceCharacter::Tick(float DeltaTime)
 
 
 		// Regenerate Health
-		if (Health < MaxHealth - DeltaTime * 0.7)
+		if (Health < MaxHealth - DeltaTime * 0.8)
 		{
-			Health += DeltaTime * 1.5;
+			Health += DeltaTime * 0.8;
 		}
 }
 

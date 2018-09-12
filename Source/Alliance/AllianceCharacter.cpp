@@ -308,9 +308,12 @@ float AAllianceCharacter::TakeDamage(float DamageAmount, struct FDamageEvent con
 	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	// If character is not controlled by a player then do not receive damage
-	if (GetController()->IsA((UClass*)AAllianceController::StaticClass()))
+	if (GetController() != nullptr)
 	{
-		return 0;
+		if (GetController()->GetClass()->IsChildOf(AAllianceController::StaticClass()))
+		{
+			return 0;
+		}
 	}
 
 

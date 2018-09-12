@@ -173,6 +173,7 @@ void AAllianceGameMode::RespawnPlayer_Implementation(APlayerController * SecondP
 	{
 		AAllianceCharacter* SecondaryCharacter = GetControlledPawnByAI(FoundCharacters);
 
+		SecondaryCharacter->GetController()->Destroy();
 		SecondPlayer->Possess(SecondaryCharacter);
 	}
 	else

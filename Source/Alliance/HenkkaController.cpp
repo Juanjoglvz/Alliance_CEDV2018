@@ -17,6 +17,19 @@ AHenkkaController::AHenkkaController()
 	PerceptionComponent->OnPerceptionUpdated.AddDynamic(this, &AHenkkaController::SensePawn);
 }
 
+void AHenkkaController::Tick(float DeltaTime)
+{
+	if (HenkkaReference)
+	{
+		BlackboardComp->SetValueAsFloat(FName{ "Hp" }, HenkkaReference->Health);
+
+		if (HenkkaReference->Health < 300)
+		{
+			BlackboardComp->SetValueAsFloat(FName{ "PowerUpPerc" }, 0.5);
+		}
+	}
+}
+
 void AHenkkaController::Possess(APawn* InPawn)
 {
 	Super::Possess(InPawn);

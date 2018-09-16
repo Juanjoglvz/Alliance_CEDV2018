@@ -25,7 +25,7 @@ void AHenkkaController::Tick(float DeltaTime)
 
 		if (HenkkaReference->Health < 300)
 		{
-			BlackboardComp->SetValueAsFloat(FName{ "PowerUpPerc" }, 0.5);
+			BlackboardComp->SetValueAsBool(FName{ "Enraged" }, true);
 		}
 	}
 }
@@ -37,6 +37,8 @@ void AHenkkaController::Possess(APawn* InPawn)
 	UAIPerceptionSystem::RegisterPerceptionStimuliSource(this, SightConfig->GetSenseImplementation(), InPawn);
 
 	AEnemy* Enemy = Cast<AEnemy>(InPawn);
+
+	HenkkaReference = Cast<ABoss>(InPawn);
 
 	if (Enemy)
 	{

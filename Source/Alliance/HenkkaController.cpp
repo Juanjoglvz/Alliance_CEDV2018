@@ -17,6 +17,19 @@ AHenkkaController::AHenkkaController()
 	PerceptionComponent->OnPerceptionUpdated.AddDynamic(this, &AHenkkaController::SensePawn);
 }
 
+void AHenkkaController::Tick(float DeltaTime)
+{
+	if (HenkkaReference)
+	{
+		BlackboardComp->SetValueAsFloat(FName{ "Hp" }, HenkkaReference->Health);
+
+		if (HenkkaReference->Health < 300)
+		{
+			BlackboardComp->SetValueAsBool(FName{ "Enraged" }, true);
+		}
+	}
+}
+
 void AHenkkaController::Possess(APawn* InPawn)
 {
 	Super::Possess(InPawn);
@@ -24,6 +37,8 @@ void AHenkkaController::Possess(APawn* InPawn)
 	UAIPerceptionSystem::RegisterPerceptionStimuliSource(this, SightConfig->GetSenseImplementation(), InPawn);
 
 	AEnemy* Enemy = Cast<AEnemy>(InPawn);
+
+	HenkkaReference = Cast<ABoss>(InPawn);
 
 	if (Enemy)
 	{

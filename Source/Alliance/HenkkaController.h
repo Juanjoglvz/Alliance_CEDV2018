@@ -10,6 +10,7 @@
 
 #include "CoreMinimal.h"
 #include "AllianceController.h"
+#include "Boss.h"
 #include "HenkkaController.generated.h"
 
 /**
@@ -22,8 +23,13 @@ class ALLIANCE_API AHenkkaController : public AAllianceController
 	
 public:
 	AHenkkaController();
+	UPROPERTY()
+		ABoss* HenkkaReference;
 
 	virtual void Possess(APawn* InPawn) override;
+
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION()
 		void SensePawn(const TArray<AActor*> &UpdatedActors);

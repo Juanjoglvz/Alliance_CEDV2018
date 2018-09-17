@@ -9,6 +9,7 @@
 #include "AllianceCharacter.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "AlliancePlayerController.h"
+#include "AllianceController.h"
 #include "AllianceGameMode.h"
 #include "Camera/CameraComponent.h"
 #include "Enemy.h"
@@ -79,6 +80,7 @@ void AAllianceCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+		// Regenerate Stamina
 		switch (CurrentState)
 		{
 		case EState::S_Idle:
@@ -108,6 +110,12 @@ void AAllianceCharacter::Tick(float DeltaTime)
 			break;
 		}
 
+
+		// Regenerate Health
+		if (Health < MaxHealth - DeltaTime * 0.8)
+		{
+			Health += DeltaTime * 0.8;
+		}
 }
 
 void AAllianceCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -298,6 +306,16 @@ void AAllianceCharacter::MoveRight(float Value)
 float AAllianceCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	// If character is not controlled by a player then do not receive damage
+	if (GetController() != nullptr)
+	{
+		if (GetController()->GetClass()->IsChildOf(AAllianceController::StaticClass()))
+		{
+			return 0;
+		}
+	}
+
 
 	if (ActualDamage > 0.f && !b_IsEvading)
 	{

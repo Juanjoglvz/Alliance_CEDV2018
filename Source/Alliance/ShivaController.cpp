@@ -7,7 +7,6 @@
 */
 
 #include "ShivaController.h"
-
 #include "AllianceCharacter.h"
 #include "Enemy.h"
 
@@ -24,6 +23,8 @@ void AShivaController::Possess(APawn* InPawn)
 
 	UAIPerceptionSystem::RegisterPerceptionStimuliSource(this, SightConfig->GetSenseImplementation(), InPawn);
 
+	ShyvaReference = Cast<ABoss>(InPawn);
+
 	AEnemy* Enemy = Cast<AEnemy>(InPawn);
 
 	if (Enemy)
@@ -34,7 +35,23 @@ void AShivaController::Possess(APawn* InPawn)
 		BehaviorTreeComp->StartTree(*BehaviourTree);
 
 		BlackboardComp->SetValueAsBool(FName{ "GetAggro" }, true);
+		BlackboardComp->SetValueAsBool(FName{ "CanPowerUp" }, true);
+		BlackboardComp->SetValueAsFloat(FName{ "AttackRange" }, 150);
+		BlackboardComp->SetValueAsFloat(FName{ "PowerUpPerc" }, 0.3);
 
+	}
+}
+
+void AShivaController::Tick(float DeltaTime)
+{
+	if (ShyvaReference)
+	{
+		BlackboardComp->SetValueAsFloat(FName{ "Hp" }, ShyvaReference->Health);
+
+		if (ShyvaReference->Health < 300)
+		{
+			BlackboardComp->SetValueAsFloat(FName{ "PowerUpPerc" }, 0.5);
+		}
 	}
 }
 

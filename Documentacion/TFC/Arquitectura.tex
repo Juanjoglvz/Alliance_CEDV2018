@@ -1,0 +1,407 @@
+\subsection{Diseño de personajes}
+Para nuestro juego, y puesto que ninguno de los desarrolladores que hemos trabajado en este proyecto tenemos ninguna experiencia en la creación y diseño gráfico de personajes, animaciones, o cualquier otro tipo de \textit{asset} requerido en este proyecto, hemos decidido utilizar los \textit{assets} que se liberaron recientemente del videojuego de \textit{Epic Games} llamado \textit{Paragon}\footnote{Juego que, por otra parte, ha cerrado todos sus servidores.}.
+
+
+Puesto que nuestros modelos son todos importados (y, en el caso de los modelos de los personajes, de \textit{Paragon}), tenemos modelos y decorados con un acabado más profesional del que nosotros podríamos haber conseguido. Sin embargo esta situación crea un problema: Nos encontramos limitados a lo hora de hacer nuestro sistema de combate. Las animaciones de ataque de los esqueletos ya vienen definidas, y tenemos que intentar amoldarnos a lo que nos viene hecho. Ni siquiera podíamos usar software externo para crear nuevas animaciones, porque estos modelos se importan directamente al proyecto.
+
+
+Dicho esto, podemos empezar a explicar la solución que hemos adoptado para modelar a los personajes.
+
+\subsubsection{Diseño de los personajes aliados}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=10cm]{./images/Classes_Aliados.png}
+  \caption{Fragmento del diagrama de clases relacionado con los personajes aliados}
+  \label{ClassesAllies}
+\end{figure}
+
+En el diagrama se puede ver cómo se ha optado por hacer una clase base en C++, \texttt{\textbf{AAllianceCharacter}}. Esta clase contiene toda la funcionalidad básica de un personaje, ya sea controlado por inteligencia artificial o por el jugador. Esta funcionalidad básica se puede resumir en todas las propiedades necesarias (Vida, estamina, daño, etc), aunque la mayoría de estas propiedades no serán inicializadas en el constructor de esta clase. Esta clase está pensada para que no haya ninguna instancia de ella en el mundo, por eso no contiene ningún componente típico de los actores que van a ser representados en él, como por ejemplo el esqueleto.
+
+
+En esta clase base se pueden resaltar ciertos aspectos importantes:
+\begin{itemize}
+\item La clase sirve también para dar la funcionalidad base de la replicación en red (de la que se hablará más adelante)
+\item Debido al punto anterior, muchos de los métodos de que se pueden ver en el diagrama de clases están duplicados, para el cliente y el servidor.
+\item Muchas de las variables de clase ni siquiera son usadas en esta clase, si no que sirven para las clases que modelan personajes del juego.
+\item El método Tick nos da la funcionalidad de regeneración de vida y estamina.
+\item Los métodos de \texttt{DoDmg()} y \texttt{TakeDamage()} llaman a los eventos internos de \ac{UE4} para causar daño, que hemos sobrescrito nosotros.
+\end{itemize}
+
+
+Hablaremos más adelante de la máquina de estados que esta clase tiene cuando hablemos del \textbf{sistema de combate}.
+
+
+Una vez discutida la clase \textbf{AAllianceCharacter}, también se puede ver que tenemos una clase base más, esta vez en \ac{BP}. La clase base en \ac{BP} sirve para modelar cierta funcionalidad básica que necesitamos que sea en Blueprints, como ciertos widgets de la \ac{GUI} o cierta parte de replicación (discutida más adelante). También nos sirve para especificar algunos componentes de los personajes, como el componente de movimiento.
+
+
+Todas las clases de los personajes del juego están hechas en \ac{BP}. Prácticamente toda la responsabilidad de estas clases es la de modelar el sistema de combate de cada personaje (El cuál se discutirá más adelante). Esto es gracias a que toda la funcionalidad extra (Replicación, comunicación con otros blueprints en caso de, por ejemplo, causar daño, etc) ya está definida en las clases mencionadas anteriormente. Estas clases se han modelado en \ac{BP} por las numerosas ventajas que proporciona: La posibilidad de ajustar el \textit{Skeletal Mesh} directamente en el editor, facilidad para añadir componentes en \textit{sockets} específicos de forma visual (Se hablará más adelante de esto), y ,lo que más importante nos ha parecido, la posibilidad de elegir un \textit{asset} directamente desde un menú desplegable al cambiar el valor de una variable, entre otras. Obviamente, el hecho de modelar estos comportamientos un poco más complejos en \ac{BP} conlleva ciertas desventajas, entre las que hemos encontrado la baja mantenibilidad, y la mala capacidad para compartir el trabajo, porque los Blueprints son archivos binarios.
+
+
+También es importante recalcar que casi todas las propiedades son inicializadas en el constructor de estas clases, porque cada personaje tendrá sus propios valores de vida, estamina, daño, etc. A continuación un ejemplo:
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=10cm]{./images/BP_Morten_Constructor.png}
+  \caption{Constructor para la clase Morten}
+  \label{MortenConstructor}
+\end{figure}
+
+
+\subsubsection{Diseño de personajes enemigos}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=10cm]{./images/Classes_Enemigos.png}
+  \caption{Fragmento del diagrama de clases relacionado con los personajes enemigos}
+  \label{ClassesEnemies}
+\end{figure}
+
+Se puede observar como la solución es muy similar al diseño de los personajes aliados: una clase base en C++ con la funcionalidad necesaria, y extensión en \ac{BP} para las clases particulares de cada enemigo. Esto es porque valoramos más las ventajas frente a las desventajas que hemos discutido anteriormente en esta sección también. Igualmente, se hablará de la máquina de estados de los enemigos en la sección del \textbf{sistema de combate}.
+
+
+En este caso, hemos decidido crear una clase base más para el caso particular de los jefes de zona (\textit{Bosses}). Esto es porque los jefes tienen ciertas funcionalidades comunes pero que son básicas, como por ejemplo las barras de vida.
+
+
+Al igual que con los aliados, la mayoría de las propiedades son inicializadas en el constructor de la clase en \ac{BP}, por el mismo motivo, cada enemigo tendrá sus propios valores de vida, daño, etc.
+
+\subsection{Sistema de combate}
+El sistema de combate en un juego de este estilo acaba resultando la mayor parte de la experiencia de juego. Por eso, es necesario hacer un incapié especial en él.
+En nuestro caso, hemos decidido crear dos personajes principales: Alyssa Y Morten. Cada uno de ellos tiene armas distintas y por tanto, la forma de combatir es treméndamente distinto: Alyssa combate cuerpo a cuerpo, mientras que Morten ataca a distancia. Esto provoca que la elección de personaje antes del inicio del juego sea más interesante, y que además, en el caso de jugar en modo multijugador, se genera una mayor distinción entre los roles de cada jugador. 
+
+
+A la hora de diseñar los distintos ataques que cada jugador podría hacer, era importante tener en cuenta las animaciones que teníamos, porque, como ya se ha dicho antes, nos encontrábamos muy limitados. Aún así, hemos conseguido hacer que cada personaje, aliado o enemigo, tenga un ataque principal basado en un combo de varios golpes (En el caso de los que atacan en combate cuerpo a cuerpo). Además, los personajes principales pueden esprintar, bloquear, esquivar, y tienen un ataque especial.
+En el caso particular de Alyssa también puede atacar en carrera y tiene otro ataque especial más. 
+
+
+Un problema en cuanto a diseño de mecánicas es que los jugadores podrían <<abusar>> de los ataques especiales (que causan más daño), además del esquive o el sprint. Para limitar las posibilidades del jugador y evitar que el juego resulte extremadamente sencillo, se ha optado por implementar un sistema de estamina, que se regenera mucho mas rápido que la salud, pero los ataques especiales consumen gran parte del total. Aún así, es importante mantener la regeneración a un nivel más o menos alto, para evitar que el jugador se encuentre sin posibilidades de actuación; en resumen, es un sistema muy difícil de balancear. 
+
+
+Prácticamente todo el sistema de combate (Salvo los eventos de causar y recibir daño) está modelado en \ac{BP}. Este sistema consta de varias partes importantes que vamos a discutir a continuación: Las máquinas de estados que tienen todos los personajes, y la comunicación entre los Blueprints de cada personaje.
+
+
+Para los personajes que atacan cuerpo a cuerpo, se ha optado por añadir unas cápsulas de colisión en las armas, que son añadidas a un \textit{socket} (Normalmente el de la mano) para que se muevan acorde a las animaciones del personaje. Estos componentes serán los encargados de detectar la colisión con un enemigo. Usar este tipo de sistema conlleva una serie de problemas, cuya solución discutiremos más adelante. A continuación una foto de cómo estas cápsulas son añadidas a un personaje.
+
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=10cm]{./images/Eur_Weapon.png}
+  \caption{Cápsulas de colisión en la espada de Euronymous}
+  \label{HenkkaSM}
+\end{figure}
+
+
+\subsubsection{Comunicación entre Blueprints}
+
+Todos los personajes tienen asociado un Blueprint de animación o \ac{ABP}. Este Blueprint tiene, en nuestro proyecto, dos finalidades importantes:
+
+
+\begin{itemize}
+\item[1] Definir el Blendspace a usar. Un Blendspace es una combinación de dos o más animaciones, que \ac{UE4} es capaz de combinar en base a cierto valor. En nuestro caso, combinamos la animación de estar parado (o Idle) con la de moverse. En el caso de los personajes jugables, puesto que pueden esprintar, también se combinaría con la animación de correr. El \ac{ABP} es el encargado de comunicar el valor de velocidad al Blendspace. Este Blendspace también puede ser cambiado en cualquier momento desde el \ac{ABP}, que se controla mediante una máquina de estados, aunque esto sólo se ha hecho con un personaje en particular. A continuación este caso.
+
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=10cm]{./images/Henkka_SM.png}
+  \caption{Máquina de estados de los Blendspaces de Henkka}
+  \label{HenkkaSM}
+\end{figure}
+
+
+Las transiciones entre un Blendspace u otro también son responsabilidad del \ac{ABP}, aunque lo que éste hace es comprobar una variable de la clase en \ac{BP}.
+
+\item[2] Controlar la comunicación entre el \ac{BP} y el \ac{ABP}. Esto vamos a ampliarlo a continuación.
+\end{itemize}
+
+
+A la hora de modelar el \textbf{sistema de combate}, nos encontramos con la problemática de las animaciones. Una vez ya teníamos modeladas las animaciones <<constantes>>, es decir, las que mantiene el personaje si no realiza ninguna acción (La animación de movimiento o la de sprint), tuvimos que modelar las animaciones de ataque. La solución que adoptamos consiste en convertir las animaciones en los denominados \textit{Animation Montage}. Estos montajes nos permiten añadir notificaciones en momentos determinados de cada animación. Ésta es la base de toda nuestra comunicación entre Blueprints.
+
+
+El flujo que seguimos a la hora de realizar un ataque es el siguiente:
+
+\begin{itemize}
+\item[1] El jugador o el controlador de inteligencia artificial llaman al evento asociado de un ataque en concreto.
+\item[2] El flujo de ejecución del evento hace que el personaje realice una determinada animación.
+\item[3] La animación genera numerosos eventos a lo largo de su ejecución, pudiendo estos eventos cambiar el estado del personaje, o generar la ejecución de nuevas animaciones.
+\end{itemize}
+
+
+A continuación se ilustra este flujo de ejecución con un diagrama de secuencia para un caso concreto: El ataque en carrera de Alyssa.
+
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=10cm]{./images/Secuencia_Alyssa.png}
+  \caption{Diagrama de secuencia para el ataque en salto de Alyssa}
+  \label{AlyssaS}
+\end{figure}
+
+
+Es importante recalcar que el Blueprint de animación no es el encargado de ejecutar las animaciones, pero se ha escrito así en el diagrama por motivos descriptivos. En el diagrama \ref{AlyssaS} se puede ver cómo el \ac{ABP} se comunica con la clase Blueprints para cambiar su estado y lanzar nuevas animaciones. En el caso concreto anterior, \textit{Launch} es un evento que empuja al personaje hacia delante, recreando la sensación de salto en carrera. Los eventos de \textit{StartAttack} y \textit{StopAttack} los comentaremos más adelante.
+
+
+Para ilustrar mejor cómo funciona esta comunicación, adjuntamos capturas de un \textit{Animantion Montage} cualquiera y de cómo se llaman los eventos en el \ac{ABP}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=10cm]{./images/Notifs_Montage.png}
+  \caption{Barra de notificaciones de un Animation Montage}
+  \label{AlyssaM}
+\end{figure}
+
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=10cm]{./images/Notifs_ABP.png}
+  \caption{Comunicación entre las notificaciones de los montajes y la clase de Alyssa}
+  \label{AlyssaABP}
+\end{figure}
+
+
+En la figura \ref{AlyssaM} Se puede ver una barra de notificaciones de un montaje. Ahí podemos poner las notificaciones que queramos en el instante de cada animación que queramos. Estas notificaciones generan eventos en el \ac{ABP} asociado, y como se puede ver en la Figura \ref{AlyssaABP}, desde estos eventos llamamos a las funciones de la clase de Blueprints.
+
+
+Gracias a esta comunicación, hemos podido modelar comportamientos más precisos de lo que en un principio se habían considerado. Un caso específico es la detección de colisiones. Como veremos más tarde, cada personaje tiene una máquina de estados asociada. Sin embargo, comprobar si el estado de un personaje es \textit{atacando} no es suficiente para evitar problemas, como que la cápsula de colisión haga \textit{overlap} con el enemigo varias veces, o que el enemigo colisione con ella justo antes de que la animación termine y no tiene sentido que se produzca daño, o incluso, para los enemigos de dos armas, que se haga \textit{overlap} con el arma que no está atacando. Para hacerlo más preciso, se ha optado por utilizar las notificaciones mencionadas antes para notificar exactamente cuándo y qué arma tiene que empezar a hacer daño, y cuando tiene que parar. Ésto se puede ver tanto en la Figura \ref{AlyssaS}, donde se explica que en el ataque en salto se llaman a esas dos funciones, como en la Figura \ref{AlyssaM}, donde se ven dichas notificaciones en la barra de notificaciones del montaje.
+
+\subsubsection{Estados de los personajes}
+
+Al modelar el \textbf{sistema de combate} y trabajar con animaciones, surgen problemas importantes, como evitar que el jugador se mueva mientras está atacando, evitar que dos animaciones no se solapen cuando no deban, y a la hora de tratar con controladores de inteligencia artificial (que mandan ordenes mucho más rápido que un humano en ciertas ocasiones), evitar que algunas acciones queden <<sepultadas>>. Una primera opción que se consideró en la etapa de prototipado fue la inclusión de varias flags o valores \textit{booleanos}, pero a medida que añadiamos funcionalidad a los personajes, se hacía claro que necesitábamos un mejor diseño. La solución obvia era la inclusión de estados en cada uno de los personajes. En las figuras \ref{ClassesAllies} y \ref{ClassesEnemies} se pueden ver los estados (Implementados mediante enumeraciones) para los aliados y los enemigos. A continuación también incluimos unas máquinas de estados para ilustrar los cambios que pueden suceder.
+
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=10cm]{./images/SM_Ally.png}
+  \caption{Máquina de estados para los personajes aliados}
+  \label{AllySM}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=10cm]{./images/SM_Enemy.png}
+  \caption{Máquina de estados para los personajes aliados}
+  \label{EnemySM}
+\end{figure}
+
+
+También hay que tener presente que, los personajes aliados que no son jugables, no van a llegar nunca a los estados como SpecialAttacking.
+
+
+Con este sistema, es importante controlar de forma correcta los cambios de estado en cualquier momento. Esto es especialmente importante en los controladores de inteligencia artificial, donde las acciones pueden ser bastante más rápidas de ejecutar (esto es, el controlador puede ser que llame a varias funciones de forma muy seguida, aunque luego el personaje las ejecute a una velocidad más natural). Dado que el estado es controlado de forma correcta, podemos comprobar fácilmente si un personaje debería moverse o no en un instante, o si puede atacar o no en un momento dado. A continuación algunos ejemplos de cómo se controla.
+
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=10cm]{./images/Henkka_Attack.png}
+  \caption{Ataque de uno de los jefes}
+  \label{HenkkaAttack}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=10cm]{./images/Henkka_Move.png}
+  \caption{Movimiento de un personaje controlado por IA}
+  \label{HenkkaMove}
+\end{figure}
+
+
+en la Figura \ref{HenkkaAttack} se puede ver como podemos controlar si un personaje debería poder atacar en un instante determinado, si el personaje no se está moviendo o no está atacando. En la Figura \ref{HenkkaMove} podemos ver algo parecido. Cuando un personaje (En este caso controlado por \ac{IA}) empieza a moverse, se cambia el estado a \textit{Running}. Cuando el movimiento acaba (En este caso, el flujo de ejecución empieza en el pin \textit{OnMoveFinished}), volvemos a poner el estado a \textit{Idle}.
+
+
+Este sistema de estados también nos permite funcionalidades muy interesantes, como la función \texttt{ResetSpeed()}, que nos resetea la velocidad dependiendo del estado después de modificarla de alguna manera.
+
+\begin{lstlisting}[language=c++,caption={},captionpos=b,label={ResetSpeed}]
+void AAllianceCharacter::ResetSpeed_Implementation()
+{
+	if (!InMinigame)
+	{
+		switch (CurrentState)
+		{
+		case EState::S_Idle:
+			GetCharacterMovement()->MaxWalkSpeed = 1200.f;
+			break;
+		case EState::S_Running:
+			GetCharacterMovement()->MaxWalkSpeed = 1200.f + Sprint;
+			break;
+		case EState::S_Blocking:
+			GetCharacterMovement()->MaxWalkSpeed = 600.f;
+			break;
+		default:
+			GetCharacterMovement()->MaxWalkSpeed = 1200.f;
+			break;
+		}
+	}
+}
+\end{lstlisting}
+
+
+\subsubsection{Inteligencia Artificial}
+
+Una parte muy importante de un sistema de combate es la inteligencia artificial de los enemigos. Los enemigos en este proyecto se han separado en dos grandes grupos: Enemigos básicos, y jefes finales. A su vez, hay 3 tipos de enemigos básicos, y 3 jefes finales diferentes. Por eso, cada uno tendrá una inteligencia artificial ligeramente distinta a las de otros enemigos.
+
+
+La inteligencia artificial de todos los personajes en \textit{Alliance} se basa en el sentido de la vista. Todos los personajes controlados por inteligencia artificial se rigen por este sentido, siendo capaces de ver otros personajes en su rango de visión y siendo capaces de distinguir si son aliados o enemigos. En caso de que detecten un enemigo, lo guardan en memoria como \textit{Aggro}, y empiezan a perseguirlo. Aquí aparecen los dos problemas que hemos tenido a la hora de diseñar la \ac{IA} en nuestro proyecto. El primero es que, por algún motivo, los enemigos <<miran>> por su derecha. El cono de visión tiene su centro en un ángulo de menos 90 grados con respecto a su vector frontal, y no hemos sido capaces de solucionarlo. El segundo problema que nos hemos encontrado resulta del uso de la función \textit{MoveTo} en las tareas de los árboles de comportamiento. Éste nodo mueve al personaje hacia donde está su objetivo en el momento de llamarlo, pero por algún motivo, y por cómo se ha diseñado la tarea de movimiento, no parece seguir a su objetivo, si no que se mueve hacia ese lugar. Esto resulta en un comportamiento un poco menos inteligente del esperado.
+
+
+Pasamos ahora a presentar un ejemplo de un árbol de comportamiento de un enemigo básico. 
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=10cm]{./images/BT_Basic.png}
+  \caption{Árbol de comportamiento para un enemigo cuerpo a cuerpo}
+  \label{BTBasic}
+\end{figure}
+
+
+En la Figura \ref{BTBasic} se puede ver como, el enemigo seguirá al personaje que tenga \textit{Aggro}, y si está a rango de atacar, atacará. También se moverá a un lugar cercano aleatorio en caso de que no vea a ningún enemigo. El servicio \textit{GetAggroAgain} sirve para evitar posibles bloqueos, que se pueden dar de forma extremadamente rara cuando el \textit{Aggro} muere en el instante que va desde el inicio de la tarea \textit{MoveToPlayerAggro} y el momento en que esa tarea llama a la función \textit{MoveTo}. Este suceso puede pasar sobre todo en la inteligencia artificial de los aliados no jugables, pero sucede de forma extremadamente rara (Tan rara que hemos sido incapaces de replicar ese error en un entorno controlado, y no hemos podido testearlo). El servicio \textit{GetAggroAgain} también cambia el objetivo de ataque, resultando en que un enemigo (O jefe) no te seguirá continuamente. Este servicio no sucede de forma muy frecuente, y muchos enemigos básicos ni siquiera tienen tiempo de llamarlo.
+
+
+La mayor diferencia entre cada tipo de enemigo básico no está en el árbol de comportamiento, si no en las tareas en sí. Obviamente no tiene sentido que un enemigo que ataca a distancia te siga de cerca. Aún así las diferencias entre los enemigos básicos no son demasiadas.
+
+
+La inteligencia artificial de los aliados controlados por un controlador de {IA} es similar a la de los enemigos básicos. Al igual que los enemigos a distancia, Morten tampoco sigue a los enemigos de cerca, si no que los ataca en cuanto está a rango. Los otros dos (Alyssa y Serj Mao) sí que siguen a los enemigos de cerca y los atacan si están a rango, y también pueden cambiar de objetivo cada cierto tiempo. También tienen otro servicio, \textit{CheckForEnemies}, para comprobar si sigue habiendo enemigos cercanos al matar a su objetivo. Cuando no están en batalla, siguen al jugador de cerca.
+
+
+El caso de los jefes finales es el más complejo. En realidad, la base del árbol de comportamiento es la misma: Esperan a ver a un personaje a quien puedan atacar, y si lo ven, lo persiguen y lo atacan si están a rango. Sin embargo, los jefes tienen varios tipos distintos de ataque básico, que en todos los casos es elegido de forma aleatoria. Además, cada jefe tiene una particularidad única, y esto se ve reflejado en su árbol de comportamiento:
+
+\begin{itemize}
+\item Henkka empezará a perseguir en carrera y atacar rápidamente cuando está bajo de vida.
+\item Euronymous Tiene una probabilidad de <<mejorarse>>, ganando la habilidad de atacar a distancia durante diez segundos con sus ataques básicos (Simulando que es capaz de cortar el viento). Cuando está bajo de vida, esta probabilidad se eleva. Cuando se <<mejora>>, hace una animación especial para que el jugador se entere.
+\item Shiva Tiene una probabilidad, que al igual que Euronymous aumenta cuando está bajo de vida, de hacer más daño durante unos momentos.
+\end{itemize}
+
+Además, por motivos de historia del juego, Shiva se regenera muchísima salud al principio del combate.
+
+
+Por estos motivos, Los árboles de comportamiento para cada jefe son ligeramente diferentes a aquellos de los enemigos básicos, cada uno con las particularidades mencionadas anteriormente.
+
+
+\subsection{Multijugador en \acf{UE4}}
+
+Los juegos multijugador en \ac{UE4} son implementados bajo un enfoque basado en el modelo Cliente-Servidor. Esto significa que el servidor actúa como una \textbf{autoridad} y que todos los datos se deben enviar desde los distintos clientes, al servidor. El servidor valida los datos y reacciona a ellos. En \ac{UE4} se pueden distinguir dos tipos de servidores:
+
+\begin{itemize}
+\item \textbf{Servidor Dedicado}. Un servidor dedicado contiene una ventana de comandos en texto y no contiene los gráficos. Sin embargo carga el mundo, se ocupa de las físicas y fuerza que se cumplan las distintas reglas del juego. Además, un servidor dedicado no tiene jugadores locales, su función es conectar a distintos jugadores remotos en una misma partida, para que puedan jugar juntos. Los jugadores se conectan a un servidor dedicado a través de una dirección IP fija.
+
+Para empaquetar y compilar el juego como un servidor dedicado, es necesario compilar el motor de \ac{UE4} desde los fuentes, que se pueden encontrar en \texttt{Github}\footnote{https://github.com/EpicGames/UnrealEngine}. Si el motor se ha instalado a través del instalador que proporciona Epic Games en su web\footnote{https://www.epicgames.com}, no será posible usar un servidor dedicado ya que Epic Games ha optado por no incluir algunos archivos en la versión que se descarga a través de su instalador debido al aumento de tamaño que producían. 
+
+\item \textbf{\textit{Listen Server}}. Este tipo de servidor aloja un jugador local, pero permite también conexiones de jugadores remotos. Por tanto, en este modelo siempre habrá al menos un cliente conectado. Si este cliente se desconecta, el servidor se apaga. En este servidor se plantea el problema de que los jugadores que actúan como \textit{host} raramente tienen direcciones IP fijas a las que otros clientes puedan conectarse. Por este motivo, se desarrolló el \textbf{\textit{OnlineSubsystem}} (subsistema online), que se explicará más adelante. Este modelo elimina la latencia al jugador que actúa como \textit{host}.
+\end{itemize}
+
+En la Figura \ref{Objects}, se puede observar cómo es la distribución de los objetos en la arquitectura cliente-servidor implementada por \ac{UE4}. Ciertos objetos, como las interfaces gráficas, sólo existen en los clientes, mientras que otros como el \textit{GameMode} sólo existen en el servidor. Cabe destacar que en la intersección existente entre los dos clientes, no hay ningún objeto, ya que entre clientes no se comparte información que solo conozcan los clientes.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=10cm]{./images/ActorsInClientServer.png}
+  \caption{Distribución de objetos en un enfoque Cliente-Servidor con \ac{UE4}}
+  \label{Objects}
+\end{figure}
+
+Para que se pase información entre los clientes y el servidor, es necesaria la \textbf{replicación}. Replicar consiste en el envío de información y datos entre los clientes y el servidor. En \ac{UE4} se puede conseguir la replicación modificando características que afectan a los actores. Para que un actor se replique (aparezca en todos los clientes conectados al servidor) y su movimiento sea igualmente replicado, habrá que añadir las siguientes líneas de código (Listado \ref{LstReplication}) en el constructor del actor:
+
+\begin{lstlisting}[language=c++,caption={Replicación de un actor en C++},captionpos=b,label={LstReplication}]
+bReplicates = true;
+bReplicateMovement = true;
+\end{lstlisting}
+
+De igual forma, se pueden replicar propiedades específicas de los actores, que pueden ser interesantes para el juego. Estas propiedades, en el caso de \textit{Alliance} son la salud del personaje y la estamina, entre otras. Para replicar una propiedad, se añaden las líneas de código del listado \ref{LstHeaderRep} en el fichero de cabecera del actor, y las líneas del listado \ref{LstSourceRep} en el fichero \texttt{.cpp} del actor.
+
+\begin{lstlisting}[language=c++,caption={Fichero de cabecera al replicar una propiedad},captionpos=b,label={LstHeaderRep}]
+UPROPERTY(Replicated)
+float Health;
+UPROPERTY(Replicated)
+float Stamina;
+\end{lstlisting}
+
+\begin{lstlisting}[language=c++,caption={Fichero fuente al replicar una propiedad},captionpos=b,label={LstSourceRep}]
+void AMyPlayer::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const {
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+    DOREPLIFETIME(AMyPlayer, Health);
+    DOREPLIFETIME(AMyPlayer, Stamina);
+}
+\end{lstlisting}
+
+Un distinto tipo de replicación es la llamada \textbf{\textit{RepNotify}}. En este caso, se hace uso de una función que va a ser llamada en \textbf{todas las instancias} cuando se actualice el valor de la variable. Para utilizar esta replicación, se hace uso del código que se muestra en el listado \ref{lstNotify}.
+
+\begin{lstlisting}[language=c++,caption={Replicación de propiedades con RepNotify},captionpos=b,label={lstNotify}]
+UPROPERTY(ReplicatedUsing=OnRep_Health)
+float Health;
+
+UFUNCTION()
+virtual void OnRep_Health();
+\end{lstlisting}
+
+En \textit{Alliance} se ha usado constantemente una forma de replicación, denominada \ac{RPC}. En \ac{UE4} existen tres modelos principales de \ac{RPC}:
+
+\begin{itemize}
+\item \textbf{Run on Server}. En este modelo, la llamada al procedimiento remoto es ejecutada sólo en la instancia del actor que se encuentra en el servidor. Sólo se ejecutará un procedimiento de este tipo, si se ha llamado desde el cliente que es el \textit{owner}. Si se llama desde otro cliente, el \ac{RPC} no se ejecuta y se obvia. Este punto será clave en nuestro proyecto.
+\item \textbf{Run on owning Client}. En este modelo, la llamada al procedimiento se ejecuta en el \textbf{\textit{owner}} del actor.
+\item \textbf{NetMulticast}. En este modelo, la llamada al procedimiento se ejecuta en la instancia del actor que se encuentra en el servidor y se replica después en todas las instancias de los distintos clientes. Para conseguir este comportamiento, la invocación \ac{RPC} se debe realizar desde el servidor, ya que si se realiza desde un cliente, actúa como un procedimiento local, no teniendo en cuenta a los demás clientes. Este punto también será clave en nuestro proyecto. Se puede ver un esquema de este tipo de \ac{RPC} en la Figura \ref{Multicast}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=13cm]{./images/Multicast.png}
+  \caption{Esquema Multicast en \ac{UE4}}
+  \label{Multicast}
+\end{figure}
+\end{itemize}
+
+\subsubsection{\textit{Ownership}}
+
+La posesión de un actor, es uno de los temas más importantes y que hay que tener más en cuenta a la hora de enfrentarse a un videojuego multijugador. Es importante ya que, como se ha comentado anteriormente, una llamada \ac{RPC} al servidor, se omitirá y no se ejecutará si se llama desde un cliente sobre un actor que no posee. 
+
+Para resolver este problema, se ha seguido el esquema de la Figura \ref{Owning}, ya que la posesión de los actores recae en la instancia del jugador que reside en el servidor. Se comprueba si la llamada a \ac{RPC} del tipo NetMulticast se realiza desde una entidad autoritativa. En \ac{UE4} la autoridad la tiene quien \textit{spawnea} el actor. Si el actor es \textit{spawneado} desde un cliente, la autoridad la tendrá ese cliente. 
+
+En el caso de \textit{Alliance}, los actores a replicar se \textit{spawnean} desde el servidor, y se replican a todos los clientes. Los actores que están colocados en el mundo desde el editor, se encuentran en la categoría <<\textit{placed in world}>>, distinta de la categoría <<\textit{spawned}>>, pero a efectos de replicación, estos actores se tratan como \textit{spawneados} en el servidor.
+
+En el caso de que la llamada se haya realizado por una entidad autoritativa, se puede proceder a realizar la llamada a procedimiento remoto. Si no se ha realizado desde una entidad autoritativa, será necesario que se realice desde el \textit{owner} del actor, que como se ha dicho es la instancia del jugador en el servidor.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=13cm]{./images/Owning.png}
+  \caption{\textit{Ownership} en \textit{Alliance}}
+  \label{Owning}
+\end{figure}
+\end{itemize}
+
+\subsubsection{El subsistema online en \ac{UE4}}
+
+El subsistema online (\textit{Online Subsystem}) y sus interfaces, existen para proporcionar una abstracción clara de la funcionalidad online común en todo el conjunto de plataformas disponibles, como pueden ser Steam, Xbox Live, Facebook, etc. Se pretende conseguir principalmente la portabilidad.
+
+Estas plataformas son necesarias, ya que proporcionan un servidor que se encarga de conectar los clientes con la lista de servidores o sesiones de juego disponibles. Además, permiten una visibilidad en internet, que un \textit{host} normalmente no tiene por sí mismo (por ejemplo, por falta de una dirección IP pública fija).
+
+En \textit{Alliance} se ha hecho uso del subsistema online de Steam, por lo que para poder jugar será necesario tener Steam abierto. Al crear una nueva partida, el jugador que lo hace creará una sesión y será el \textit{host} de la partida. Una sesión es una instancia del juego, que se ejecuta en el servidor, con una serie de propiedades como pueden ser el número de jugadores que se aceptan en la partida, si los jugadores se pueden unir a la partida de forma pública o tienen que ser invitados para que puedan entrar, etc. 
+
+Cuando un jugador se une a una partida, el subsistema online busca si existe alguna sesión creada que no se encuentre llena de jugadores. De ser así, pregunta al jugador si quiere unirse y en caso afirmativo, el jugador se une a la sesión que se ha encontrado (se puede ver el flujo de ejecución en el diagrama de la Figura \ref{seqOSS}). En este punto, la sesión estaría llena de jugadores (ya que en \textit{Alliance} se ha establecido un máximo de dos jugadores por sesión), el cliente que se ha unido pasaría a controlar al personaje no controlado por el \textit{host} de la partida, y ambos jugadores podrían comenzar a jugar juntos.
+
+Para el cambio de niveles, se ha optado por destruir la sesión con el nivel actual y crear otra nueva a la que se unirán los dos jugadores. Se ha optado por este método ya que un servidor tiene la capacidad de alojar una sola sesión. Para permitir que se puedan unir varios jugadores a un mismo nivel, al abrir el nivel hay que indicar la opción <<\textit{listen}>>.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=10cm]{./images/Seq_OSS.png}
+  \caption{Flujo de conexión de dos jugadores en una partida de \textit{Alliance}}
+  \label{seqOSS}
+\end{figure}
+\end{itemize}
+
+\subsubsection{Problemas que se han encontrado durante la replicación}
+
+Durante el desarrollo de \textit{Alliance} ha habido algunos problemas relacionados con el multijugador y la replicación de los actores. Estos problemas han sido los más costosos de resolver, debido a la dificultad al depurar este tipo de problemas y la falta de información que se encontraba en foros de programación, como son StackOverflow\footnote{https://stackoverflow.com} y el foro de Unreal Engine\footnote{https://forums.unrealengine.com}. En muchos casos, era difícil seguir el flujo de ejecución del programa, por la naturaleza distribuida del videojuego. 
+
+A continuación, se explican los problemas más notables y cómo se han afrontado en el proyecto:
+
+\begin{itemize}
+\item Como se ha visto anteriormente, para replicar un actor con apariencia de humano es necesario establecer las propiedades \texttt{bReplicates} y \texttt{bReplicateMovement}. Cuando se lanzaba el juego en multijugador, el jugador que actuaba como cliente (se llamará cliente al jugador que no actúa como \textit{host} y se llamará servidor al jugador que \textit{hostea} la partida) podía moverse pero cuando atacaba o esprintaba, el servidor no veía estos cambios. Para el servidor el jugador se seguía moviendo a velocidad normal y no veía que el cliente atacaba. 
+
+Esto se producía debido a que las animaciones que se dan al esprintar o atacar no estaban siendo replicadas, ya que la llamada a un procedimiento \textit{multicast} desde un cliente, se ejecuta tan sólo localmente en dicho cliente y el comportamiento necesario es que se ejecute en el servidor, y se replique a cada uno de los clientes. Para resolverlo se tomó un enfoque basado en \ac{RPC}, de forma que cuando el cliente ataca, se notifica al servidor que se va a producir este ataque y el servidor se encarga de la replicación de la animación. Si es el servidor el que quiere atacar, se puede ejecutar de forma directa la llamada \ac{RPC} \textit{multicast}. Este enfoque, está basado en la Figura \ref{Owning}.
+
+\item Problemas para lanzar el minijuego desde el cliente, debido a conflictos con el \textbf{ownership}. Cuando se intentaba lanzar el minijuego en el cliente, siguiendo un esquema como el de la Figura \ref{BadApproach}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=7cm]{./images/BadApproach.png}
+  \caption{Enfoque incorrecto al lanzar el minijuego desde el cliente}
+  \label{BadApproach}
+\end{figure}
+\end{itemize}
+\end{itemize}

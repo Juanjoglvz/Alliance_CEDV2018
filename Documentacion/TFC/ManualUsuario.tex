@@ -39,6 +39,7 @@ Si al iniciar \textit{Alliance} nos encontramos con un error como el de la figur
 \item Una vez estemos seguros de la elección de personaje, hacer click en <<Continuar>>. Saldrá una pantalla de carga tras la cual apareceremos en el inicio del primer nivel, y podremos jugarlo.
 \end{itemize}
 
+\pagestyle{notsection}
 
 \subsection{¿Cómo unirme a una partida de \textit{Alliance}?}
 
@@ -131,6 +132,135 @@ La vida y la estamina son los dos rasgos más importantes que posee el jugador. 
 
 Coger un \textit{pickup} de vida te aumenta en \todo{Poner cuánto aumenta la salud} puntos tu salud, mientras que coger un \textit{pickup} de estamina aumenta en \todo{poner cuanto aumenta la estamina} puntos tu estamina.
 \end{itemize}
+
+\subsection{¿Qué tipos de enemigos existen?}
+
+En \textit{Alliance} hay tres tipos de enemigos principales, además de tres jefes enemigos.
+
+\begin{itemize}
+\item Los enemigos principales son:
+\begin{itemize}
+\item Enemigos a melé (Figura \ref{Mele}). La forma de ataque de estos enemigos es acercarse al jugador más cercano cuando le ven y una vez que están cerca, atacarle. Sus ataques quitan \textbf{x} \unsure{Puntos de vida quita melé} puntos de salud a los personajes controlados por humanos. Tienen una vida total de \textbf{y} \unsure{Puntos de salud tiene melé} puntos de salud.
+\item Enemigos a distancia (Figura \ref{Distancia}). Estos enemigos se mantienen a una cierta distancia de los jugadores, desde la que disparan proyectiles en forma de lanza a los mismos. Sus  ataques quitan \textbf{x} \unsure{Puntos de vida quitan enemigos a distancia} puntos de salud a los personajes controlados por humanos. Tienen una vida total de \textbf{y} \unsure{Puntos de salud tienen enemigos a distancia} puntos de salud.
+\item Enemigos tanque (Figura \ref{Tanque}). Son enemigos de movimiento y ataque lento, pero muy poderoso. Además pueden recibir mucho daño antes de morir. Su forma de ataque es igual que la de los enemigos a melé, acercándose hacia el jugador más cercano y atacándole. Sus ataques quitan \textbf{x} \unsure{Punts de vida quita tanque} puntos de salud a los personajes controlados por humanos. Tienen una vida total de \textbf{y} \unsure{Puntos de salud tiene tanque} puntos de salud.
+\end{itemize}
+
+\begin{figure}[H]
+  \begin{minipage}{0.33\textwidth}
+    \centering
+    \includegraphics[width=5cm]{./images/guerrero.jpg}
+    \caption{Enemigos a melé}
+    \label{Mele}
+  \end{minipage}%
+  \hspace{0.5mm}
+  \begin{minipage}{0.33\textwidth}
+    \centering
+    \includegraphics[width=3cm]{./images/distancia.jpg}
+    \caption{Enemigos a distancia}
+    \label{Distancia}
+  \end{minipage}
+  \hspace{0.5mm}
+  \begin{minipage}{0.33\textwidth}
+    \centering
+    \includegraphics[width=5cm]{./images/tanque.jpg}
+    \caption{Enemigos tanque}
+    \label{Tanque}
+  \end{minipage}
+\end{figure}
+
+\item Los jefes enemigos son:
+\begin{itemize}
+\item \textbf{Henkka} (Figura \ref{Henkka}). Es el jefe de los esclavos de la primera zona. Ataca cuerpo a cuerpo con dos grandes mazas. Sus ataques quitan \textbf{x} \unsure{Puntos que quita Henkka} putos de salud a los personajes controlados por humanos. Tiene una vida total de \textbf{y} \unsure{Puntos que tiene Henkka} puntos de salud.
+\item \textbf{Euronymous} (Figura \ref{Euronymous}). Es el jefe de los esclavos de la segunda zona. Ataca cuerpo a cuerpo con una espada, su movimiento es más rápido. Sus ataques quitan \textbf{x} \unsure{Puntos que quita Euronymous} puntos de salud a los personajes controlados por humanos. Tiene una vida total de \textbf{y} \unsure{Puntos que tiene Euronymous} puntos de salud.
+\item \textbf{Shiva} (Figura \ref{Shiva}). Es el jefe de los alienígenas enemigos. Sus ataques los lleva a cabo con sus dos grandes puños. Estos ataques quitan \textbf{x} \unsure{Puntos que quita Shiva} puntos de salud a los personajes controlados por humanos. Tiene una vida total de \textbf{y} \unsure{Puntos que tiene Shiva} puntos de salud.
+\end{itemize}
+
+\begin{figure}[H]
+  \begin{minipage}{0.33\textwidth}
+    \centering
+    \includegraphics[width=5cm]{./images/henkka.jpg}
+    \caption{Boss Henkka}
+    \label{Henkka}
+  \end{minipage}%
+  \hspace{0.5mm}
+  \begin{minipage}{0.33\textwidth}
+    \centering
+    \includegraphics[width=5cm]{./images/euronymous.jpg}
+    \caption{Boss Euronymous}
+    \label{Euronymous}
+  \end{minipage}
+  \hspace{0.5mm}
+  \begin{minipage}{0.33\textwidth}
+    \centering
+    \includegraphics[width=5cm]{./images/shiva.jpg}
+    \caption{Boss Shiva}
+    \label{Shiva}
+  \end{minipage}
+\end{figure}
+
+\begin{greenbox}[Sobre el ataque de los enemigos...]
+\begin{center}
+Todos los ataques de los enemigos quitan una cantidad de puntos de salud a los personajes controlados por humanos. Los personajes controlados por la \ac{IA} no pueden morir, tomen el daño que tomen.
+\end{center}
+\end{greenbox}
+\end{itemize}
+
+\subsection{¿Cómo puedo atacar con \textit{Alyssa}?}
+
+\textit{Alyssa} posee varios ataques, que pueden ejecutarse de las siguientes formas:
+
+\begin{itemize}
+\item Ataque básico. En este ataque, \textit{Alyssa} producirá daño golpeando con su maza. Se puede llevar a cabo pulsando el \textbf{botón izquierdo} del ratón. Se pueden encadenar varios de estos ataques en forma de combo, pulsando de forma seguida en repetidas ocasiones este botón.
+\item Ataque especial. Si se pulsa el \textbf{botón derecho} del ratón, \textit{Alyssa} lanzará una bola de fuego. Esta bola hace mucho daño a los enemigos, pero también consume mucha estamina.
+\item Ataque mientras bloquea. Si mientras se está bloqueando (con la tecla \texttt{F}), se pulsa el \textbf{botón derecho} del ratón, se producirá un daño en área a los enemigos, empujándolos hacia fuera de dicho área. Este ataque es muy útil si nos encontramos rodeados de enemigos.
+\item Ataque en carrera. Si se pulsa el \textbf{botón izquierdo} del ratón mientras se está \textit{sprintando} (con la tecla \texttt{SHIFT} pulsada), se producirá un ataque en salto, que es más poderoso que el ataque básico pero a su vez consume mayor estamina.
+\end{itemize}
+
+\subsection{¿Cómo puedo atacar con \textit{Morten}?}
+
+\textit{Morten} posee también varios ataques, como son:
+
+\begin{itemize}
+\item Ataque básico. En este ataque, \textit{Morten} producirá daño disparando con sus pistolas. Se puede llevar a cabo pulsando el \textbf{botón izquierdo} del ratón. El daño que produce este ataque no es muy alto, pero se ve compensado con la rapidez en la ejecución (lo que permite atacar más veces en el mismo tiempo) y con el poco gasto de estamina.
+\item Ataque especial. Si se pulsa el \textbf{botón derecho} del ratón, \textit{Morten} lanzará una granada. Dicha granada explotará pasado un pequeño tiempo, produciendo un gran daño en área a los enemigos que se encuentren dentro del rango de explosión.
+\end{itemize}
+
+\begin{greenbox}[Tanto \textit{Alyssa} como \textit{Morten}]
+\begin{center}
+pueden bloquear ataques pulsando la tecla \texttt{F}, \textit{sprintar} mientras se mueven si se mantiene pulsada la tecla \texttt{SHIFT} y realizar esquivas pulsando el espacio.
+\end{center}
+\end{greenbox}
+\end{itemize}
+
+\subsection{¿Cómo acceder a las partes del mapa bloqueadas?}
+
+En el mapa de \textit{Alliance} existen ciertas partes no accesibles, bloqueadas por un muro invisible como el de la Figura \todo{Figura del muro invisible}. El motivo de este muro es prevenir pasar a algunas zonas sin completar objetivos en las zonas anteriores.
+
+Para poder acceder a las siguientes zonas del mapa, será necesario haber acabado por completo con todos los enemigos de las zonas anteriores. Habremos completado este objetivo si el muro desaparece, permitiendo el paso a la siguiente zona.
+
+\subsection{¿Cómo interactuar con los diálogos?}
+
+Durante el juego aparecerán diálogos, que explicarán la historia del mundo, te guiarán por el camino y te ayudarán con los controles y mecánicas del juego. Estos diálogos tienen la apariencia que se puede observar en la Figura \ref{Dialogo}.
+
+Mientras estás leyendo el texto de los diálogos, el juego estará pausado. Para seguir leyendo el texto, se hará click en la flecha que aparece abajo a la derecha. Cuando no quede más diálogo por leer, este desaparecerá automáticamente y volverás a controlar al personaje principal.
+
+\renewcommand\bcStyleTitre[1]{\large\hspace*{1.8in}\textcolor{red!100}{#1}}
+\begin{bclogo}[
+  couleur=red!15,
+  arrondi=0.25,
+  logo=\hspace*{1in}\bctakecare,
+  barre=none,
+  noborder=true]{\hspace*{0.15in} Advertencia.}
+\itshape \vspace*{0.15in}
+Cabe destacar que una vez que se ha leído un diálogo, no se puede volver a leer, por lo que ten cuidado al saltarlo y obviar cierta información.
+\end{bclogo}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=12cm]{./images/Dialogo.png}
+  \caption{Interfaz de diálogos de \textit{Alliance}}
+  \label{Dialogo}
+\end{figure}
 
 
 \subsection{¿Cómo cambiar el personaje del juego?}

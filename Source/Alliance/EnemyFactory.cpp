@@ -92,21 +92,21 @@ AEnemy* AEnemyFactory::SpawnAnEnemy(EEnemyType EnemyType, FVector Location, FRot
 			EnemyToReturn = GetWorld()->SpawnActor<AEnemy>(EnemyEuronymousReference, Location, Rotation, SpawnParams);
 			ABoss* Boss = Cast<ABoss>(EnemyToReturn);
 			Boss->setBossName(FName("Euronymous")); 
-			Boss->setMaxBossHealth(200.f);
+			Boss->setMaxBossHealth(800.f);
 		}
 		else if (EnemyType == EEnemyType::ET_Shiva)
 		{
 			EnemyToReturn = GetWorld()->SpawnActor<AEnemy>(EnemyShivaReference, Location, Rotation, SpawnParams);
 			ABoss* Boss = Cast<ABoss>(EnemyToReturn);
 			Boss->setBossName(FName("Shiva"));
-			Boss->setMaxBossHealth(200.f);
+			Boss->setMaxBossHealth(1200.f);
 		}
 		else if (EnemyType == EEnemyType::ET_Henkka)
 		{
 			EnemyToReturn = GetWorld()->SpawnActor<AEnemy>(EnemyHenkkaReference, Location, Rotation, SpawnParams);
 			ABoss* Boss = Cast<ABoss>(EnemyToReturn);
 			Boss->setBossName(FName("Henkka"));
-			Boss->setMaxBossHealth(200.f);
+			Boss->setMaxBossHealth(1000.f);
 		}
 		else
 		{

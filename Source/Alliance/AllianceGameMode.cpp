@@ -112,7 +112,7 @@ void AAllianceGameMode::RespawnPlayer_Implementation(APlayerController * SecondP
 	}
 
 	TArray<AActor*> FoundCharacters; // Only one character should exist
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AAllianceCharacter::StaticClass(), FoundCharacters); 
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName{ "PlayableCharacter" }, FoundCharacters);
 
 	if (FoundCharacters.Num() == 0) // First character in the world, use playerstart then spawn AI Character
 	{

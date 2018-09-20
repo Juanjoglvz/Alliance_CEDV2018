@@ -10,6 +10,7 @@
 
 #include "CoreMinimal.h"
 #include "AllianceController.h"
+#include "Boss.h"
 #include "ShivaController.generated.h"
 
 /**
@@ -23,7 +24,12 @@ class ALLIANCE_API AShivaController : public AAllianceController
 public:
 	AShivaController();
 
+	UPROPERTY()
+		ABoss* ShyvaReference;
+
 	virtual void Possess(APawn* InPawn) override;
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION()
 		void SensePawn(const TArray<AActor*> &UpdatedActors);

@@ -274,7 +274,6 @@ Además, por motivos de historia del juego, Shiva se regenera muchísima salud a
 
 Por estos motivos, Los árboles de comportamiento para cada jefe son ligeramente diferentes a aquellos de los enemigos básicos, cada uno con las particularidades mencionadas anteriormente.
 
-
 \subsection{Multijugador en \acf{UE4}}
 
 Los juegos multijugador en \ac{UE4} son implementados bajo un enfoque basado en el modelo Cliente-Servidor. Esto significa que el servidor actúa como una \textbf{autoridad} y que todos los datos se deben enviar desde los distintos clientes, al servidor. El servidor valida los datos y reacciona a ellos. En \ac{UE4} se pueden distinguir dos tipos de servidores:
@@ -395,7 +394,11 @@ A continuación, se explican los problemas más notables y cómo se han afrontad
 
 Esto se producía debido a que las animaciones que se dan al esprintar o atacar no estaban siendo replicadas, ya que la llamada a un procedimiento \textit{multicast} desde un cliente, se ejecuta tan sólo localmente en dicho cliente y el comportamiento necesario es que se ejecute en el servidor, y se replique a cada uno de los clientes. Para resolverlo se tomó un enfoque basado en \ac{RPC}, de forma que cuando el cliente ataca, se notifica al servidor que se va a producir este ataque y el servidor se encarga de la replicación de la animación. Si es el servidor el que quiere atacar, se puede ejecutar de forma directa la llamada \ac{RPC} \textit{multicast}. Este enfoque, está basado en la Figura \ref{Owning}.
 
-\item Problemas para lanzar el minijuego desde el cliente, debido a conflictos con el \textbf{ownership}. Cuando se intentaba lanzar el minijuego en el cliente, siguiendo un esquema como el de la Figura \ref{BadApproach}
+
+\item Problemas para lanzar el minijuego desde el cliente, debido a conflictos con el \textbf{ownership}. Cuando se intentaba lanzar el minijuego en el cliente, siguiendo un esquema como el de la Figura \ref{BadApproach}, nos encontrábamos con el problema de que el cliente no podía iniciar el minijuego. Esto es debido a que el enfoque que se siguió es erróneo. La función <<\textit{Server}>> nunca se ejecutaba, ya que era llamada desde un cliente que no es el \textit{owner} del actor, y como se ha explicado anteriormente, este tipo de llamadas se omiten y no se ejecutan.
+
+Para resolverlo, se cambió el enfoque al de la Figura \ref{Owning}, de forma que ahora la función <<\textit{Server}>> sí es ejecutada, porque se llama en el \textit{owner} del actor, que como se ha dicho es la instancia del jugador en el servidor. Desde aquí se llama a la función <<\textit{Multicast}>>, replicando correctamente el funcionamiento.
+
 
 \begin{figure}[H]
   \centering
@@ -403,5 +406,89 @@ Esto se producía debido a que las animaciones que se dan al esprintar o atacar 
   \caption{Enfoque incorrecto al lanzar el minijuego desde el cliente}
   \label{BadApproach}
 \end{figure}
+
+\item \textit{Crasheo} del videojuego por un error de violación de segmentos en tiempo de ejecución. Este \textit{crasheo} ocurría al jugar el minijuego cuando un jugador lo había jugado anteriormente.
+
+El error venía causado porque se accedía a una referencia local desde una máquina remota (no tiene sentido compartir una referencia a memoria a un jugador remoto, ya que la memoria de ambos es completamente distinta). Este problema era causado en el evento \texttt{BeginOverlap}. En este evento se toma una referencia al jugador que está haciendo \textit{overlap} (que será quien juega el minijuego), y este evento parecía ejecutarse varias veces, con un comportamiento parecido al de un evento <<\textit{Multicast}>>.
+
+Tras emplear mucho tiempo intentando buscar la solución al problema (para conseguir el comportamiento que se observa en la Tabla \ref{Behaviour}) y no conseguir arreglarlo, se optó por deshabilitar de forma temporal la posibilidad de que el cliente jugase el minijuego, limitando la jugabilidad del mismo al servidor (véase la Figura \ref{Limitation}). Esta no es una opción definitiva (que el cliente pueda jugar el minijuego es una característica muy deseable), por lo que este error se solucionará en actualizaciones futuras. Sin embargo, por el momento no supone un gran problema, ya que aunque el cliente no pueda jugar el minijuego, si que puede observar cómo el servidor lo juega.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Quién juega el minijuego} & \textbf{Comportamiento Deseado}        \\ \hline
+Servidor                          & El cliente no puede jugarlo a la vez   \\ \hline
+Cliente                           & El servidor no puede jugarlo a la vez  \\ \hline
+Cualquiera lo ha jugado           & El minijuego no puede volver a jugarse \\ \hline
+\end{tabular}
+\caption{Comportamiento deseado del minijuego}
+\label{Behaviour}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=13cm]{./images/LimitacionMinijuego.png}
+  \caption{Limitación en la ejecución del minijuego a solo el servidor}
+  \label{Limitation}
+\end{figure}
 \end{itemize}
+
+\subsection{Patrón Observador y Patrón Factoría en la creación de enemigos}
+
+Para \textit{spawnear} los enemigos en el juego, se ha usado un actor a modo de \textit{spawner}, que se encargará de crear los enemigos de cada tipo que se indican por medio de propiedades en el editor. Recibe también como parámetro el número de oleadas de enemigos que aparecerán. Se ha diseñado un esquema basado en el patrón factoría para el \textit{spawn} de los enemigos y basado en el patrón observador para detectar cuando los enemigos de un cierto \textit{spawner} han muerto.
+
+Para crear los enemigos, se usa un \textit{spawner} que comenzará la creación cuando el jugador alcanza una cierta zona del mapa (mediante \textit{overlap} con alguna caja de colisiones invisible). El \textit{spawner} sabe cuántos enemigos de cada tipo tiene que \textit{spawnear} y cuantas oleadas lanzará, pero la creación de los enemigos recae sobre una factoría de enemigos (véase la Figura \ref{Factory}). Esta factoría es la encargada de colocar sobre una determinada posición del mundo a un enemigo de un tipo indicado por el \textit{spawner} y devolverle al mismo el enemigo creado.
+
+ 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=11cm]{./images/FactoryPattern.png}
+  \caption{Patrón factoría para la creación de enemigos}
+  \label{Factory}
+\end{figure}
+
+Para que el \textit{spawner} sepa cuándo un enemigo que ha creado él ha sido eliminado, se usa el patrón observador con delegados (ver Figura \ref{Observer}). En la creación de enemigos, cuando la factoría crea un enemigo, le indica un identificador único que se corresponde con el identificador del \textit{spawner} que lo ha creado. De esta forma, cuando un enemigo muere, notifica mediante el delegado a todos los observadores que ha muerto, usando el identificador que se le ha otorgado. Los \textit{spawner} comprueban si el enemigo que ha muerto ha sido creado por ellos, por medio de este identificador, y de ser así, decrementan su contador de enemigos vivos.
+
+Si este contador llega a cero, significará que todos los enemigos que han creado han sido eliminados. Si quedan mas rondas de enemigos por \textit{spawnear}, procederán a lanzar una nueva ronda de enemigos. Si por el contrario, las rondas de enemigos que el \textit{spawner} tiene que lanzar han sido lanzadas, el \textit{spawner} se destruirá, ya que su labor no es necesaria.
+
+Para acceder a ciertas zonas del mapa que están bloqueadas, es necesario que se hayan eliminado los enemigos de las zonas anteriores. Para llevar a cabo esta comprobación, se mira que los \textit{spawners} de las zonas anteriores hayan sido destruidos. Como se ha dicho, los \textit{spawners} se destruyen una vez que éstos no tienen más enemigos que crear y los que han creado han muerto. Si la comprobación de que los \textit{spawners} de las zonas anteriores están destruidos es cierta, significará que todos los enemigos hasta el momento han muerto.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=10cm]{./images/Observer.png}
+  \caption{Patrón observador en la destrucción de enemigos}
+  \label{Observer}
+\end{figure}
+
+\subsection{Diálogos en \textit{Alliance}}
+
+Para implementar los diálogos en \textit{Alliance} se ha optado por usar un \textit{plugin}, debido a que el proyecto quedaría mucho más limpio de esta forma y además se ha conseguido un ahorro de tiempo considerable en el desarrollo del proyecto, junto con la facilidad al maquetar los diálogos. El \textit{plugin} se llama \textit{NotYetDialogueSystem} y se puede encontrar de forma gratuita en el \textit{marketplace} de \ac{UE4}\footnote{https://www.unrealengine.com/marketplace/not-yet-dialogue-system}. Se trata de un \textit{plugin} para realizar los diálogos muy potente, basado en una estructura en forma de árbol y orientado a participantes. Esta estructura en forma de árbol se ejecutará de acuerdo a condiciones, que se establecen en los nodos del árbol. Existen varios tipos de nodos, pero los que se han usado para los diálogos de \textit{Alliance} son los nodos de <<discurso>> (o \textit{speech}). A este tipo de nodos se le indica qué texto se mostrará en el diálogo. Entre otras opciones interesantes, cabe destacar el posible uso de archivos de audio en el diálogo, que se reproducirán durante el mismo.
+
+Para establecer los diálogos, es necesario implementar la interfaz que se puede observar en la Figura \ref{Dialog} en la clase del actor participante en el diálogo. Todos los actores que participen en un diálogo deben tener implementada esta interfaz. Una vez que se ha realizado dicha implementación, se pueden usar Blueprints para maquetar estos diálogos, con una estructura en forma de árbol. Aunque se puede hacer el árbol todo lo complejo que se quiera, introduciendo nodos de condición, en \textit{Alliance} se ha optado por seguir una ejecución secuencial, debido a que no era necesario realizar diálogos tan complejos.
+
+Para lanzar los diálogos durante la ejecución del juego, se han usado dos enfoques:
+
+\begin{itemize}
+\item Mostrar los diálogos cuando se produce un determinado evento, como puede ser que se haya completado el minijuego correctamente, que se haya eliminado a un jefe final, etc.
+\item Mostrar los diálogos cuando se llega a una parte específica del mapa, al hacer \textit{overlap} con alguna caja de colisiones invisible. 
 \end{itemize}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=7cm]{./images/IDlgParticipant.png}
+  \caption{Interfaz que tienen que implementar los participantes en un diálogo}
+  \label{Dialog}
+\end{figure}
+
+\subsection{\textit{Breakables} y \textit{Pickups}}
+
+Con el objetivo de incrementar la jugabilidad y teniendo en cuenta que el combate es muy importante en el juego, se ha querido introducir en \textit{Alliance} un mecanismo para conseguir aumentar la vida y la estamina del jugador, mediante la destrucción de ciertos objetos decorativos que se encuentran en el mapa, como son cajas, barriles, carros, etc. 
+
+Estos objetos se han implementado completamente en C++ y otorgan la posibilidad de \textit{spawnear} \textit{pickups} de vida, de estamina o simplemente no \textit{spawnear} nada cuando se rompen. Los objetos decorativos se rompen cuando \textit{Alyssa} ataca con su maza, colisionando con estos objetos o cuando \textit{Morten} dispara sobre los mismos, usando sus armas. Sin embargo, estos objetos no se rompen con los ataques especiales de los personajes, la bola de fuego en el caso de \textit{Alyssa} y la granada en el caso de \textit{Morten}. 
+
+Cabe destacar que ambos actores están completamente replicados, por lo que si el cliente rompe un objeto, el servidor no podrá volver a romperlo ya que observará que ya se encuentra roto (y viceversa). Para conseguir esto, se ha hecho uso de \ac{RPC}, que se ha comentado anteriormente.
+
+La probabilidad de que cuando se rompe un \textit{breakable} se \textit{spawnee} algún objeto de vida o de estamina, se puede poner desde el editor. Se ha hecho así ya que puede ser útil que en un \textit{breakable} concreto se \textit{spawnee} un tipo fijo de \textit{pickup}, por ejemplo el \textit{spawn} de vida en un objeto que se encuentra en un área de combate con jefes enemigos, o el \textit{spawn} de estamina en objetos que se encuentran en los caminos de transición entre distintas arenas. 
+
+Cuando se rompe un \textit{breakable}, al igual que cuando se coge un \textit{pickup} se reproduce un sonido. A estos sonidos, al igual que a los sonidos de los enemigos y personajes, se les ha añadido una atenuación con la distancia, de forma que cuanto más se aleje el personaje de la fuente del sonido, más suaves oirá estos sonidos. Si el personaje está suficientemente lejos, dejará de oír los sonidos gracias a la atenuación. 

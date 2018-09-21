@@ -2,7 +2,7 @@
 
 Si al iniciar \textit{Alliance} nos encontramos con un error como el de la figura \ref{ErrorSteam}, tan sólo tendremos que iniciar sesión en una cuenta de STEAM y reiniciar \textit{Alliance}. El error se debe a que el juego para su funcionamiento online usa el subsistema online de STEAM y sin iniciar sesión en STEAM no se puede hacer uso del mismo.
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \includegraphics[width=12cm]{./images/ErrorSteam.png}
   \caption{Error de STEAM al iniciar el juego}
@@ -16,7 +16,7 @@ Si al iniciar \textit{Alliance} nos encontramos con un error como el de la figur
 \item En primer lugar, haz click en el ejecutable de \textit{Alliance}, para iniciar la aplicación.
 \item Aparecerá el menú principal del juego, que se puede ver en la figura \ref{MenuPpal}.
 
-\begin{figure}[h]
+\begin{figure}[H]
   \begin{minipage}{0.5\textwidth}
     \centering
     \includegraphics[width=8cm]{./images/MenuPpal.png}
@@ -48,7 +48,7 @@ Si al iniciar \textit{Alliance} nos encontramos con un error como el de la figur
 \item Aparecerá el menú principal del juego, que se puede ver en la figura \ref{MenuPpal}.
 \item En este menú haremos click en <<Unirse a Partida>> para unirnos a una partida ya existente.
 
-\begin{figure}[h]
+\begin{figure}[H]
   \begin{minipage}{0.5\textwidth}
     \centering
     \includegraphics[width=8cm]{./images/BuscandoPartida.png}
@@ -85,7 +85,7 @@ Volver hacia las opciones del principio (haciendo click en <<Volver>>), que se m
 
 \begin{itemize}
 \item Pausar el juego, presionando la tecla \texttt{P} (o la tecla Escape) y hacer click en <<Salir del juego>>.
-\item Dejar que los enemigos nos maten. En la interfaz que aparece (véase Figura \todo{Insertar imagen cuando el jugador pierde}), hacer click en <<Volver al Menú>>. Una vez en el menú principal, escoger la opción <<Salir>>, como se ha indicado anteriormente. 
+\item Dejar que los enemigos nos maten. En la interfaz que aparece (véase Figura \ref{YouLose}), hacer click en <<Volver al Menú>>. Una vez en el menú principal, escoger la opción <<Salir>>, como se ha indicado anteriormente. 
 \end{itemize}
 \end{itemize}
 
@@ -128,9 +128,43 @@ La vida y la estamina son los dos rasgos más importantes que posee el jugador. 
 \begin{itemize}
 \item Tanto la vida, como la estamina, se regeneran con el tiempo. Este porcentaje de regeneración es muy bajo, aunque en situaciones de calma en las que no haya combate es muy útil para comenzar los siguientes combates bien regenerado.
 
-\item Existen cajas, barriles y otros destructibles (véase la Figura \todo{Añadir figura de destructibles}). Al romper estos objetos, existe la posibilidad de que aparezcan \textit{pickups} (véase la Figura \todo{Añadir figura de pickups}), que al cogerlos proporcionan vida y estamina.
+\item Existen cajas, barriles y otros destructibles (véase la Figura \ref{Breakables}). Al romper estos objetos, existe la posibilidad de que aparezcan \textit{pickups} (véase la Figura \ref{Pickup}), que al cogerlos proporcionan vida y estamina.
 
-Coger un \textit{pickup} de vida te aumenta en \todo{Poner cuánto aumenta la salud} puntos tu salud, mientras que coger un \textit{pickup} de estamina aumenta en \todo{poner cuanto aumenta la estamina} puntos tu estamina.
+\begin{figure}[H]
+  \begin{minipage}{0.33\textwidth}
+    \centering
+    \includegraphics[width=4cm]{./images/Dest_Barr2.png}
+  \end{minipage}%
+  \hspace{0.5mm}
+  \begin{minipage}{0.33\textwidth}
+    \centering
+    \includegraphics[width=4cm]{./images/Dest_Barr.png}
+  \end{minipage}
+  \hspace{0.5mm}
+  \begin{minipage}{0.33\textwidth}
+    \centering
+    \includegraphics[width=4cm]{./images/Dest_Box.png}
+  \end{minipage}
+  \caption{Distintos tipos de breakables}
+  \label{Breakables}
+\end{figure}
+
+Coger un \textit{pickup} de vida te aumenta en 15 puntos tu salud, mientras que coger un \textit{pickup} de estamina aumenta en 25 puntos tu estamina.
+
+
+\begin{figure}[H]
+  \begin{minipage}{0.5\textwidth}
+    \centering
+    \includegraphics[width=5cm]{./images/Health.png}
+  \end{minipage}%
+  \hspace{1mm}
+  \begin{minipage}{0.5\textwidth}
+    \centering
+    \includegraphics[width=5cm]{./images/Stamina.png}
+  \end{minipage}
+  \caption{Pickups de salud y estamina}
+  \label{Pickup}
+\end{figure}
 \end{itemize}
 
 \subsection{¿Qué tipos de enemigos existen?}
@@ -140,9 +174,9 @@ En \textit{Alliance} hay tres tipos de enemigos principales, además de tres jef
 \begin{itemize}
 \item Los enemigos principales son:
 \begin{itemize}
-\item Enemigos a melé (Figura \ref{Mele}). La forma de ataque de estos enemigos es acercarse al jugador más cercano cuando le ven y una vez que están cerca, atacarle. Sus ataques quitan \textbf{x} \unsure{Puntos de vida quita melé} puntos de salud a los personajes controlados por humanos. Tienen una vida total de \textbf{y} \unsure{Puntos de salud tiene melé} puntos de salud.
-\item Enemigos a distancia (Figura \ref{Distancia}). Estos enemigos se mantienen a una cierta distancia de los jugadores, desde la que disparan proyectiles en forma de lanza a los mismos. Sus  ataques quitan \textbf{x} \unsure{Puntos de vida quitan enemigos a distancia} puntos de salud a los personajes controlados por humanos. Tienen una vida total de \textbf{y} \unsure{Puntos de salud tienen enemigos a distancia} puntos de salud.
-\item Enemigos tanque (Figura \ref{Tanque}). Son enemigos de movimiento y ataque lento, pero muy poderoso. Además pueden recibir mucho daño antes de morir. Su forma de ataque es igual que la de los enemigos a melé, acercándose hacia el jugador más cercano y atacándole. Sus ataques quitan \textbf{x} \unsure{Punts de vida quita tanque} puntos de salud a los personajes controlados por humanos. Tienen una vida total de \textbf{y} \unsure{Puntos de salud tiene tanque} puntos de salud.
+\item Enemigos a melé (Figura \ref{Mele}). La forma de ataque de estos enemigos es acercarse al jugador más cercano cuando le ven y una vez que están cerca, atacarle. Sus ataques quitan \textbf{8} puntos de salud a los personajes controlados por humanos. Tienen una vida total de \textbf{30} puntos de salud.
+\item Enemigos a distancia (Figura \ref{Distancia}). Estos enemigos se mantienen a una cierta distancia de los jugadores, desde la que disparan proyectiles en forma de lanza a los mismos. Sus  ataques quitan \textbf{5} puntos de salud a los personajes controlados por humanos. Tienen una vida total de \textbf{20} puntos de salud.
+\item Enemigos tanque (Figura \ref{Tanque}). Son enemigos de movimiento y ataque lento, pero muy poderoso. Además pueden recibir mucho daño antes de morir. Su forma de ataque es igual que la de los enemigos a melé, acercándose hacia el jugador más cercano y atacándole. Sus ataques quitan \textbf{10} puntos de salud a los personajes controlados por humanos. Tienen una vida total de \textbf{80} puntos de salud.
 \end{itemize}
 
 \begin{figure}[H]
@@ -170,9 +204,9 @@ En \textit{Alliance} hay tres tipos de enemigos principales, además de tres jef
 
 \item Los jefes enemigos son:
 \begin{itemize}
-\item \textbf{Henkka} (Figura \ref{Henkka}). Es el jefe de los esclavos de la primera zona. Ataca cuerpo a cuerpo con dos grandes mazas. Sus ataques quitan \textbf{x} \unsure{Puntos que quita Henkka} putos de salud a los personajes controlados por humanos. Tiene una vida total de \textbf{y} \unsure{Puntos que tiene Henkka} puntos de salud.
-\item \textbf{Euronymous} (Figura \ref{Euronymous}). Es el jefe de los esclavos de la segunda zona. Ataca cuerpo a cuerpo con una espada, su movimiento es más rápido. Sus ataques quitan \textbf{x} \unsure{Puntos que quita Euronymous} puntos de salud a los personajes controlados por humanos. Tiene una vida total de \textbf{y} \unsure{Puntos que tiene Euronymous} puntos de salud.
-\item \textbf{Shiva} (Figura \ref{Shiva}). Es el jefe de los alienígenas enemigos. Sus ataques los lleva a cabo con sus dos grandes puños. Estos ataques quitan \textbf{x} \unsure{Puntos que quita Shiva} puntos de salud a los personajes controlados por humanos. Tiene una vida total de \textbf{y} \unsure{Puntos que tiene Shiva} puntos de salud.
+\item \textbf{Henkka} (Figura \ref{Henkka}). Es el jefe de los esclavos de la primera zona. Ataca cuerpo a cuerpo con dos grandes mazas. Sus ataques quitan \textbf{15} puntos de salud a los personajes controlados por humanos. Tiene una vida total de \textbf{1000} puntos de salud.
+\item \textbf{Euronymous} (Figura \ref{Euronymous}). Es el jefe de los esclavos de la segunda zona. Ataca cuerpo a cuerpo con una espada, su movimiento es más rápido. Sus ataques quitan \textbf{20} puntos de salud a los personajes controlados por humanos. Tiene una vida total de \textbf{800} puntos de salud.
+\item \textbf{Shiva} (Figura \ref{Shiva}). Es el jefe de los alienígenas enemigos. Sus ataques los lleva a cabo con sus dos grandes puños. Estos ataques quitan \textbf{25} puntos de salud a los personajes controlados por humanos. Tiene una vida total de \textbf{1200} puntos de salud.
 \end{itemize}
 
 \begin{figure}[H]
@@ -234,7 +268,14 @@ pueden bloquear ataques pulsando la tecla \texttt{F}, \textit{sprintar} mientras
 
 \subsection{¿Cómo acceder a las partes del mapa bloqueadas?}
 
-En el mapa de \textit{Alliance} existen ciertas partes no accesibles, bloqueadas por un muro invisible como el de la Figura \todo{Figura del muro invisible}. El motivo de este muro es prevenir pasar a algunas zonas sin completar objetivos en las zonas anteriores.
+En el mapa de \textit{Alliance} existen ciertas partes no accesibles, bloqueadas por un muro invisible como el de la Figura \ref{Wall}. El motivo de este muro es prevenir pasar a algunas zonas sin completar objetivos en las zonas anteriores.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=12cm]{./images/InvisibleWall.png}
+  \caption{Muro invisible, que evita el paso a ciertas partes del mapa}
+  \label{Wall}
+\end{figure}
 
 Para poder acceder a las siguientes zonas del mapa, será necesario haber acabado por completo con todos los enemigos de las zonas anteriores. Habremos completado este objetivo si el muro desaparece, permitiendo el paso a la siguiente zona.
 
@@ -268,7 +309,15 @@ Cabe destacar que una vez que se ha leído un diálogo, no se puede volver a lee
 Mientras se está jugando no existe la posibilidad de cambiar el personaje que es controlado por el jugador y continuar con el juego. Existen dos formas de cambiar el personaje, pero ambas necesitan empezar el juego de nuevo:
 
 \begin{itemize}
-\item Dejar que los enemigos nos maten. En la pantalla que sale cuando el jugador pierde (se puede ver en la Figura \todo{Insertar imagen cuando el jugador pierde}), hacer click en <<Volver al Menú>>. Una vez en el menú, se puede iniciar una nueva partida escogiendo al personaje que se quiera, entre los dos disponibles.
+\item Dejar que los enemigos nos maten. En la pantalla que sale cuando el jugador pierde (se puede ver en la Figura \ref{YouLose}), hacer click en <<Volver al Menú>>. Una vez en el menú, se puede iniciar una nueva partida escogiendo al personaje que se quiera, entre los dos disponibles.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=10cm]{./images/YouLose.png}
+  \caption{Interfaz gráfica cuando el jugador pierde}
+  \label{YouLose}
+\end{figure}
+
 \item Pausar el juego, presionando la tecla \texttt{P} y hacer click en <<Salir del juego>>. Reiniciar \textit{Alliance} e iniciar una nueva partida, escogiendo al personaje deseado entre los dos personajes disponibles.
 \end{itemize}
 

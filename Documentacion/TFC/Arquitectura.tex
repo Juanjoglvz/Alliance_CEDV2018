@@ -65,6 +65,82 @@ En este caso, hemos decidido crear una clase base más para el caso particular d
 
 Al igual que con los aliados, la mayoría de las propiedades son inicializadas en el constructor de la clase en \ac{BP}, por el mismo motivo, cada enemigo tendrá sus propios valores de vida, daño, etc.
 
+\subsection{Diseño del minijuego}
+El diseño del minijuego está dividido en dos clases, \textit{Board} y \textit{Piece}, la primera es la encargada de saber la posición de todas las piezas, comprobar los movimientos válidos de cada pieza y saber cuándo se ha ganado el juego. La segunda, por el contrario únicamente conoce su posición actual y sus dimensiones, también se encargará de ejecutar la \textit{Timeline} que la moverá a la casilla que se le indique. \\
+
+\subsubsection{Representación del minijuego}
+Para la representación del tablero se ha usado la estructura de datos \textit{TBitArray}. Se ha escogido esta estructura de datos debido a su bajo tamaño en memoria. En este array se guarda qué celdas están ocupadas y cuáles no. \\
+
+Complementario a este, existe otro array de piezas, el cual se usa para cambiar que pieza está seleccionada, mover las piezas y comprobar si un movimiento es válido. Ninguno de estos dos arrays está replicado ya que estos se actualizan con las llamadas \ac{RPC} que permiten mover las piezas. \\
+
+A parte de estas dos propiedades el tablero también tiene una serie de delegados para notificar de una serie de eventos: \\
+
+\begin{itemize}
+	\item \textbf{OnMiniGameFinished}: Informa de que el minijuego ha acabado para, por ejemplo, ocultar la interfaz del minijuego, abrir la puerta y ejecutar la animación de la cámara.
+	\item \textbf{OnChangePieceToSelected}: Informa de que el jugador que está en el servidor ha cambiado la pieza seleccionada al jugador que está en el cliente para que este también cambie la pieza seleccionada.
+	\item \textbf{OnChangePieceToItsColor}: Informa de que el color de la pieza indicada ha cambiado de color, indicandole al cliente de que también cambie el color a esa pieza.
+	\item \textbf{OnMovePiece}: Informa de que la pieza indicada se está moviendo para que el cliente ejecute también la \textit{timeline} asociada a la pieza.
+\end{itemize} \\
+
+Para la representación de las piezas se ha optado por guardar únicamente su tamaño y su posición (de la esquina superior izquierda). Estos valores se pueden editar dentro del editor para así poder ajustar la dificultad del minijuego de una forma más sencilla comparado con editar los valores en C++/Blueprints.\\
+
+
+\subsubsection{Reproducción del minijuego en pantalla}
+
+Durante el diseño del juego se consideraron dos formas de mostrar el minijuego al jugador, la primera opción pasaría por colocar todos los actores del minijuego en la misma localización donde se mostrarían durante la partida, la segunda consistiría en colocar el minijuego en un lugar del nivel donde no se pudiese ver por el jugador durante el gameplay normal y posteriormente, por medio de una \textit{Scene Capture 2D} mostrarsela al jugador como si de una pantalla se tratase.
+
+La primera opción se descartó debido a los siguientes problemas:
+
+\begin{itemize}
+	\item La gran cantidad de actores que se necesitan para mostrar el minijuego aumentaba la dificultad de mostrar/ocultar el minijuego.
+	\item La dificultad de crear nuevos minijuegos en localizaciones distintas debido a la gran cantidad de actores que posicionar correctamente.
+	\item La poca flexibilidad en términos de tamaños, si se quiere ajustar el minijuego a una puerta más pequeña se tendrían que escalar todo el tablero.
+\end{itemize}
+
+Por lo que la segunda opción fue la desarrollada, esta opción cuenta con la ventaja de que da una sensación de inmersión con la temática de la historia planteada. Esta opción está formada por tres componentes que se describirán a continuación:
+
+\paragraph{Disposición del minijuego en el nivel}
+
+Todos los minijuegos están colocados en una caja debajo del suelo de cada nivel para que el jugador no pueda encontrarselos en un gameplay normal. Una gran ventaja de este enfoque es la capacidad de crear nuevos minijuegos a partir de los anteriores, únicamente con copiar todos los contenidos de una caja en otra posición del nivel se crea un nuevo minijuego, solo haría falta colocar una nueva pantalla en el nivel. \\
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=13cm]{./images/Minigame_When_Playing2.png}
+  \caption{Contenido dentro de la caja del minijuego durante el gameplay}
+  \label{MinigameWhenPlaying}
+\end{figure}
+
+\paragraph{\textit{Scene Capture 2D} para mostrar en minijuego en una "pantalla"}
+Para mostrar el minijuego en otra parte del nivel se recurrió a una \textit{Scene Capture}, concretamente a un \textit{Scene Capture 2D}. Este actor actúa como si de una cámara se tratase solo que esta en vez de mostrar lo que captura a través de la pantalla del jugador guarda la imagen en una textura para su posterior uso en un material el cual se usa en un plano para mostrarlo dentro del nivel.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=11cm]{./images/Screen_Capture_To_Mat.png}
+  \caption{Material para mostrar el \textit{Scene Capture 2D}}
+  \label{SceneCapture2DMat}
+\end{figure}
+
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=14cm]{./images/Minigame_When_Playing.png}
+  \caption{Plano del minijuego durante el gameplay}
+  \label{GameplayMinigame}
+\end{figure}
+
+\paragraph{Blueprint que maneja el gameplay del minijuego}
+Para la interacción inicial con el minijuego y las tareas de movimiento de la cámara, apertura de puertas y gestión de la intefaz se ha creado una clase \textit{Blueprint} que hereda de \textit{Trigger Box}, el \textit{MinigameStarter\_Blueprint} .Para realizar todas estas tareas este se suscribe a los delegados del \textit{Board} que se comentaron anteriormente, demostrando una forma de comunicación entre C++ y Blueprints. \\
+
+Para sugerir al jugador de que puede interactuar con este actor se han añadido tanto un sistema de partículas que se activa cuando el minijuego está disponible para ser jugado como un texto que aparece cuando el jugador pasa por encima de este actor dando, de esta forma, información de que el jugador puede interactuar sin ser intrusivo, como podría ser un diálogo o un tutorial.
+
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=14cm]{./images/Minigame_Press_Play.png}
+  \caption{Interacción con el \textit{MinigameStarter_Blueprint}}
+  \label{Minigamestarterinteraction}
+\end{figure}
+
 \subsection{Sistema de combate}
 El sistema de combate en un juego de este estilo acaba resultando la mayor parte de la experiencia de juego. Por eso, es necesario hacer un incapié especial en él.
 En nuestro caso, hemos decidido crear dos personajes principales: Alyssa Y Morten. Cada uno de ellos tiene armas distintas y por tanto, la forma de combatir es treméndamente distinto: Alyssa combate cuerpo a cuerpo, mientras que Morten ataca a distancia. Esto provoca que la elección de personaje antes del inicio del juego sea más interesante, y que además, en el caso de jugar en modo multijugador, se genera una mayor distinción entre los roles de cada jugador. 
@@ -382,6 +458,140 @@ Para el cambio de niveles, se ha optado por destruir la sesión con el nivel act
   \label{seqOSS}
 \end{figure}
 \end{itemize}
+
+
+\subsubsection{Elección de personajes en runtime}
+En versiones anteriores de \ac{UE4} 4.4 la elección de personajes y, en general, la persistencia de datos entre niveles suponía un gran desafío debido a que no existía la clase \textit{UGameInstance}. 
+
+En estas versiones se optaba por escribir en un fichero de configuración toda la información que debía persistir entre niveles para, una vez cambiado el nivel, volver a importar los valores que se habían escribido en el fichero.
+Sin embargo, con la llegada de la versión 4.4 de \ac{UE4} \cite{12} se introdujo la clase \textit{UGameInstance}, esta clase existe tanto en el servidor como en el cliente y puede contener variables replicadas, por lo que es el sustituto perfecto a la anterior solución, mucho más complicada y propensa a errores \cite{13}. \\
+
+Otro desafío a superar era la identificación unívoca de cada cliente a la hora de cambiar de niveles. El método \textitt{PostLogin} de \textit{AGameMode} solamente proporciona el controlador del cliente que se ha unido. \\
+
+Sin embargo, cada jugador tiene un objeto de la clase \textit{APlayerState} asociado, estos objetos están replicados en todos los clientes que estén conectados al servidor y contienen información relevante sobre la red, el jugador y su identificación \cite{13}. Al estar usando el \textit{Online Subsystem Steam} el nombre del jugador asociado es la ID de Steam del jugador, la cual es única para cada jugador. \\
+
+La estructura de datos usada para almacenar esta información ha sido la siguiente:
+
+\begin{lstlisting}[language=c++,caption={Declaración del mapa de jugadores a caracteres},captionpos=b,label={lstAssignedMap}]
+TMap<FString, TSubclassOf<AAllianceCharacter>> AssignedCharacters;
+\end{lstlisting}
+
+En la cual las claves son los identificadores únicos de Steam y los valores las clases de cada caracter asignado a cada jugador.
+
+
+A continuación se discutirá la solución propuesta:
+
+El flujo empieza cuando el \textit{AAlliancePlayerController} es spawneado en el mundo y se llama al método \textit{BeginPlay}, dentro de este método se hace una llamada a la \ac{RPC} \textit{OnServerAssignCharacter} el cual tiene la siguiente firma:
+
+\begin{lstlisting}[language=c++,caption={Firma del método OnServerAssignCharacter},captionpos=b,label={lstAssignFirma}]
+UFUNCTION(Reliable, Server, WithValidation)
+	void OnServerAssignCharacter();
+void OnServerAssignCharacter_Implementation();
+FORCEINLINE bool OnServerAssignCharacter_Validate() { return true; }
+\end{lstlisting} \\
+
+En la firma del método le estamos indicando al \textit{Online Subsystem} de \ac{UE4} que el método se ejecutará en el \textbf{servidor} y será una llamada fiable es decir, que usará un protocolo de transmisión fiable.
+
+Dentro del método \textit{OnServerAssignCharacter} y una vez seguros que todo el código que ejecutemos a partir de ahora se ejecutará en el servidor de la partida:
+
+\begin{lstlisting}[language=c++,caption={Código del método OnServerAssignCharacter},captionpos=b,label={lstAssignCodigo}]
+void AAlliancePlayerController::OnServerAssignCharacter_Implementation()
+{
+	AGameModeBase* GMode = GetWorld()->GetAuthGameMode();
+	AAllianceGameMode* Gamemode = Cast<AAllianceGameMode>(GMode);
+
+	if (Gamemode)
+		Gamemode->RespawnPlayer(this);
+}
+\end{lstlisting} \\
+
+Una vez que estamos ejecutando código en el servidor podemos estar seguros de que la llamada a \textit{GetAuthGameMode} no va a fallar \cite{14}. Una vez hemos obtenido y casteado el \textit{GameMode} podemos llamar a la función \textit{RespawnPlayer} pasándole como parámetro el controlador que queremos \textit{spawnear}.
+
+El método \textit{RespawnPlayer} es el encargado de asignar, spawnear y poseer a los caracteres spawneados.
+
+A la hora de programar este método se ha tenido en cuenta de que el juego no sólo debe poder testearse en el modo \textit{standalone}, también en \textit{\ac{PIE}}. Por lo que hay que poner especial cuidado a la hora de prevenir fallos en casos límite como por ejemplo:
+
+\begin{itemize}
+	\item Intentar jugar en modo multijugador en el menú principal.
+	\item Unirse a una sesión cuando esta ya está empezada.
+	\item Asignación doble del mismo personaje debido a errores de timing.
+\end{itemize}
+
+Para prevenir fallos en el primer caso límite la solución implementada ha sido rechazar spawnear caracteres si el mapa actual era el menú principal.
+
+\begin{lstlisting}[language=c++,caption={Rechazar el spawneo de caracteres en el menú principal},captionpos=b,label={lstRespawnNoMainMenu}]
+FString LevelName = UGameplayStatics::GetCurrentLevelName(GetWorld());
+
+if (LevelName.Contains("Main") || LevelName.Contains("Menu"))
+	return;
+\end{lstlisting}
+
+Otra opción que se consideró fue retrasar el spawneo del carácter hasta que el servidor empezara una partida pero se rechazó debido a que aumentaba de forma considerable la complejidad de la solución y sería confuso para el jugador.
+
+El siguiente paso es asignar el caracter al jugador, en el caso de que no haya escogido uno anteriormente, los casos en los que podría pasar esto son:
+
+\begin{itemize}
+	\item El segundo jugador se está uniendo a la sesión
+	\item Acaba de empezar una sesión \ac{PIE}
+\end{itemize}
+
+En el primer caso se le asigna al segundo jugador el personaje que está controlado por la IA.
+En el segundo caso se le asigna a \textit{Alyssa}, el personaje por defecto.
+
+Después, dependiendo de cuántos caracteres jugables haya en la partida se realizan las siguientes acciones:
+
+\paragraph{Ningún carácter:}
+
+El juego acaba de iniciarse y no hay ningún carácter jugable en la partida. Se deben spawnear ambos caracteres junto con el controlador de IA del personaje correspondiente y poseer a cada carácter.
+
+Para empezar, se buscan todos los actores \textit{APlayerStart} que existan en el nivel, para obtener la posición inicial de spawneo del primer personaje.
+
+Posteriormente se spawnea el personaje que va a ser controlado por el jugador.
+
+\begin{lstlisting}[language=c++,caption={Búsqueda de playerstarts y spawneo de personaje controlado por el jugador},captionpos=b,label={lstRespawnZeroCharsSpawnPlayer}]
+TArray<AActor*> FoundPStarts;
+UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), FoundPStarts);
+
+
+APlayerStart* PStart = Cast<APlayerStart>(FoundPStarts[0]);
+
+FActorSpawnParameters SpawnInfo;
+SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+AAllianceCharacter* SpawnedCharacter = GetWorld()->SpawnActor<AAllianceCharacter>(AssignedCharacter, PStart->GetActorLocation() , PStart->GetActorRotation(), SpawnInfo);
+
+SecondPlayer->Possess(SpawnedCharacter);
+\end{lstlisting} \\
+
+A continuación se procede a spawnear el carácter que será controlado por la IA junto con su controlador, aunque esta vez la posición de spawneo no es el playerstart que mencionamos anteriormente. Sino que se spawnea cerca del primer carácter, esto cubre el otro caso límite nombrado anteriormente, la unión de un jugador cuando la sesión esté empezada. Este comportamiento está implementado en la función \textit{SpawnSecondPLayerNearFirst}.
+
+\begin{lstlisting}[language=c++,caption={Método \textit{SpawnSecondPlayerNearFirst}},captionpos=b,label={lstSpawnSecondPLayerNearFirst}]
+AAllianceCharacter * AAllianceGameMode::SpawnSecondPlayerNearFirst(FVector FirstPosition, FRotator FirstRotation, TSubclassOf<class AAllianceCharacter> SecondCharacter)
+{
+	FVector NewPosition = FirstPosition;
+	NewPosition.Y += 250;
+
+	FActorSpawnParameters SpawnInfo;
+	SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	return GetWorld()->SpawnActor<AAllianceCharacter>(SecondCharacter, NewPosition, FirstRotation, SpawnInfo);
+}
+\end{lstlisting}
+
+Posteriormente se spawnea el controlador de la IA del personaje asociado y se posee el carácter spawneado anteriormente.
+
+
+\paragraph{Dos caracteres:}
+
+En este caso ambos caracteres están ya en el nivel y otro jugador se está uniendo a la sesión, solo haría falta cambiar el controlador que posee al carácter asociado al nuevo jugador.
+
+
+\begin{lstlisting}[language=c++,caption={Cambio de controlador del carácter IA},captionpos=b,label={lstRespawnControllerChange}]
+AAllianceCharacter* SecondaryCharacter = GetControlledPawnByAI(FoundCharacters);
+
+SecondaryCharacter->GetController()->Destroy();
+SecondPlayer->Possess(SecondaryCharacter);
+\end{lstlisting} \\
+
+Como se puede ver, en vez de llamar al método \textit{UnPossess} del controlador este se destruye. Esto es debido a un problema encontrado el cual, después de desposeer y volver a poseer el mismo \textit{pawn} por distintos controladores el controlador que deja de poseer sigue enviando órdenes al \textit{pawn} que dejó de poseer. Por lo que, efectivamente, dos controladores están controlando a un mismo \textit{pawn}.
 
 \subsubsection{Problemas que se han encontrado durante la replicación}
 

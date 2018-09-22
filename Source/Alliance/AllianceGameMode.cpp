@@ -72,24 +72,7 @@ void AAllianceGameMode::RespawnPlayer_Implementation(APlayerController * SecondP
 	UAllianceGameInstance* GInstance;
 	GInstance = Cast<UAllianceGameInstance>(GetGameInstance());
 
-	if (!GInstance->AssignedCharacters.Contains(Name)) // Joining player has not been assigned a character
-	{
-		if (GInstance->AssignedCharacters.Num() == 1) // Joining player should have the free character
-		{
-			TArray<FString> Keys;
-			GInstance->AssignedCharacters.GetKeys(Keys);
-			FString MainPlayerName = Keys[0];
-
-			if (GInstance->AssignedCharacters[MainPlayerName].Get()->IsChildOf(FirstCharacter.Get()))
-				GInstance->AssignedCharacters.Add(Name, SecondCharacter);
-			else
-				GInstance->AssignedCharacters.Add(Name, FirstCharacter);
-		}
-		else // Joining player has not been assigned a character (PIE, Alyssa first character by default)
-		{
-			GInstance->AssignedCharacters.Add(Name, FirstCharacter);
-		}
-	}
+	AssignCharacter(GInstance, Name); // Assign a character to the player if it doesnt have one already)
 
 	TSubclassOf<AAllianceCharacter> AssignedCharacter;
 	TSubclassOf<AAllianceCharacter> SecondAssignedCharacter;
@@ -179,6 +162,28 @@ void AAllianceGameMode::RespawnPlayer_Implementation(APlayerController * SecondP
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("A lot of characters found"));
+	}
+}
+
+void AAllianceGameMode::AssignCharacter(UAllianceGameInstance * GInstance, FString &Name)
+{
+	if (!GInstance->AssignedCharacters.Contains(Name)) // Joining player has not been assigned a character
+	{
+		if (GInstance->AssignedCharacters.Num() == 1) // Joining player should have the free character
+		{
+			TArray<FString> Keys;
+			GInstance->AssignedCharacters.GetKeys(Keys);
+			FString MainPlayerName = Keys[0];
+
+			if (GInstance->AssignedCharacters[MainPlayerName].Get()->IsChildOf(FirstCharacter.Get()))
+				GInstance->AssignedCharacters.Add(Name, SecondCharacter);
+			else
+				GInstance->AssignedCharacters.Add(Name, FirstCharacter);
+		}
+		else // Joining player has not been assigned a character (PIE, Alyssa first character by default)
+		{
+			GInstance->AssignedCharacters.Add(Name, FirstCharacter);
+		}
 	}
 }
 

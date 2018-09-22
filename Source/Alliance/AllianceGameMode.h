@@ -40,6 +40,8 @@ public:
 	void RespawnPlayer_Implementation(APlayerController* SecondPlayer);
 	FORCEINLINE bool RespawnPlayer_Validate(APlayerController* SecondPlayer) { return true; }
 
+	void AssignCharacter(class UAllianceGameInstance * GInstance, FString &Name);
+
 private:
 	AAllianceCharacter* SpawnSecondPlayerNearFirst(FVector FirstPosition, FRotator FirstRotation, TSubclassOf<class AAllianceCharacter> SecondCharacter);
 	AAllianceCharacter* GetControlledPawnByAI(TArray<AActor*> CharactersInWorld);

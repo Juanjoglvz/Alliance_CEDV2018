@@ -1,3 +1,5 @@
+\lettrine[lines=2,findent=2pt,nindent=3pt,loversize=0.1]{\textcolor[gray]{0.4}{S}}{e} va a presentar una explicación técnica de la arquitectura usada para el desarrollo de \textit{Alliance}, justificando las elecciones de diseño y teniendo en cuenta los problemas que se han encontrado durante el desarrollo.
+
 \subsection{Diseño de personajes}
 Para nuestro juego, y puesto que ninguno de los desarrolladores que hemos trabajado en este proyecto tenemos ninguna experiencia en la creación y diseño gráfico de personajes, animaciones, o cualquier otro tipo de \textit{asset} requerido en este proyecto, hemos decidido utilizar los \textit{assets} que se liberaron recientemente del videojuego de \textit{Epic Games} llamado \textit{Paragon}\footnote{Juego que, por otra parte, ha cerrado todos sus servidores.}.
 \\
@@ -16,8 +18,10 @@ Dicho esto, podemos empezar a explicar la solución que hemos adoptado para mode
   \label{ClassesAllies}
 \end{figure}
 
-En el diagrama se puede ver cómo se ha optado por hacer una clase base en C++, \texttt{\textbf{AAllianceCharacter}}. Esta clase contiene toda la funcionalidad básica de un personaje, ya sea controlado por inteligencia artificial o por el jugador. Esta funcionalidad básica se puede resumir en todas las propiedades necesarias (Vida, estamina, daño, etc), aunque la mayoría de estas propiedades no serán inicializadas en el constructor de esta clase. Esta clase está pensada para que no haya ninguna instancia de ella en el mundo, por eso no contiene ningún componente típico de los actores que van a ser representados en él, como por ejemplo el esqueleto.
+En el diagrama se puede ver cómo se ha optado por hacer una clase base en C++, \texttt{\textbf{AAllianceCharacter}}. Esta clase contiene toda la funcionalidad básica de un personaje, ya sea controlado por inteligencia artificial o por el jugador. Esta funcionalidad básica se puede resumir en todas las propiedades necesarias (vida, estamina, daño, etc), aunque la mayoría de estas propiedades no serán inicializadas en el constructor de esta clase. Esta clase está pensada para que no haya ninguna instancia de ella en el mundo, por eso no contiene ningún componente típico de los actores que van a ser representados en él, como por ejemplo el esqueleto.
 \\
+
+\pagestyle{notsection}
 
 En esta clase base se pueden resaltar ciertos aspectos importantes:
 \begin{itemize}
@@ -35,7 +39,7 @@ Hablaremos más adelante de la máquina de estados que esta clase tiene cuando h
 Una vez discutida la clase \textbf{AAllianceCharacter}, también se puede ver que tenemos una clase base más, esta vez en \ac{BP}. La clase base en \ac{BP} sirve para modelar cierta funcionalidad básica que necesitamos que sea en Blueprints, como ciertos widgets de la \ac{GUI} o cierta parte de replicación (discutida más adelante). También nos sirve para especificar algunos componentes de los personajes, como el componente de movimiento.
 \\
 
-Todas las clases de los personajes del juego están hechas en \ac{BP}. Prácticamente toda la responsabilidad de estas clases es la de modelar el sistema de combate de cada personaje (El cuál se discutirá más adelante). Esto es gracias a que toda la funcionalidad extra (Replicación, comunicación con otros blueprints en caso de, por ejemplo, causar daño, etc) ya está definida en las clases mencionadas anteriormente. Estas clases se han modelado en \ac{BP} por las numerosas ventajas que proporciona: La posibilidad de ajustar el \textit{Skeletal Mesh} directamente en el editor, facilidad para añadir componentes en \textit{sockets} específicos de forma visual (Se hablará más adelante de esto), y ,lo que más importante nos ha parecido, la posibilidad de elegir un \textit{asset} directamente desde un menú desplegable al cambiar el valor de una variable, entre otras. Obviamente, el hecho de modelar estos comportamientos un poco más complejos en \ac{BP} conlleva ciertas desventajas, entre las que hemos encontrado la baja mantenibilidad, y la mala capacidad para compartir el trabajo, porque los Blueprints son archivos binarios.
+Todas las clases de los personajes del juego están hechas en \ac{BP}. Prácticamente toda la responsabilidad de estas clases es la de modelar el sistema de combate de cada personaje (el cuál se discutirá más adelante). Esto es gracias a que toda la funcionalidad extra (replicación, comunicación con otros blueprints en caso de, por ejemplo, causar daño, etc) ya está definida en las clases mencionadas anteriormente. Estas clases se han modelado en \ac{BP} por las numerosas ventajas que proporciona: La posibilidad de ajustar el \textit{Skeletal Mesh} directamente en el editor, facilidad para añadir componentes en \textit{sockets} específicos de forma visual (se hablará más adelante de esto), y lo que más importante nos ha parecido, la posibilidad de elegir un \textit{asset} directamente desde un menú desplegable al cambiar el valor de una variable, entre otras. Obviamente, el hecho de modelar estos comportamientos un poco más complejos en \ac{BP} conlleva ciertas desventajas, entre las que hemos encontrado la baja mantenibilidad, y la mala capacidad para compartir el trabajo, porque los Blueprints son archivos binarios.
 \\
 
 También es importante recalcar que casi todas las propiedades son inicializadas en el constructor de estas clases, porque cada personaje tendrá sus propios valores de vida, estamina, daño, etc. A continuación un ejemplo:
@@ -60,7 +64,7 @@ También es importante recalcar que casi todas las propiedades son inicializadas
 Se puede observar como la solución es muy similar al diseño de los personajes aliados: una clase base en C++ con la funcionalidad necesaria, y extensión en \ac{BP} para las clases particulares de cada enemigo. Esto es porque valoramos más las ventajas frente a las desventajas que hemos discutido anteriormente en esta sección también. Igualmente, se hablará de la máquina de estados de los enemigos en la sección del \textbf{sistema de combate}.
 \\
 
-En este caso, hemos decidido crear una clase base más para el caso particular de los jefes de zona (\textit{Bosses}). Esto es porque los jefes tienen ciertas funcionalidades comunes pero que son básicas, como por ejemplo las barras de vida.
+En este caso, hemos decidido crear una clase base más para el caso particular de los jefes de zona (\textit{bosses}). Esto es porque los jefes tienen ciertas funcionalidades comunes pero que son básicas, como por ejemplo las barras de vida.
 \\
 
 Al igual que con los aliados, la mayoría de las propiedades son inicializadas en el constructor de la clase en \ac{BP}, por el mismo motivo, cada enemigo tendrá sus propios valores de vida, daño, etc.
@@ -101,11 +105,11 @@ Por lo que la segunda opción fue la desarrollada, esta opción cuenta con la ve
 
 \paragraph{Disposición del minijuego en el nivel}
 
-Todos los minijuegos están colocados en una caja debajo del suelo de cada nivel para que el jugador no pueda encontrarselos en un gameplay normal. Una gran ventaja de este enfoque es la capacidad de crear nuevos minijuegos a partir de los anteriores, únicamente con copiar todos los contenidos de una caja en otra posición del nivel se crea un nuevo minijuego, solo haría falta colocar una nueva pantalla en el nivel. \\
+Todos los minijuegos están colocados en una caja debajo del suelo de cada nivel para que el jugador no pueda encontrárselos en un gameplay normal. Una gran ventaja de este enfoque es la capacidad de crear nuevos minijuegos a partir de los anteriores, únicamente con copiar todos los contenidos de una caja en otra posición del nivel se crea un nuevo minijuego, solo haría falta colocar una nueva pantalla en el nivel. \\
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=13cm]{./images/Minigame_When_Playing2.png}
+  \includegraphics[width=10cm]{./images/Minigame_Cube_When_Playing.png}
   \caption{Contenido dentro de la caja del minijuego durante el gameplay}
   \label{MinigameWhenPlaying}
 \end{figure}
@@ -129,7 +133,7 @@ Para mostrar el minijuego en otra parte del nivel se recurrió a una \textit{Sce
 \end{figure}
 
 \paragraph{Blueprint que maneja el gameplay del minijuego}
-Para la interacción inicial con el minijuego y las tareas de movimiento de la cámara, apertura de puertas y gestión de la intefaz se ha creado una clase \textit{Blueprint} que hereda de \textit{Trigger Box}, el \textit{MinigameStarter\_Blueprint} .Para realizar todas estas tareas este se suscribe a los delegados del \textit{Board} que se comentaron anteriormente, demostrando una forma de comunicación entre C++ y Blueprints. \\
+Para la interacción inicial con el minijuego y las tareas de movimiento de la cámara, apertura de puertas y gestión de la interfaz se ha creado una clase \textit{Blueprint} que hereda de \textit{Trigger Box}, el \textit{MinigameStarter\_Blueprint}. Para realizar todas estas tareas, este se suscribe a los delegados del \textit{Board} que se comentaron anteriormente, demostrando una forma de comunicación entre C++ y Blueprints. \\
 
 Para sugerir al jugador de que puede interactuar con este actor se han añadido tanto un sistema de partículas que se activa cuando el minijuego está disponible para ser jugado como un texto que aparece cuando el jugador pasa por encima de este actor dando, de esta forma, información de que el jugador puede interactuar sin ser intrusivo, como podría ser un diálogo o un tutorial.
 
@@ -143,20 +147,20 @@ Para sugerir al jugador de que puede interactuar con este actor se han añadido 
 
 \subsection{Sistema de combate}
 El sistema de combate en un juego de este estilo acaba resultando la mayor parte de la experiencia de juego. Por eso, es necesario hacer un incapié especial en él.
-En nuestro caso, hemos decidido crear dos personajes principales: Alyssa Y Morten. Cada uno de ellos tiene armas distintas y por tanto, la forma de combatir es treméndamente distinto: Alyssa combate cuerpo a cuerpo, mientras que Morten ataca a distancia. Esto provoca que la elección de personaje antes del inicio del juego sea más interesante, y que además, en el caso de jugar en modo multijugador, se genera una mayor distinción entre los roles de cada jugador. 
+En nuestro caso, hemos decidido crear dos personajes principales: Alyssa Y Morten. Cada uno de ellos tiene armas distintas y por tanto, la forma de combatir es muy distinta: Alyssa combate cuerpo a cuerpo, mientras que Morten ataca a distancia. Esto provoca que la elección de personaje antes del inicio del juego sea más interesante, y que además, en el caso de jugar en modo multijugador, se genera una mayor distinción entre los roles de cada jugador. 
 \\
 
-A la hora de diseñar los distintos ataques que cada jugador podría hacer, era importante tener en cuenta las animaciones que teníamos, porque, como ya se ha dicho antes, nos encontrábamos muy limitados. Aún así, hemos conseguido hacer que cada personaje, aliado o enemigo, tenga un ataque principal basado en un combo de varios golpes (En el caso de los que atacan en combate cuerpo a cuerpo). Además, los personajes principales pueden esprintar, bloquear, esquivar, y tienen un ataque especial.
+A la hora de diseñar los distintos ataques que cada jugador podría hacer, era importante tener en cuenta las animaciones que teníamos, porque, como ya se ha dicho antes, nos encontrábamos muy limitados. Aún así, hemos conseguido hacer que cada personaje, aliado o enemigo, tenga un ataque principal basado en un combo de varios golpes (en el caso de los que atacan en combate cuerpo a cuerpo). Además, los personajes principales pueden esprintar, bloquear, esquivar, y tienen un ataque especial.
 En el caso particular de Alyssa también puede atacar en carrera y tiene otro ataque especial más. 
 \\
 
 Un problema en cuanto a diseño de mecánicas es que los jugadores podrían <<abusar>> de los ataques especiales (que causan más daño), además del esquive o el sprint. Para limitar las posibilidades del jugador y evitar que el juego resulte extremadamente sencillo, se ha optado por implementar un sistema de estamina, que se regenera mucho mas rápido que la salud, pero los ataques especiales consumen gran parte del total. Aún así, es importante mantener la regeneración a un nivel más o menos alto, para evitar que el jugador se encuentre sin posibilidades de actuación; en resumen, es un sistema muy difícil de balancear. 
 \\
 
-Prácticamente todo el sistema de combate (Salvo los eventos de causar y recibir daño) está modelado en \ac{BP}. Este sistema consta de varias partes importantes que vamos a discutir a continuación: Las máquinas de estados que tienen todos los personajes, y la comunicación entre los Blueprints de cada personaje.
+Prácticamente todo el sistema de combate (salvo los eventos de causar y recibir daño) está modelado en \ac{BP}. Este sistema consta de varias partes importantes que vamos a discutir a continuación: Las máquinas de estados que tienen todos los personajes, y la comunicación entre los Blueprints de cada personaje.
 \\
 
-Para los personajes que atacan cuerpo a cuerpo, se ha optado por añadir unas cápsulas de colisión en las armas, que son añadidas a un \textit{socket} (Normalmente el de la mano) para que se muevan acorde a las animaciones del personaje. Estos componentes serán los encargados de detectar la colisión con un enemigo. Usar este tipo de sistema conlleva una serie de problemas, cuya solución discutiremos más adelante. A continuación una foto de cómo estas cápsulas son añadidas a un personaje.
+Para los personajes que atacan cuerpo a cuerpo, se ha optado por añadir unas cápsulas de colisión en las armas, que son añadidas a un \textit{socket} (normalmente el de la mano) para que se muevan acorde a las animaciones del personaje. Estos componentes serán los encargados de detectar la colisión con un enemigo. Usar este tipo de sistema conlleva una serie de problemas, cuya solución discutiremos más adelante. A continuación una foto de cómo estas cápsulas son añadidas a un personaje.
 
 
 \begin{figure}[H]
@@ -190,7 +194,7 @@ Las transiciones entre un Blendspace u otro también son responsabilidad del \ac
 \end{itemize}
 
 
-A la hora de modelar el \textbf{sistema de combate}, nos encontramos con la problemática de las animaciones. Una vez ya teníamos modeladas las animaciones <<constantes>>, es decir, las que mantiene el personaje si no realiza ninguna acción (La animación de movimiento o la de sprint), tuvimos que modelar las animaciones de ataque. La solución que adoptamos consiste en convertir las animaciones en los denominados \textit{Animation Montage}. Estos montajes nos permiten añadir notificaciones en momentos determinados de cada animación. Ésta es la base de toda nuestra comunicación entre Blueprints.
+A la hora de modelar el \textbf{sistema de combate}, nos encontramos con la problemática de las animaciones. Una vez ya teníamos modeladas las animaciones <<constantes>>, es decir, las que mantiene el personaje si no realiza ninguna acción (la animación de movimiento o la de sprint), tuvimos que modelar las animaciones de ataque. La solución que adoptamos consiste en convertir las animaciones en los denominados \textit{Animation Montage}. Estos montajes nos permiten añadir notificaciones en momentos determinados de cada animación. Ésta es la base de toda nuestra comunicación entre Blueprints.
 \\
 
 El flujo que seguimos a la hora de realizar un ataque es el siguiente:
@@ -241,7 +245,7 @@ Gracias a esta comunicación, hemos podido modelar comportamientos más precisos
 
 \subsubsection{Estados de los personajes}
 
-Al modelar el \textbf{sistema de combate} y trabajar con animaciones, surgen problemas importantes, como evitar que el jugador se mueva mientras está atacando, evitar que dos animaciones no se solapen cuando no deban, y a la hora de tratar con controladores de inteligencia artificial (que mandan ordenes mucho más rápido que un humano en ciertas ocasiones), evitar que algunas acciones queden <<sepultadas>>. Una primera opción que se consideró en la etapa de prototipado fue la inclusión de varias flags o valores \textit{booleanos}, pero a medida que añadiamos funcionalidad a los personajes, se hacía claro que necesitábamos un mejor diseño. La solución obvia era la inclusión de estados en cada uno de los personajes. En las figuras \ref{ClassesAllies} y \ref{ClassesEnemies} se pueden ver los estados (Implementados mediante enumeraciones) para los aliados y los enemigos. A continuación también incluimos unas máquinas de estados para ilustrar los cambios que pueden suceder.
+Al modelar el \textbf{sistema de combate} y trabajar con animaciones, surgen problemas importantes, como evitar que el jugador se mueva mientras está atacando, evitar que dos animaciones no se solapen cuando no deban, y a la hora de tratar con controladores de inteligencia artificial (que mandan ordenes mucho más rápido que un humano en ciertas ocasiones), evitar que algunas acciones queden <<sepultadas>>. Una primera opción que se consideró en la etapa de prototipado fue la inclusión de varias flags o valores \textit{booleanos}, pero a medida que añadiamos funcionalidad a los personajes, se hacía claro que necesitábamos un mejor diseño. La solución obvia era la inclusión de estados en cada uno de los personajes. En las figuras \ref{ClassesAllies} y \ref{ClassesEnemies} se pueden ver los estados (implementados mediante enumeraciones) para los aliados y los enemigos. A continuación también incluimos unas máquinas de estados para ilustrar los cambios que pueden suceder.
 
 
 \begin{figure}[H]
@@ -280,7 +284,7 @@ Con este sistema, es importante controlar de forma correcta los cambios de estad
 \end{figure}
 
 
-en la Figura \ref{HenkkaAttack} se puede ver como podemos controlar si un personaje debería poder atacar en un instante determinado, si el personaje no se está moviendo o no está atacando. En la Figura \ref{HenkkaMove} podemos ver algo parecido. Cuando un personaje (En este caso controlado por \ac{IA}) empieza a moverse, se cambia el estado a \textit{Running}. Cuando el movimiento acaba (En este caso, el flujo de ejecución empieza en el pin \textit{OnMoveFinished}), volvemos a poner el estado a \textit{Idle}.
+en la Figura \ref{HenkkaAttack} se puede ver como podemos controlar si un personaje debería poder atacar en un instante determinado, si el personaje no se está moviendo o no está atacando. En la Figura \ref{HenkkaMove} podemos ver algo parecido. Cuando un personaje (en este caso controlado por \ac{IA}) empieza a moverse, se cambia el estado a \textit{Running}. Cuando el movimiento acaba (en este caso, el flujo de ejecución empieza en el pin \textit{OnMoveFinished}), volvemos a poner el estado a \textit{Idle}.
 \\
 
 Este sistema de estados también nos permite funcionalidades muy interesantes, como la función \texttt{ResetSpeed()}, que nos resetea la velocidad dependiendo del estado después de modificarla de alguna manera.
@@ -328,7 +332,7 @@ Pasamos ahora a presentar un ejemplo de un árbol de comportamiento de un enemig
 \end{figure}
 
 
-En la Figura \ref{BTBasic} se puede ver como, el enemigo seguirá al personaje que tenga \textit{Aggro}, y si está a rango de atacar, atacará. También se moverá a un lugar cercano aleatorio en caso de que no vea a ningún enemigo. El servicio \textit{GetAggroAgain} sirve para evitar posibles bloqueos, que se pueden dar de forma extremadamente rara cuando el \textit{Aggro} muere en el instante que va desde el inicio de la tarea \textit{MoveToPlayerAggro} y el momento en que esa tarea llama a la función \textit{MoveTo}. Este suceso puede pasar sobre todo en la inteligencia artificial de los aliados no jugables, pero sucede de forma extremadamente rara (Tan rara que hemos sido incapaces de replicar ese error en un entorno controlado, y no hemos podido testearlo). El servicio \textit{GetAggroAgain} también cambia el objetivo de ataque, resultando en que un enemigo (O jefe) no te seguirá continuamente. Este servicio no sucede de forma muy frecuente, y muchos enemigos básicos ni siquiera tienen tiempo de llamarlo.
+En la Figura \ref{BTBasic} se puede ver como, el enemigo seguirá al personaje que tenga \textit{Aggro}, y si está a rango de atacar, atacará. También se moverá a un lugar cercano aleatorio en caso de que no vea a ningún enemigo. El servicio \textit{GetAggroAgain} sirve para evitar posibles bloqueos, que se pueden dar de forma extremadamente rara cuando el \textit{Aggro} muere en el instante que va desde el inicio de la tarea \textit{MoveToPlayerAggro} y el momento en que esa tarea llama a la función \textit{MoveTo}. Este suceso puede pasar sobre todo en la inteligencia artificial de los aliados no jugables, pero sucede de forma extremadamente rara (tan rara que hemos sido incapaces de replicar ese error en un entorno controlado, y no hemos podido testearlo). El servicio \textit{GetAggroAgain} también cambia el objetivo de ataque, resultando en que un enemigo (o jefe) no te seguirá continuamente. Este servicio no sucede de forma muy frecuente, y muchos enemigos básicos ni siquiera tienen tiempo de llamarlo.
 \\
 
 La mayor diferencia entre cada tipo de enemigo básico no está en el árbol de comportamiento, si no en las tareas en sí. Obviamente no tiene sentido que un enemigo que ataca a distancia te siga de cerca. Aún así las diferencias entre los enemigos básicos no son demasiadas.
@@ -341,7 +345,7 @@ El caso de los jefes finales es el más complejo. En realidad, la base del árbo
 
 \begin{itemize}
 \item Henkka empezará a perseguir en carrera y atacar rápidamente cuando está bajo de vida.
-\item Euronymous Tiene una probabilidad de <<mejorarse>>, ganando la habilidad de atacar a distancia durante diez segundos con sus ataques básicos (Simulando que es capaz de cortar el viento). Cuando está bajo de vida, esta probabilidad se eleva. Cuando se <<mejora>>, hace una animación especial para que el jugador se entere.
+\item Euronymous Tiene una probabilidad de <<mejorarse>>, ganando la habilidad de atacar a distancia durante diez segundos con sus ataques básicos (simulando que es capaz de cortar el viento). Cuando está bajo de vida, esta probabilidad se eleva. Cuando se <<mejora>>, hace una animación especial para que el jugador se entere.
 \item Shiva Tiene una probabilidad, que al igual que Euronymous aumenta cuando está bajo de vida, de hacer más daño durante unos momentos.
 \end{itemize}
 
@@ -425,9 +429,15 @@ En \textit{Alliance} se ha usado constantemente una forma de replicación, denom
 
 La posesión de un actor, es uno de los temas más importantes y que hay que tener más en cuenta a la hora de enfrentarse a un videojuego multijugador. Es importante ya que, como se ha comentado anteriormente, una llamada \ac{RPC} al servidor, se omitirá y no se ejecutará si se llama desde un cliente sobre un actor que no posee. 
 
+\\
+
 Para resolver este problema, se ha seguido el esquema de la Figura \ref{Owning}, ya que la posesión de los actores recae en la instancia del jugador que reside en el servidor. Se comprueba si la llamada a \ac{RPC} del tipo NetMulticast se realiza desde una entidad autoritativa. En \ac{UE4} la autoridad la tiene quien \textit{spawnea} el actor. Si el actor es \textit{spawneado} desde un cliente, la autoridad la tendrá ese cliente. 
 
+\\
+
 En el caso de \textit{Alliance}, los actores a replicar se \textit{spawnean} desde el servidor, y se replican a todos los clientes. Los actores que están colocados en el mundo desde el editor, se encuentran en la categoría <<\textit{placed in world}>>, distinta de la categoría <<\textit{spawned}>>, pero a efectos de replicación, estos actores se tratan como \textit{spawneados} en el servidor.
+
+\\
 
 En el caso de que la llamada se haya realizado por una entidad autoritativa, se puede proceder a realizar la llamada a procedimiento remoto. Si no se ha realizado desde una entidad autoritativa, será necesario que se realice desde el \textit{owner} del actor, que como se ha dicho es la instancia del jugador en el servidor.
 
@@ -443,11 +453,19 @@ En el caso de que la llamada se haya realizado por una entidad autoritativa, se 
 
 El subsistema online (\textit{Online Subsystem}) y sus interfaces, existen para proporcionar una abstracción clara de la funcionalidad online común en todo el conjunto de plataformas disponibles, como pueden ser Steam, Xbox Live, Facebook, etc. Se pretende conseguir principalmente la portabilidad.
 
+\\
+
 Estas plataformas son necesarias, ya que proporcionan un servidor que se encarga de conectar los clientes con la lista de servidores o sesiones de juego disponibles. Además, permiten una visibilidad en internet, que un \textit{host} normalmente no tiene por sí mismo (por ejemplo, por falta de una dirección IP pública fija).
+
+\\
 
 En \textit{Alliance} se ha hecho uso del subsistema online de Steam, por lo que para poder jugar será necesario tener Steam abierto. Al crear una nueva partida, el jugador que lo hace creará una sesión y será el \textit{host} de la partida. Una sesión es una instancia del juego, que se ejecuta en el servidor, con una serie de propiedades como pueden ser el número de jugadores que se aceptan en la partida, si los jugadores se pueden unir a la partida de forma pública o tienen que ser invitados para que puedan entrar, etc. 
 
+\\
+
 Cuando un jugador se une a una partida, el subsistema online busca si existe alguna sesión creada que no se encuentre llena de jugadores. De ser así, pregunta al jugador si quiere unirse y en caso afirmativo, el jugador se une a la sesión que se ha encontrado (se puede ver el flujo de ejecución en el diagrama de la Figura \ref{seqOSS}). En este punto, la sesión estaría llena de jugadores (ya que en \textit{Alliance} se ha establecido un máximo de dos jugadores por sesión), el cliente que se ha unido pasaría a controlar al personaje no controlado por el \textit{host} de la partida, y ambos jugadores podrían comenzar a jugar juntos.
+
+\\
 
 Para el cambio de niveles, se ha optado por destruir la sesión con el nivel actual y crear otra nueva a la que se unirán los dos jugadores. Se ha optado por este método ya que un servidor tiene la capacidad de alojar una sola sesión. Para permitir que se puedan unir varios jugadores a un mismo nivel, al abrir el nivel hay que indicar la opción <<\textit{listen}>>.
 
@@ -462,6 +480,8 @@ Para el cambio de niveles, se ha optado por destruir la sesión con el nivel act
 
 \subsubsection{Elección de personajes en runtime}
 En versiones anteriores de \ac{UE4} 4.4 la elección de personajes y, en general, la persistencia de datos entre niveles suponía un gran desafío debido a que no existía la clase \textit{UGameInstance}. 
+
+\\
 
 En estas versiones se optaba por escribir en un fichero de configuración toda la información que debía persistir entre niveles para, una vez cambiado el nivel, volver a importar los valores que se habían escribido en el fichero.
 Sin embargo, con la llegada de la versión 4.4 de \ac{UE4} \cite{12} se introdujo la clase \textit{UGameInstance}, esta clase existe tanto en el servidor como en el cliente y puede contener variables replicadas, por lo que es el sustituto perfecto a la anterior solución, mucho más complicada y propensa a errores \cite{13}. \\

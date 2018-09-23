@@ -47,7 +47,6 @@ void ATankController::SensePawn(const TArray<AActor*> &UpdatedActors)
 		{
 			if (BlackboardComp->GetValueAsBool(FName{ "GetAggro" }))
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, "I see you!");
 				FName Key = FName{ "PlayerAggro" };
 				BlackboardComp->SetValueAsObject(Key, Player);
 				BlackboardComp->SetValueAsBool(FName{ "GetAggro" }, false);

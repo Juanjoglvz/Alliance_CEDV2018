@@ -20,34 +20,34 @@ AEnemyFactory::AEnemyFactory()
 	bAlwaysRelevant = true;
 
 	// Get references to enemies blueprints
-	static ConstructorHelpers::FObjectFinder<UClass> MeleeBP(TEXT("Class /Game/ThirdPersonCPP/Blueprints/Enemies/MeleeEnemy.MeleeEnemy"));
-	if (MeleeBP.Object) {
-		EnemyMeleeReference = (UClass*)MeleeBP.Object;
+	static ConstructorHelpers::FClassFinder<APawn> MeleeBP(TEXT("/Game/ThirdPersonCPP/Blueprints/Enemies/MeleeEnemy"));
+	if (MeleeBP.Class) {
+		EnemyMeleeReference = MeleeBP.Class;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UClass> RangedBP(TEXT("Class /Game/ThirdPersonCPP/Blueprints/Enemies/RangedEnemy.RangedEnemy"));
-	if (RangedBP.Object) {
-		EnemyRangedReference = (UClass*)RangedBP.Object;
+	static ConstructorHelpers::FClassFinder<APawn> RangedBP(TEXT("/Game/ThirdPersonCPP/Blueprints/Enemies/RangedEnemy"));
+	if (RangedBP.Class) {
+		EnemyRangedReference = RangedBP.Class;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UClass> TankBP(TEXT("Class /Game/ThirdPersonCPP/Blueprints/Enemies/TankEnemy.TankEnemy"));
-	if (TankBP.Object) {
-		EnemyTankReference = (UClass*)TankBP.Object;
+	static ConstructorHelpers::FClassFinder<APawn> TankBP(TEXT("/Game/ThirdPersonCPP/Blueprints/Enemies/TankEnemy"));
+	if (TankBP.Class) {
+		EnemyTankReference = TankBP.Class;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UClass> HenkkaBP(TEXT("Class /Game/ThirdPersonCPP/Blueprints/Enemies/Henkka.Henkka"));
-	if (HenkkaBP.Object) {
-		EnemyHenkkaReference = (UClass*)HenkkaBP.Object;
+	static ConstructorHelpers::FClassFinder<APawn> HenkkaBP(TEXT("/Game/ThirdPersonCPP/Blueprints/Enemies/Henkka"));
+	if (HenkkaBP.Class) {
+		EnemyHenkkaReference = HenkkaBP.Class;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UClass> ShivaBP(TEXT("Class /Game/ThirdPersonCPP/Blueprints/Enemies/Shiva.Shiva"));
-	if (ShivaBP.Object) {
-		EnemyShivaReference = (UClass*)ShivaBP.Object;
+	static ConstructorHelpers::FClassFinder<APawn> ShivaBP(TEXT("/Game/ThirdPersonCPP/Blueprints/Enemies/Shiva"));
+	if (ShivaBP.Class) {
+		EnemyShivaReference = ShivaBP.Class;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UClass> EuronymousBP(TEXT("Class /Game/ThirdPersonCPP/Blueprints/Enemies/Euronymous.Euronymous"));
-	if (EuronymousBP.Object) {
-		EnemyEuronymousReference = (UClass*)EuronymousBP.Object;
+	static ConstructorHelpers::FClassFinder<APawn> EuronymousBP(TEXT("/Game/ThirdPersonCPP/Blueprints/Enemies/Euronymous"));
+	if (EuronymousBP.Class) {
+		EnemyEuronymousReference = EuronymousBP.Class;
 	}
 }
 

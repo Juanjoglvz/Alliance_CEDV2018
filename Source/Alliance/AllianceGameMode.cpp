@@ -28,14 +28,14 @@ AAllianceGameMode::AAllianceGameMode()
 	PlayerStateClass = AAlliancePlayerState::StaticClass();
 
 
-	static ConstructorHelpers::FObjectFinder<UClass> CharBlueprint(TEXT("Class'/Game/ThirdPersonCPP/Blueprints/Characters_and_NPCs/Alyssa.Alyssa'"));
-	if (CharBlueprint.Object) {
-		FirstCharacter = (UClass*)CharBlueprint.Object;
+	static ConstructorHelpers::FClassFinder<APawn> CharBlueprint(TEXT("/Game/ThirdPersonCPP/Blueprints/Characters_and_NPCs/Alyssa"));
+	if (CharBlueprint.Class) {
+		FirstCharacter = (UClass*)CharBlueprint.Class;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UClass> CharBlueprint2(TEXT("Class'/Game/ThirdPersonCPP/Blueprints/Characters_and_NPCs/Morten.Morten'"));
-	if (CharBlueprint2.Object) {
-		SecondCharacter = (UClass*)CharBlueprint2.Object;
+	static ConstructorHelpers::FClassFinder<APawn> CharBlueprint2(TEXT("/Game/ThirdPersonCPP/Blueprints/Characters_and_NPCs/Morten"));
+	if (CharBlueprint2.Class) {
+		SecondCharacter = CharBlueprint2.Class;
 	}
 
 	FirstCharacterController = (UClass*)AAlyssaController::StaticClass();
